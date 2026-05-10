@@ -219,7 +219,7 @@ body {
   padding:8px 0 4px; display:flex; align-items:center; gap:8px;
 }
 .phase-label::after { content:''; flex:1; height:1px; background:var(--b1); }
-.day-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(64px,1fr)); gap:5px; }
+.day-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(44px,1fr)); gap:3px; }
 
 .day-box {
   aspect-ratio:1; border-radius:var(--r); border:1px solid var(--b1);
@@ -362,11 +362,16 @@ body {
   /* READ MODE: stack content above panel vertically */
   #readModeOverlay {
     flex-direction:column !important;
+    height:100vh !important;
+    height:100dvh !important;
+    overflow:hidden !important;
   }
   #readModeOverlay > div:nth-child(3) {
     flex-direction:column !important;
     overflow:hidden;
-    height:100%;
+    flex:1 1 0 !important;
+    min-height:0 !important;
+    height:auto !important;
   }
   #sessionReadContent {
     flex:1 1 auto !important;
@@ -414,7 +419,10 @@ body {
   #btnTogglePanel { padding:3px 8px !important; font-size:9px !important; }
   #readModeOverlay > div:first-child > button:last-child { padding:3px 8px !important; font-size:9px !important; }
   /* Bangla popup */
-  #banglaPopup { padding:6px 10px !important; gap:6px !important; font-size:12px; }
+  #banglaPopup { padding:5px 8px !important; gap:4px !important; font-size:11px; flex-wrap:nowrap !important; overflow-x:auto; }
+  #banglaPopup span { font-size:12px !important; white-space:nowrap; }
+  #popupDesc { display:none !important; }
+  #banglaPopup button { padding:2px 7px !important; font-size:9px !important; flex-shrink:0; }
   .layout { grid-template-columns:1fr; }
   .sidebar {
     position:static;
@@ -477,8 +485,8 @@ body {
   .gcd-textarea { min-height:220px; }
   .parse-textarea { min-height:140px; }
   .content { padding:12px; gap:14px; }
-  .day-grid { grid-template-columns:repeat(7,1fr) !important; gap:3px; }
-  .day-box { padding:2px; }
+  .day-grid { grid-template-columns:repeat(7,1fr) !important; gap:2px; }
+  .day-box { padding:1px; min-width:0; overflow:hidden; }
   .day-num { font-size:10px; }
   .modal { max-height:95vh; border-radius:var(--r2) var(--r2) 0 0; }
   .res-grid { grid-template-columns:1fr; }
