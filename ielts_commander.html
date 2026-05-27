@@ -358,7 +358,64 @@ body {
 .rule-body code { background:var(--s3); color:var(--teal); padding:1px 5px; border-radius:3px; font-family:'Space Mono',monospace; }
 .rule-body strong { color:var(--t1); }
 
+/* CBT STYLES */
+.cbt-reading-wrap { display:grid; grid-template-columns:1fr 1fr; height:100%; overflow:hidden; }
+.cbt-passage { overflow-y:auto; padding:24px 28px; border-right:1px solid #1a2035; font-size:14px; line-height:2; color:#c8d0e8; font-family:'Georgia',serif; }
+.cbt-questions { overflow-y:auto; padding:20px 24px; background:#080c18; }
+.cbt-passage ::selection { background:rgba(240,192,64,0.35); }
+.cbt-passage.highlight-mode { cursor:text; }
+.cbt-highlight { background:rgba(240,192,64,0.3); border-radius:2px; cursor:pointer; }
+.cbt-highlight:hover { background:rgba(240,192,64,0.5); }
+.cbt-q-block { margin-bottom:24px; padding:14px 16px; background:#0c1220; border:1px solid #1a2035; border-radius:8px; transition:border-color 0.2s; }
+.cbt-q-block.flagged { border-color:rgba(240,192,64,0.6); }
+.cbt-q-block.answered { border-color:rgba(128,224,80,0.4); }
+.cbt-q-num { font-size:9px; font-family:'Space Mono',monospace; color:#6070a0; letter-spacing:1px; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; }
+.cbt-q-text { font-size:13px; color:#c8d0e8; line-height:1.7; margin-bottom:10px; }
+.cbt-option { display:flex; align-items:flex-start; gap:8px; padding:7px 10px; border-radius:5px; border:1px solid #1a2035; margin-bottom:5px; cursor:pointer; transition:all 0.12s; font-size:12px; color:#8090c0; }
+.cbt-option:hover { border-color:#3040a0; background:rgba(48,64,160,0.1); color:#c8d0e8; }
+.cbt-option.selected { border-color:rgba(64,208,192,0.6); background:rgba(64,208,192,0.08); color:#40d0c0; }
+.cbt-option.struck { text-decoration:line-through; opacity:0.45; }
+.cbt-option .opt-letter { flex-shrink:0; width:20px; height:20px; border-radius:50%; border:1px solid #3040a0; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; font-family:'Space Mono',monospace; }
+.cbt-option.selected .opt-letter { background:rgba(64,208,192,0.2); border-color:var(--teal); color:var(--teal); }
+.cbt-fill-input { width:100%; background:#060a14; border:1px solid #252540; color:#e0e8ff; font-family:'Space Grotesk',sans-serif; font-size:13px; padding:7px 10px; border-radius:5px; outline:none; transition:border-color 0.2s; }
+.cbt-fill-input:focus { border-color:var(--teal); }
+.cbt-tf-btn { padding:6px 14px; border-radius:5px; border:1px solid #252540; background:transparent; color:#8090c0; font-family:'Space Mono',monospace; font-size:10px; font-weight:700; cursor:pointer; transition:all 0.12s; margin-right:5px; }
+.cbt-tf-btn.selected-t { border-color:var(--lime); color:var(--lime); background:rgba(128,224,80,0.1); }
+.cbt-tf-btn.selected-f { border-color:var(--rose); color:var(--rose); background:rgba(240,96,128,0.1); }
+.cbt-tf-btn.selected-ng { border-color:var(--gold); color:var(--gold); background:rgba(240,192,64,0.1); }
+.cbt-flag-btn { background:none; border:1px solid #252540; color:#6070a0; padding:2px 7px; border-radius:4px; font-size:9px; cursor:pointer; font-family:'Space Mono',monospace; transition:all 0.12s; }
+.cbt-flag-btn.flagged { border-color:var(--gold); color:var(--gold); background:rgba(240,192,64,0.1); }
+.q-bubble { width:26px; height:26px; border-radius:5px; border:1px solid #252540; background:#0c1220; color:#6070a0; font-family:'Space Mono',monospace; font-size:9px; font-weight:700; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; }
+.q-bubble:hover { border-color:#3040a0; color:#c8d0e8; }
+.q-bubble.answered { background:rgba(128,224,80,0.15); border-color:rgba(128,224,80,0.5); color:var(--lime); }
+.q-bubble.flagged { border-color:var(--gold); color:var(--gold); }
+.q-bubble.current { border-color:var(--teal); color:var(--teal); background:rgba(64,208,192,0.1); }
+/* Writing CBT */
+.cbt-writing-wrap { display:grid; grid-template-columns:1fr 1fr; height:100%; overflow:hidden; }
+.cbt-task-prompt { overflow-y:auto; padding:24px 28px; border-right:1px solid #1a2035; font-size:13px; line-height:2; color:#c8d0e8; background:#070b16; }
+.cbt-write-area { display:flex; flex-direction:column; padding:0; background:#080c18; }
+.cbt-write-toolbar { flex-shrink:0; display:flex; gap:2px; padding:8px 12px; background:#060a14; border-bottom:1px solid #1a2035; }
+.cbt-tool-btn { background:#0c1220; border:1px solid #1a2035; color:#8090c0; padding:4px 10px; border-radius:4px; font-size:11px; cursor:pointer; transition:all 0.12s; font-family:'Space Grotesk',sans-serif; }
+.cbt-tool-btn:hover { border-color:#3040a0; color:#c8d0e8; }
+.cbt-write-ta { flex:1; background:transparent; border:none; color:#e0e8ff; font-family:'Georgia',serif; font-size:14px; line-height:1.9; padding:20px 24px; resize:none; outline:none; }
+.cbt-word-bar { flex-shrink:0; display:flex; align-items:center; gap:14px; padding:6px 16px; background:#060a14; border-top:1px solid #1a2035; font-family:'Space Mono',monospace; font-size:10px; }
+/* Listening CBT */
+.cbt-listen-wrap { display:flex; flex-direction:column; height:100%; overflow:hidden; }
+.cbt-audio-bar { flex-shrink:0; display:flex; align-items:center; gap:14px; padding:14px 24px; background:#070b16; border-bottom:1px solid #1a2035; }
+.cbt-play-btn { width:44px; height:44px; border-radius:50%; background:var(--violet); border:none; color:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; }
+.cbt-play-btn:disabled { opacity:0.35; cursor:not-allowed; }
+.cbt-audio-progress { flex:1; height:4px; background:#1a2035; border-radius:2px; position:relative; }
+.cbt-audio-fill { height:100%; background:var(--violet); border-radius:2px; transition:width 0.5s linear; }
+/* Speaking CBT */
+.cbt-speak-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:24px; padding:40px; }
+.cbt-mic-btn { width:80px; height:80px; border-radius:50%; background:rgba(128,224,80,0.1); border:2px solid var(--lime); color:var(--lime); font-size:32px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+.cbt-mic-btn.recording { background:rgba(240,96,128,0.2); border-color:var(--rose); color:var(--rose); animation:micPulse 1s infinite; }
+@keyframes micPulse { 0%,100%{box-shadow:0 0 0 0 rgba(240,96,128,0.4)} 50%{box-shadow:0 0 0 16px rgba(240,96,128,0)} }
+.cbt-cue-card { background:#0c1220; border:2px solid #2a3550; border-radius:12px; padding:24px 28px; max-width:480px; width:100%; }
+
 @media (max-width:768px) {
+  .cbt-reading-wrap, .cbt-writing-wrap { grid-template-columns:1fr; }
+  .cbt-passage, .cbt-task-prompt { border-right:none; border-bottom:1px solid #1a2035; max-height:40vh; }
   /* READ MODE: stack content above panel vertically */
   #readModeOverlay {
     flex-direction:column !important;
@@ -502,6 +559,13 @@ body {
   .panel-acts { flex-wrap:wrap; }
   .phase-n { font-size:24px; }
   .streak-n { font-size:24px; }
+  .cbt-reading-wrap, .cbt-writing-wrap { grid-template-columns:1fr; }
+  .cbt-passage, .cbt-task-prompt { border-right:none; border-bottom:1px solid #1a2035; max-height:40vh; }
+  .cbt-questions, .cbt-write-area { max-height:60vh; }
+  #cbtTopBar { flex-wrap:wrap; height:auto; padding:8px 12px; gap:6px; }
+  #cbtBottomBar { gap:4px; padding:8px 10px; }
+  .q-bubble { width:22px; height:22px; font-size:8px; }
+  .cbt-speak-wrap { padding:20px; gap:16px; }
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
@@ -614,9 +678,12 @@ body {
       <button class="tab" onclick="switchTab('schema')">📐 Schema</button>
       <button class="tab" onclick="switchTab('parse')">⚡ Parse</button>
       <button class="tab" onclick="switchTab('data')">📊 My Data</button>
+      <button class="tab" onclick="switchTab('analytics')">📈 Analytics</button>
       <button class="tab" onclick="switchTab('resources')">🔗 Resources</button>
       <button class="tab" onclick="switchTab('router')">🤖 AI Team</button>
       <button class="tab" onclick="switchTab('vocab')">📚 Vocab</button>
+      <button class="tab" onclick="switchTab('cbt')">🖥 CBT Practice</button>
+      <button class="tab" onclick="switchTab('mock')">🏆 Mock Test</button>
     </div>
 
     <!-- DAYS TAB -->
@@ -986,6 +1053,167 @@ session_note: Good understanding of articles but uncountable noun errors persist
       </div>
     </div>
 
+  <!-- ANALYTICS TAB -->
+    <div class="tab-panel" id="tab-analytics">
+      <div class="sec-title">📈 Performance Analytics</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px" id="analyticsKPIs"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="data-card">
+          <div class="data-head">Band Progression</div>
+          <div class="data-body" style="padding:0">
+            <canvas id="bandChart" height="180" style="width:100%;display:block;padding:10px"></canvas>
+          </div>
+        </div>
+        <div class="data-card">
+          <div class="data-head">Score Trend</div>
+          <div class="data-body" style="padding:0">
+            <canvas id="scoreChart" height="180" style="width:100%;display:block;padding:10px"></canvas>
+          </div>
+        </div>
+        <div class="data-card" style="grid-column:1/-1">
+          <div class="data-head">Error Heatmap — Grammar Patterns</div>
+          <div class="data-body" id="errorHeatmap" style="display:flex;flex-wrap:wrap;gap:5px;padding:10px"></div>
+        </div>
+        <div class="data-card">
+          <div class="data-head">Weak Question Types</div>
+          <div class="data-body" id="weakTypes"></div>
+        </div>
+        <div class="data-card">
+          <div class="data-head">Module Performance</div>
+          <div class="data-body" id="modulePerf"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CBT PRACTICE TAB -->
+    <div class="tab-panel" id="tab-cbt">
+      <div class="sec-title">🖥 Computer-Based IELTS Practice</div>
+      <div class="notice teal"><strong>CBT Mode:</strong> These modules simulate the exact Computer-Based IELTS interface — split screen, real timers, no spell-check, play-once audio, and flagging system. Choose a module to begin.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+        <div class="data-card" style="cursor:pointer;transition:all 0.15s" onclick="launchCBT('reading')" onmouseover="this.style.borderColor='var(--sky)'" onmouseout="this.style.borderColor='var(--b1)'">
+          <div class="data-head" style="color:var(--sky)">📖 Reading Module</div>
+          <div class="data-body">
+            <div style="font-size:10px;color:var(--t2);line-height:1.8">Split-screen passage + questions<br>Highlight &amp; annotate text<br>Strikethrough answer options<br>Flag for review<br><strong style="color:var(--sky)">60 minutes · 40 questions</strong></div>
+            <button class="btn teal" style="margin-top:10px;justify-content:center">▶ Start Reading</button>
+          </div>
+        </div>
+        <div class="data-card" style="cursor:pointer;transition:all 0.15s" onclick="launchCBT('listening')" onmouseover="this.style.borderColor='var(--violet)'" onmouseout="this.style.borderColor='var(--b1)'">
+          <div class="data-head" style="color:var(--violet)">🎧 Listening Module</div>
+          <div class="data-body">
+            <div style="font-size:10px;color:var(--t2);line-height:1.8">Play-once audio simulation<br>4 sections, increasing difficulty<br>Answer sheet locks after audio<br>CBT-accurate question types<br><strong style="color:var(--violet)">30 minutes · 40 questions</strong></div>
+            <button class="btn" style="margin-top:10px;justify-content:center;border-color:var(--violet);color:var(--violet)">▶ Start Listening</button>
+          </div>
+        </div>
+        <div class="data-card" style="cursor:pointer;transition:all 0.15s" onclick="launchCBT('writing')" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--b1)'">
+          <div class="data-head" style="color:var(--gold)">✍ Writing Module</div>
+          <div class="data-body">
+            <div style="font-size:10px;color:var(--t2);line-height:1.8">CBT word processor interface<br>Cut/Copy/Paste toolbar (no shortcuts)<br>Spell-check disabled<br>Task 1 (20 min) + Task 2 (40 min)<br><strong style="color:var(--gold)">60 minutes · 2 tasks</strong></div>
+            <button class="btn primary" style="margin-top:10px;justify-content:center">▶ Start Writing</button>
+          </div>
+        </div>
+        <div class="data-card" style="cursor:pointer;transition:all 0.15s" onclick="launchCBT('speaking')" onmouseover="this.style.borderColor='var(--lime)'" onmouseout="this.style.borderColor='var(--b1)'">
+          <div class="data-head" style="color:var(--lime)">🎙 Speaking Module</div>
+          <div class="data-body">
+            <div style="font-size:10px;color:var(--t2);line-height:1.8">Microphone recording<br>Cue card with 1-min prep timer<br>Part 1/2/3 simulation<br>Playback for self-evaluation<br><strong style="color:var(--lime)">11–14 minutes · 3 parts</strong></div>
+            <button class="btn lime" style="margin-top:10px;justify-content:center">▶ Start Speaking</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUSTOM PASSAGE INPUT -->
+      <div class="gcd-wrap" style="margin-top:16px">
+        <div class="panel-head">
+          <div class="panel-title">📝 Add Custom Reading Passage <span class="badge teal">PASTE ANY TEXT</span></div>
+        </div>
+        <div style="padding:14px;display:flex;flex-direction:column;gap:10px">
+          <div class="sf"><label class="sl">Passage Title</label><input class="si" id="cbtPassageTitle" placeholder="e.g. The History of the Internet"></div>
+          <div class="sf"><label class="sl">Passage Text (paste from Cambridge IELTS or any academic source)</label>
+            <textarea class="si" id="cbtPassageText" style="min-height:120px;resize:vertical" placeholder="Paste the full reading passage here..."></textarea></div>
+          <div class="sf"><label class="sl">Questions (one per line — prefix with type: MC: / TF: / MATCH: / COMPLETE:)</label>
+            <textarea class="si" id="cbtPassageQs" style="min-height:100px;resize:vertical" placeholder="TF: The author claims technology improves education.&#10;MC: According to the passage, which of the following is true? | A) option | B) option | C) option | D) option&#10;COMPLETE: The study was conducted in ___ and involved ___ participants."></textarea></div>
+          <button class="btn primary" style="width:auto;padding:7px 18px" onclick="saveCBTPassage()">💾 Save Passage</button>
+        </div>
+      </div>
+
+      <!-- SAVED PASSAGES -->
+      <div class="gcd-wrap" style="margin-top:10px">
+        <div class="panel-head"><div class="panel-title">📚 Saved Passages</div></div>
+        <div style="padding:10px 14px" id="savedPassagesList"></div>
+      </div>
+    </div>
+
+    <!-- MOCK TEST TAB -->
+    <div class="tab-panel" id="tab-mock">
+      <div class="sec-title">🏆 Full IELTS Mock Test</div>
+      <div class="notice rose"><strong>Real Exam Conditions:</strong> Once started, you cannot go back between modules. Timer runs continuously. This simulates the exact Computer-Based IELTS experience.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px">
+        <div class="data-card">
+          <div class="data-head">Mock Test History</div>
+          <div class="data-body" id="mockHistory"><div class="data-item" style="color:var(--t3)">No mock tests completed yet.</div></div>
+        </div>
+        <div class="data-card">
+          <div class="data-head">Start New Mock Test</div>
+          <div class="data-body" style="display:flex;flex-direction:column;gap:10px">
+            <div style="font-size:10px;color:var(--t2);line-height:1.9">
+              <span style="color:var(--sky)">📖 Reading</span> — 60 min · 40 questions<br>
+              <span style="color:var(--violet)">🎧 Listening</span> — 30 min · 40 questions<br>
+              <span style="color:var(--gold)">✍ Writing</span> — 60 min · 2 tasks<br>
+              <span style="color:var(--lime)">🎙 Speaking</span> — ~14 min · 3 parts<br>
+              <strong style="color:var(--rose)">Total: ~2h 45min</strong>
+            </div>
+            <div class="sf"><label class="sl">Select modules to include</label>
+              <div style="display:flex;flex-direction:column;gap:5px;margin-top:4px">
+                <label style="font-size:10px;color:var(--t2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="mockIncReading" checked> Reading (60 min)</label>
+                <label style="font-size:10px;color:var(--t2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="mockIncListening" checked> Listening (30 min)</label>
+                <label style="font-size:10px;color:var(--t2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="mockIncWriting" checked> Writing (60 min)</label>
+                <label style="font-size:10px;color:var(--t2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="mockIncSpeaking" checked> Speaking (~14 min)</label>
+              </div>
+            </div>
+            <button class="btn primary" style="justify-content:center" onclick="startMockTest()">🏆 Begin Mock Test</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CBT FULLSCREEN OVERLAY -->
+<div id="cbtOverlay" style="display:none;position:fixed;inset:0;z-index:8000;background:#0a0e1a;flex-direction:column;font-family:'Space Grotesk',sans-serif;">
+
+  <!-- CBT TOP BAR -->
+  <div id="cbtTopBar" style="flex-shrink:0;display:flex;align-items:center;gap:12px;padding:0 20px;height:52px;background:#060a14;border-bottom:1px solid #1a2035;">
+    <div style="font-weight:700;font-size:14px;color:#e0e8ff" id="cbtModuleLabel">IELTS Reading</div>
+    <div style="flex:1"></div>
+    <div id="cbtSectionLabel" style="font-size:11px;color:#6070a0;font-family:'Space Mono',monospace"></div>
+    <div style="display:flex;align-items:center;gap:8px;background:#0f1628;border:1px solid #1a2035;border-radius:6px;padding:6px 14px">
+      <span style="font-size:10px;color:#6070a0;font-family:'Space Mono',monospace">TIME</span>
+      <span id="cbtTimer" style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:#f0c040;min-width:60px;text-align:center">60:00</span>
+    </div>
+    <div id="cbtQuestionNav" style="font-size:11px;color:#6070a0;font-family:'Space Mono',monospace"></div>
+    <button onclick="confirmExitCBT()" style="background:rgba(240,96,128,0.1);border:1px solid rgba(240,96,128,0.4);color:#f06080;padding:5px 12px;border-radius:5px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer">✕ EXIT</button>
+    <button id="cbtSubmitBtn" onclick="submitCBT()" style="background:#f0c040;border:none;color:#09090e;padding:5px 14px;border-radius:5px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;display:none">✓ SUBMIT</button>
+  </div>
+
+  <!-- CBT BODY — switches between modules -->
+  <div id="cbtBody" style="flex:1;display:flex;overflow:hidden;position:relative"></div>
+
+  <!-- CBT BOTTOM NAV -->
+  <div id="cbtBottomBar" style="flex-shrink:0;display:flex;align-items:center;gap:8px;padding:10px 20px;background:#060a14;border-top:1px solid #1a2035;flex-wrap:wrap">
+    <button id="cbtPrevBtn" onclick="cbtNav(-1)" style="background:#0f1628;border:1px solid #1a2035;color:#8090c0;padding:6px 14px;border-radius:5px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer">◀ PREV</button>
+    <div id="cbtQBubbles" style="display:flex;gap:4px;flex-wrap:wrap;flex:1"></div>
+    <button id="cbtNextBtn" onclick="cbtNav(1)" style="background:#f0c040;border:none;color:#09090e;padding:6px 14px;border-radius:5px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer">NEXT ▶</button>
+  </div>
+</div>
+
+<!-- MOCK TEST FULLSCREEN -->
+<div id="mockOverlay" style="display:none;position:fixed;inset:0;z-index:7500;background:#060a14;flex-direction:column;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;">
+  <div style="text-align:center;max-width:500px;padding:40px">
+    <div style="font-family:'Space Mono',monospace;font-size:11px;color:#6070a0;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">IELTS Mock Test</div>
+    <div id="mockStatusIcon" style="font-size:48px;margin-bottom:16px">🏆</div>
+    <div id="mockStatusTitle" style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#e0e8ff;margin-bottom:8px"></div>
+    <div id="mockStatusDesc" style="font-size:12px;color:#6070a0;line-height:1.8;margin-bottom:24px"></div>
+    <div id="mockActionBtns" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"></div>
   </div>
 </div>
 
@@ -1038,6 +1266,7 @@ session_note: Good understanding of articles but uncountable noun errors persist
           <div id="readModeProgress" style="font-size:10px;color:var(--t3);font-family:'Space Mono',monospace;white-space:nowrap"></div>
           <div id="readModeAnswerProgress" style="font-size:10px;color:var(--lime);font-family:'Space Mono',monospace;white-space:nowrap;margin-left:8px"></div>
           <button onclick="toggleAnswerPanel()" id="btnTogglePanel" style="background:rgba(176,144,248,0.1);border:1px solid var(--violet);color:var(--violet);padding:5px 12px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">📝 EXERCISES</button>
+          <button onclick="openReadModeParser()" style="background:rgba(64,208,192,0.1);border:1px solid var(--teal);color:var(--teal);padding:5px 12px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">⚡ PARSE</button>
           <button onclick="closeReadMode()" style="background:var(--rose-dim);border:1px solid var(--rose);color:var(--rose);padding:5px 12px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px">✕ CLOSE</button>
         </div>
 
@@ -1073,6 +1302,7 @@ session_note: Good understanding of articles but uncountable noun errors persist
             <div style="flex-shrink:0;background:#0d0d16;border-bottom:1px solid #1d1d28;">
               <div style="display:flex;">
                 <button id="tabBtnExercises" onclick="switchRightTab('exercises')" style="flex:1;padding:11px 8px;background:rgba(176,144,248,0.15);border:none;border-bottom:2px solid var(--violet);color:var(--violet);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;">📝 EXERCISES</button>
+                <button id="tabBtnWriting" onclick="switchRightTab('writing')" style="flex:1;padding:11px 8px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--t3);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;">✍ WRITING</button>
                 <button id="tabBtnAI" onclick="switchRightTab('ai')" style="flex:1;padding:11px 8px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--t3);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;">🤖 ASK AI</button>
               </div>
             </div>
@@ -1097,6 +1327,31 @@ session_note: Good understanding of articles but uncountable noun errors persist
               <div style="flex-shrink:0;padding:10px 12px;border-top:1px solid #1d1d28;background:#0d0d16;">
                 <div style="font-size:9px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Compiled Answer Sheet</div>
                 <div id="compiledQA" style="background:#07080f;border:1px solid #1d1d28;border-radius:var(--r);padding:8px 10px;max-height:100px;overflow-y:auto;font-family:'Space Mono',monospace;font-size:9px;color:var(--t2);line-height:1.7;white-space:pre-wrap;word-break:break-word;">Write your answers above to see them compiled here.</div>
+              </div>
+            </div>
+
+            <!-- WRITING TASK VIEW -->
+            <div id="rightTabWriting" style="flex:1;display:none;flex-direction:column;overflow:hidden;">
+              <div style="flex-shrink:0;padding:10px 12px 8px;border-bottom:1px solid #1d1d28;background:#0d0d16;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <div style="font-size:9px;color:var(--t3);flex:1;font-family:'Space Mono',monospace;">IELTS Writing Task — Task 1 or Task 2</div>
+                <button onclick="saveWritingTask()" style="background:rgba(128,224,80,0.1);border:1px solid var(--lime);color:var(--lime);padding:3px 9px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;">💾 SAVE</button>
+                <button onclick="copyWritingForSubmit()" style="background:rgba(240,192,64,0.1);border:1px solid var(--gold);color:var(--gold);padding:3px 9px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;">📋 COPY</button>
+                <button onclick="clearWritingTask()" style="background:var(--rose-dim);border:1px solid var(--rose);color:var(--rose);padding:3px 9px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;">🗑 CLEAR</button>
+              </div>
+              <div style="flex-shrink:0;padding:8px 12px;border-bottom:1px solid #1d1d28;background:#0a0a14;">
+                <div id="writingTaskPrompt" style="font-size:10px;color:var(--sky);font-family:'Space Grotesk',sans-serif;line-height:1.6;max-height:80px;overflow-y:auto;padding:6px 8px;background:#07080f;border:1px solid #1d1d28;border-radius:var(--r);"></div>
+                <div style="font-size:8px;color:var(--t3);margin-top:4px;">Task prompt auto-extracted from session. You can edit below.</div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;padding:10px 12px;gap:6px;">
+                <textarea id="writingTaskTA" placeholder="Write your IELTS response here...&#10;&#10;Task 1: Describe the chart/graph/diagram in 150+ words.&#10;Task 2: Write an essay in 250+ words.&#10;&#10;Your response will be included when you copy everything for Claude to mark." style="flex:1;min-height:120px;background:#07080f;border:1px solid #252535;color:#e8e8f4;font-family:'Space Grotesk',sans-serif;font-size:12px;line-height:1.7;padding:10px 12px;border-radius:6px;outline:none;resize:none;transition:border-color 0.2s;" oninput="updateWritingWordCount()" onfocus="this.style.borderColor='rgba(128,224,80,0.5)'" onblur="this.style.borderColor='#252535'"></textarea>
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+                  <div id="writingWordCount" style="font-size:9px;color:var(--t3);font-family:'Space Mono',monospace;">0 words</div>
+                  <div id="writingWordTarget" style="font-size:9px;font-family:'Space Mono',monospace;color:var(--t3);">Target: 150+ (Task 1) / 250+ (Task 2)</div>
+                </div>
+              </div>
+              <div style="flex-shrink:0;padding:10px 12px;border-top:1px solid #1d1d28;background:#0d0d16;">
+                <div style="font-size:9px;color:var(--t3);margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">Submit for Feedback</div>
+                <button onclick="copyWritingForMark()" style="width:100%;background:var(--gold);border:none;color:#09090e;padding:8px 12px;border-radius:6px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">📋 COPY TASK + MY RESPONSE → Paste to Claude</button>
               </div>
             </div>
 
@@ -1151,6 +1406,30 @@ session_note: Good understanding of articles but uncountable noun errors persist
         </div>
     </div>
 
+  </div>
+</div>
+
+<!-- Read Mode Parser Modal -->
+<div id="readModeParserOverlay" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.92);backdrop-filter:blur(14px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);width:100%;max-width:700px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.8);">
+    <div style="padding:14px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--s1);z-index:2;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;">⚡ Paste &amp; Parse AI Response</div>
+      <button onclick="closeReadModeParser()" style="background:none;border:1px solid var(--b1);color:var(--t2);width:26px;height:26px;border-radius:5px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div style="padding:18px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-size:10px;color:var(--t2);line-height:1.8;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:10px 12px;">
+        Paste <strong style="color:var(--teal)">Claude's full response</strong> (or any AI response with a <code style="background:var(--s3);color:var(--teal);padding:1px 5px;border-radius:3px">[SESSION_DATA]</code> block). This will:<br>
+        • Auto-update your tracker (scores, errors, vocab, band estimate)<br>
+        • Save the full response as today's session content<br>
+        • Extract questions into the Exercise panel
+      </div>
+      <textarea id="readModeParserTA" placeholder="Paste the full AI response here...&#10;&#10;The parser finds [SESSION_DATA]...[/SESSION_DATA] anywhere in the text.&#10;It also saves the full text as your session content for today." style="width:100%;min-height:240px;background:var(--bg);border:1px solid var(--b1);color:var(--t1);font-family:'Space Mono',monospace;font-size:11px;line-height:1.8;padding:12px;resize:vertical;outline:none;border-radius:var(--r);"></textarea>
+      <div id="readModeParserResult" style="display:none;padding:10px 12px;border-radius:var(--r);font-size:10px;line-height:1.7;font-family:'Space Mono',monospace;"></div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="parseFromReadMode()" style="flex:1;background:var(--gold);border:none;color:#09090e;padding:9px 16px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;">⚡ Parse &amp; Update Tracker</button>
+        <button onclick="closeReadModeParser()" style="background:var(--s2);border:1px solid var(--b1);color:var(--t2);padding:9px 14px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1382,9 +1661,22 @@ async function loadStoreWithSync() {
   }
 }
 
+let _supaDebounceTimer = null;
 function saveStore() {
-  localStorage.setItem(STORE_KEY, JSON.stringify(S));
-  if (_supaClient) pushToSupabase();
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(S));
+  } catch(e) {
+    console.warn('localStorage full — trimming session content');
+    const keys = Object.keys(S.sessionContent || {}).sort((a,b) => a - b);
+    if (keys.length > 5) {
+      keys.slice(0, keys.length - 5).forEach(k => delete S.sessionContent[k]);
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch(e2) { console.error('Still full after trim', e2); }
+    }
+  }
+  if (_supaClient) {
+    clearTimeout(_supaDebounceTimer);
+    _supaDebounceTimer = setTimeout(() => pushToSupabase(), 2000);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2859,7 +3151,7 @@ function updateDataExplorer() {
 // ═══════════════════════════════════════════════════════════════
 // TABS
 // ═══════════════════════════════════════════════════════════════
-const TAB_NAMES = ['days','gcd','schema','parse','data','resources','router','vocab'];
+const TAB_NAMES = ['days','gcd','schema','parse','data','analytics','resources','router','vocab','cbt','mock'];
 function switchTab(name) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -3019,6 +3311,8 @@ function switchSessionView(mode) {
     // Parse questions
     const questions = parseQuestionsBlock(raw);
     renderAnswerPanel(questions);
+    // Load writing task for this day
+    loadWritingTaskForDay(modalDay);
     // Show overlay
     document.getElementById('readModeOverlay').style.display = 'flex';
     document.getElementById('banglaPopup').style.display = 'none';
@@ -3219,7 +3513,6 @@ function reindexCards() {
     card.setAttribute('data-qindex', i);
     const badge = card.querySelector('div > div:first-child');
     if (badge) badge.textContent = i + 1;
-    const oldIndex = card._oldIndex !== undefined ? card._oldIndex : i;
     const ta = card.querySelector('textarea');
     if (ta) newAnswers[String(i)] = ta.value;
   });
@@ -3268,19 +3561,274 @@ function updateCompiledQA() {
 
 function copyAllAnswers() {
   const cards = document.querySelectorAll('.q-card');
-  if (cards.length === 0) { toast('No questions to copy.', 'warn'); return; }
-  let text = `IELTS Commander — Day ${modalDay} Answer Sheet\n${'═'.repeat(44)}\n\n`;
-  cards.forEach((card, i) => {
-    const headerDiv = card.querySelector('div');
-    const qEl = headerDiv ? headerDiv.children[1] : null;
-    const question = qEl ? qEl.textContent.trim() : `Question ${i + 1}`;
-    const ta = card.querySelector('textarea');
-    const answer = ta ? ta.value.trim() : '';
-    text += `Q${i + 1}: ${question}\n`;
-    text += `A${i + 1}: ${answer || '(no answer written)'}\n\n`;
-  });
+  const sessionText = (S.sessionContent && S.sessionContent[modalDay]) ? S.sessionContent[modalDay] : '';
+  const writingText = document.getElementById('writingTaskTA') ? document.getElementById('writingTaskTA').value.trim() : '';
+  const topic = TOPICS[modalDay] || 'Study Session';
+  const gcdPrefix = S.gcd ? S.gcd + '\n\n' + '═'.repeat(60) + '\n\n' : '';
+  const dayPrompt = buildPrompt(modalDay, topic, getPhase(modalDay), isReview(modalDay));
+
+  let text = gcdPrefix;
+  text += dayPrompt;
+  text += '\n\n' + '═'.repeat(60) + '\n';
+  text += `TODAY\'S SESSION CONTENT (Day ${modalDay})\n`;
+  text += '═'.repeat(60) + '\n\n';
+  text += sessionText || '(no session content saved)';
+
+  if (writingText) {
+    text += '\n\n' + '═'.repeat(60) + '\n';
+    text += 'MY WRITING TASK RESPONSE\n';
+    text += '═'.repeat(60) + '\n\n';
+    text += writingText;
+  }
+
+  if (cards.length > 0) {
+    text += '\n\n' + '═'.repeat(60) + '\n';
+    text += `MY ANSWERS — Day ${modalDay}\n`;
+    text += '═'.repeat(60) + '\n\n';
+    cards.forEach((card, i) => {
+      const headerDiv = card.querySelector('div');
+      const qEl = headerDiv ? headerDiv.children[1] : null;
+      const question = qEl ? qEl.textContent.trim() : `Question ${i + 1}`;
+      const ta = card.querySelector('textarea');
+      const answer = ta ? ta.value.trim() : '';
+      text += `Q${i + 1}: ${question}\n`;
+      text += `A${i + 1}: ${answer || '(no answer written)'}\n\n`;
+    });
+  }
+
   copyText(text.trim());
-  toast('All answers copied to clipboard!');
+  toast('Full session + answers copied! Paste to Claude for feedback.');
+}
+
+// ── WRITING TASK FUNCTIONS ────────────────────────────────────
+
+function updateWritingWordCount() {
+  const ta = document.getElementById('writingTaskTA');
+  const countEl = document.getElementById('writingWordCount');
+  const targetEl = document.getElementById('writingWordTarget');
+  if (!ta || !countEl) return;
+  const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+  countEl.textContent = words + ' words';
+  const isTask2 = words >= 200 || (ta.value.toLowerCase().includes('essay') || ta.value.toLowerCase().includes('opinion'));
+  const target = isTask2 ? 250 : 150;
+  const pct = Math.min(100, Math.round((words / target) * 100));
+  countEl.style.color = words >= target ? 'var(--lime)' : words >= target * 0.8 ? 'var(--gold)' : 'var(--rose)';
+  if (targetEl) targetEl.textContent = `${pct}% of ${target} word target`;
+}
+
+function saveWritingTask() {
+  const ta = document.getElementById('writingTaskTA');
+  if (!ta) return;
+  const dayKey = String(modalDay);
+  if (!S.sessionAnswers) S.sessionAnswers = {};
+  if (!S.sessionAnswers[dayKey]) S.sessionAnswers[dayKey] = {};
+  S.sessionAnswers[dayKey]['__writing__'] = ta.value;
+  saveStore();
+  toast('Writing task saved for Day ' + modalDay + '!');
+}
+
+function clearWritingTask() {
+  if (!confirm('Clear your writing task response for Day ' + modalDay + '?')) return;
+  const ta = document.getElementById('writingTaskTA');
+  if (ta) ta.value = '';
+  updateWritingWordCount();
+  const dayKey = String(modalDay);
+  if (S.sessionAnswers && S.sessionAnswers[dayKey]) delete S.sessionAnswers[dayKey]['__writing__'];
+  saveStore();
+  toast('Writing task cleared.');
+}
+
+function copyWritingTask() {
+  const ta = document.getElementById('writingTaskTA');
+  if (!ta || !ta.value.trim()) { toast('Nothing to copy — write your response first.', 'warn'); return; }
+  copyText(ta.value);
+  toast('Writing response copied!');
+}
+
+function copyWritingForSubmit() {
+  copyWritingTask();
+}
+
+function copyWritingForMark() {
+  const ta = document.getElementById('writingTaskTA');
+  const promptEl = document.getElementById('writingTaskPrompt');
+  const taskPrompt = promptEl ? promptEl.textContent.trim() : '';
+  const myResponse = ta ? ta.value.trim() : '';
+  if (!myResponse) { toast('Write your response first!', 'warn'); return; }
+  const sessionText = (S.sessionContent && S.sessionContent[modalDay]) ? S.sessionContent[modalDay].slice(0, 2000) : '';
+  const gcdPrefix = S.gcd ? S.gcd.slice(0, 3000) + '\n\n[...GCD truncated for writing feedback...]\n\n' : '';
+  let text = gcdPrefix;
+  text += `IELTS COMMANDER — Day ${modalDay} Writing Feedback Request\n`;
+  text += `Student: ${S.name} | Current Band: ${S.currentBand} | Target: ${S.targetBand}\n`;
+  text += '═'.repeat(60) + '\n\n';
+  if (taskPrompt) {
+    text += 'WRITING TASK:\n' + taskPrompt + '\n\n';
+  }
+  text += 'MY RESPONSE:\n';
+  text += '─'.repeat(40) + '\n';
+  text += myResponse + '\n';
+  text += '─'.repeat(40) + '\n\n';
+  text += 'Please mark this response on all 4 IELTS criteria:\n';
+  text += '• Task Achievement / Task Response\n• Coherence & Cohesion\n• Lexical Resource\n• Grammatical Range & Accuracy\n\n';
+  text += 'Give a band score for each criterion, an overall band, list every error with correction, and show a Band 8 rewrite of my response.\n\n';
+  text += 'Then end with the mandatory [SESSION_DATA] block as per my GCD instructions.';
+  copyText(text);
+  toast('Writing + marking request copied! Paste to Claude.');
+}
+
+function extractWritingTaskFromSession(sessionText) {
+  if (!sessionText) return '';
+  // Look for common IELTS writing task patterns
+  const patterns = [
+    /(?:WRITING TASK|TASK [12]|IELTS Writing Task)[^\n]*\n([\s\S]{80,600}?)(?:\n\n|\n━|$)/i,
+    /(?:You should spend|Write at least|In this task)[^\n]*\n([\s\S]{80,500}?)(?:\n\n|$)/i,
+    /(?:The (chart|graph|table|diagram|map|process) (?:below |above )?shows?)[^\n]*([\s\S]{0,400}?)(?:\n\n|$)/i,
+    /(?:Some people|Many people|It is argued|Governments|In many countries)[^\n]{20,}(?:\nDiscuss|To what extent|Do you agree|Give your)[^\n]*/i,
+  ];
+  for (const re of patterns) {
+    const m = sessionText.match(re);
+    if (m) return (m[1] || m[0] || '').trim().slice(0, 500);
+  }
+  return '';
+}
+
+function loadWritingTaskForDay(day) {
+  const dayKey = String(day);
+  const ta = document.getElementById('writingTaskTA');
+  const promptEl = document.getElementById('writingTaskPrompt');
+  if (!ta) return;
+  // Load saved answer
+  const savedWriting = S.sessionAnswers && S.sessionAnswers[dayKey] && S.sessionAnswers[dayKey]['__writing__'];
+  ta.value = savedWriting || '';
+  updateWritingWordCount();
+  // Extract task prompt from session content
+  const sessionText = S.sessionContent && S.sessionContent[day] ? S.sessionContent[day] : '';
+  const extracted = extractWritingTaskFromSession(sessionText);
+  if (promptEl) promptEl.textContent = extracted || 'No writing task detected yet. Paste session content first, or write the task prompt here manually.';
+}
+
+// ── READ MODE PARSER ─────────────────────────────────────────
+
+function openReadModeParser() {
+  const overlay = document.getElementById('readModeParserOverlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  document.getElementById('readModeParserTA').value = '';
+  document.getElementById('readModeParserResult').style.display = 'none';
+}
+
+function closeReadModeParser() {
+  const overlay = document.getElementById('readModeParserOverlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+function parseFromReadMode() {
+  const ta = document.getElementById('readModeParserTA');
+  const resultEl = document.getElementById('readModeParserResult');
+  const raw = ta ? ta.value.trim() : '';
+  if (!raw) { toast('Paste a response first.', 'err'); return; }
+
+  // Save full text as session content for today
+  if (!S.sessionContent) S.sessionContent = {};
+  const existing = S.sessionContent[modalDay] || '';
+  // Append with separator if content already exists
+  if (existing && existing.trim()) {
+    const sep = '\n\n' + '─'.repeat(40) + '\n[APPENDED — ' + new Date().toLocaleTimeString() + ']\n' + '─'.repeat(40) + '\n\n';
+    S.sessionContent[modalDay] = existing + sep + raw;
+  } else {
+    S.sessionContent[modalDay] = raw;
+  }
+
+  // Update the session textarea in the modal if open
+  const dayTA = document.getElementById('daySessionTA');
+  if (dayTA) {
+    dayTA.value = S.sessionContent[modalDay];
+    updateSessionCharCount();
+  }
+
+  // Run the standard parse logic (duplicated here for read mode context)
+  const match = raw.match(/\[SESSION_DATA\]([\s\S]*?)\[\/SESSION_DATA\]/);
+  if (!match) {
+    // Still saved the content, just no SESSION_DATA
+    saveStore();
+    // Re-render read mode with new content
+    renderSessionReadMode(S.sessionContent[modalDay]);
+    // Re-parse questions
+    const questions = parseQuestionsBlock(S.sessionContent[modalDay]);
+    renderAnswerPanel(questions);
+    // Extract writing task
+    loadWritingTaskForDay(modalDay);
+    resultEl.style.display = 'block';
+    resultEl.style.background = 'rgba(240,192,64,0.1)';
+    resultEl.style.border = '1px solid rgba(240,192,64,0.4)';
+    resultEl.style.color = 'var(--gold)';
+    resultEl.textContent = '⚠ Content saved to Day ' + modalDay + ' but no [SESSION_DATA] block found. Session text updated.';
+    toast('Content saved. No SESSION_DATA block found.', 'warn');
+    return;
+  }
+
+  // Parse the SESSION_DATA block
+  const block = match[1];
+  const data = {};
+  block.split('\n').forEach(line => {
+    const ci = line.indexOf(':');
+    if (ci > -1) {
+      const k = line.slice(0, ci).trim();
+      const v = line.slice(ci + 1).trim();
+      if (k && v) data[k] = v;
+    }
+  });
+
+  const required = ['day','phase','week','score','band_estimate','topic_covered','errors_grammar',
+    'errors_vocab','errors_writing','vocab_learned','writing_task_done','writing_band',
+    'speaking_done','speaking_band','next_day_focus','media_today','notebooklm_task',
+    'voice_script','session_note'];
+  const missing = required.filter(f => !data[f]);
+
+  const day = parseInt(data.day) || modalDay;
+  if (!isNaN(day) && day >= 0 && day <= 365) {
+    const score = parseInt(data.score);
+    if (!isNaN(score)) S.dayScores[day] = score;
+    const band = parseFloat(data.band_estimate);
+    if (!isNaN(band)) { S.bandEstimates[day] = band; S.currentBand = band; }
+    if (day > 0 && day >= S.currentDay) { S.currentDay = Math.min(day + 1, 365); updateStreak(); }
+    const parseList = v => v && v !== 'none' ? v.split('|').map(x=>x.trim()).filter(Boolean) : [];
+    parseList(data.errors_grammar).forEach(e => { const entry = `Day ${day}: ${e}`; if (!S.errors.grammar.includes(entry)) S.errors.grammar.push(entry); });
+    parseList(data.errors_vocab).forEach(e => { const entry = `Day ${day}: ${e}`; if (!S.errors.vocab.includes(entry)) S.errors.vocab.push(entry); });
+    parseList(data.errors_writing).forEach(e => { const entry = `Day ${day}: ${e}`; if (!S.errors.writing.includes(entry)) S.errors.writing.push(entry); });
+    S.errors.grammar = S.errors.grammar.slice(-100);
+    S.errors.vocab = S.errors.vocab.slice(-100);
+    S.errors.writing = S.errors.writing.slice(-100);
+    parseList(data.vocab_learned).forEach(w => { if (!S.vocabulary.find(v => v.word === w)) S.vocabulary.push({ word: w, bangla: '', description: '', example: '', day: day, manual: false }); });
+    if (data.writing_task_done === 'yes' && data.writing_band !== 'na') S.writingBands[day] = parseFloat(data.writing_band);
+    if (data.speaking_done === 'yes' && data.speaking_band !== 'na') S.speakingBands[day] = parseFloat(data.speaking_band);
+    if (data.media_today) S.media[day] = data.media_today;
+    if (data.voice_script && data.voice_script !== 'none') S.voiceScript = data.voice_script;
+    if (data.session_note) S.sessionNotes[day] = data.session_note;
+    if (!S.parsedDays.includes(day)) S.parsedDays.push(day);
+  }
+
+  saveStore();
+  updateUI();
+  buildGrid();
+
+  // Re-render read mode with combined content
+  renderSessionReadMode(S.sessionContent[modalDay]);
+  const questions = parseQuestionsBlock(S.sessionContent[modalDay]);
+  renderAnswerPanel(questions);
+  loadWritingTaskForDay(modalDay);
+
+  const hasAll = missing.length === 0;
+  resultEl.style.display = 'block';
+  resultEl.style.background = hasAll ? 'rgba(128,224,80,0.1)' : 'rgba(240,192,64,0.1)';
+  resultEl.style.border = '1px solid ' + (hasAll ? 'rgba(128,224,80,0.4)' : 'rgba(240,192,64,0.4)');
+  resultEl.style.color = hasAll ? 'var(--lime)' : 'var(--gold)';
+  resultEl.textContent = hasAll
+    ? `✓ Parsed! Day ${data.day} — Score: ${data.score}% — Band: ${data.band_estimate} — ${Object.keys(data).length} fields found. Content appended to session.`
+    : `⚠ Parsed with ${missing.length} missing fields: ${missing.join(', ')}. Score: ${data.score || '?'}% Content saved.`;
+
+  toast(hasAll ? 'Parsed & tracker updated!' : 'Parsed with warnings — check result.', hasAll ? 'ok' : 'warn');
+  closeReadModeParser();
 }
 
 function clearAllAnswers() {
@@ -3506,7 +4054,7 @@ function tokenizeLine(text, vocabMap) {
 
 function wordify(text, vocabMap) {
   // Make every English word clickable; vocab-bank words get teal highlight
-  return text.replace(/([a-zA-Z][a-zA-Z'-]*)/g, (word) => {
+  return text.replace(/([a-zA-Z][a-zA-Z'-]*[a-zA-Z]|[a-zA-Z])/g, (word) => {
     const key = word.toLowerCase().replace(/['-]$/g, '');
     const vEntry = vocabMap[key] || vocabMap[word.toLowerCase()];
     const safeWord = escHtml(word);
@@ -3659,31 +4207,30 @@ let _aiStreaming = false;
 
 function switchRightTab(tab) {
   const exView = document.getElementById('rightTabExercises');
+  const writingView = document.getElementById('rightTabWriting');
   const aiView = document.getElementById('rightTabAI');
   const btnEx = document.getElementById('tabBtnExercises');
+  const btnWriting = document.getElementById('tabBtnWriting');
   const btnAI = document.getElementById('tabBtnAI');
+
+  // Hide all
+  [exView, writingView, aiView].forEach(el => { if (el) { el.style.display = 'none'; } });
+  [btnEx, btnWriting, btnAI].forEach(btn => {
+    if (btn) { btn.style.background = 'transparent'; btn.style.borderBottomColor = 'transparent'; btn.style.color = 'var(--t3)'; }
+  });
+
   if (tab === 'ai') {
-    exView.style.display = 'none';
-    aiView.style.display = 'flex';
-    aiView.style.flexDirection = 'column';
-    btnEx.style.background = 'transparent';
-    btnEx.style.borderBottomColor = 'transparent';
-    btnEx.style.color = 'var(--t3)';
-    btnAI.style.background = 'rgba(240,192,64,0.15)';
-    btnAI.style.borderBottomColor = 'var(--gold)';
-    btnAI.style.color = 'var(--gold)';
+    if (aiView) { aiView.style.display = 'flex'; aiView.style.flexDirection = 'column'; }
+    if (btnAI) { btnAI.style.background = 'rgba(240,192,64,0.15)'; btnAI.style.borderBottomColor = 'var(--gold)'; btnAI.style.color = 'var(--gold)'; }
     updateAIContext();
     setTimeout(() => { const inp = document.getElementById('aiInput'); if (inp) inp.focus(); }, 80);
+  } else if (tab === 'writing') {
+    if (writingView) { writingView.style.display = 'flex'; writingView.style.flexDirection = 'column'; }
+    if (btnWriting) { btnWriting.style.background = 'rgba(128,224,80,0.15)'; btnWriting.style.borderBottomColor = 'var(--lime)'; btnWriting.style.color = 'var(--lime)'; }
+    loadWritingTaskForDay(modalDay);
   } else {
-    aiView.style.display = 'none';
-    exView.style.display = 'flex';
-    exView.style.flexDirection = 'column';
-    btnAI.style.background = 'transparent';
-    btnAI.style.borderBottomColor = 'transparent';
-    btnAI.style.color = 'var(--t3)';
-    btnEx.style.background = 'rgba(176,144,248,0.15)';
-    btnEx.style.borderBottomColor = 'var(--violet)';
-    btnEx.style.color = 'var(--violet)';
+    if (exView) { exView.style.display = 'flex'; exView.style.flexDirection = 'column'; }
+    if (btnEx) { btnEx.style.background = 'rgba(176,144,248,0.15)'; btnEx.style.borderBottomColor = 'var(--violet)'; btnEx.style.color = 'var(--violet)'; }
   }
 }
 
@@ -4044,13 +4591,1126 @@ function clearAIChat() {
     if (h) h.style.background = '#0b0b12';
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
+  function attachDragHandle() {
     const handle = document.getElementById('panelDragHandle');
     if (!handle) return;
     handle.addEventListener('touchstart', onDragStart, { passive: false });
     handle.addEventListener('mousedown', onDragStart);
-  });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachDragHandle);
+  } else {
+    attachDragHandle();
+  }
 })();
+
+// ═══════════════════════════════════════════════════════════════
+// ANALYTICS
+// ═══════════════════════════════════════════════════════════════
+function buildAnalytics() {
+  // KPI cards
+  const kpiEl = document.getElementById('analyticsKPIs');
+  if (!kpiEl) return;
+  const days = Object.keys(S.dayScores).length;
+  const avgScore = days ? Math.round(Object.values(S.dayScores).reduce((a,b)=>a+b,0)/days) : 0;
+  const bands = Object.values(S.bandEstimates);
+  const latestBand = bands.length ? bands[bands.length-1] : S.currentBand;
+  const totalErrs = S.errors.grammar.length + S.errors.vocab.length + S.errors.writing.length;
+  const kpis = [
+    {label:'Days Done',val:days,color:'var(--gold)'},
+    {label:'Avg Score',val:avgScore+'%',color:'var(--lime)'},
+    {label:'Current Band',val:latestBand.toFixed(1),color:'var(--sky)'},
+    {label:'Total Errors',val:totalErrs,color:'var(--rose)'},
+    {label:'Vocab Bank',val:S.vocabulary.length,color:'var(--teal)'},
+    {label:'Streak',val:S.streak+' days',color:'var(--orange)'},
+  ];
+  kpiEl.innerHTML = kpis.map(k=>`<div class="data-card"><div class="data-body" style="text-align:center;padding:14px 10px"><div style="font-size:22px;font-weight:700;color:${k.color};font-family:'Fraunces',serif">${k.val}</div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-top:4px">${k.label}</div></div></div>`).join('');
+
+  // Band chart (canvas)
+  drawLineChart('bandChart', Object.entries(S.bandEstimates).sort((a,b)=>a[0]-b[0]).map(([d,v])=>({x:'D'+d,y:v})), 'var(--gold)', 5.0, 9.0, 'Band');
+  // Score chart
+  drawLineChart('scoreChart', Object.entries(S.dayScores).sort((a,b)=>a[0]-b[0]).slice(-30).map(([d,v])=>({x:'D'+d,y:v})), 'var(--lime)', 0, 100, 'Score');
+
+  // Error heatmap
+  const heatEl = document.getElementById('errorHeatmap');
+  if (heatEl) {
+    const errCounts = {};
+    [...S.errors.grammar,...S.errors.vocab,...S.errors.writing].forEach(e=>{
+      const words = e.replace(/Day \d+: /,'').toLowerCase().split(/\s+/).slice(0,3).join(' ');
+      errCounts[words] = (errCounts[words]||0)+1;
+    });
+    const sorted = Object.entries(errCounts).sort((a,b)=>b[1]-a[1]).slice(0,20);
+    heatEl.innerHTML = sorted.length ? sorted.map(([err,cnt])=>{
+      const heat = Math.min(1, cnt/5);
+      const bg = `rgba(240,96,128,${0.1+heat*0.5})`;
+      const border = `rgba(240,96,128,${0.2+heat*0.6})`;
+      return `<div style="padding:4px 8px;border-radius:4px;background:${bg};border:1px solid ${border};font-size:9px;color:#e8a0b0;cursor:default" title="${cnt} occurrences">${err} <strong>(${cnt})</strong></div>`;
+    }).join('') : '<div style="color:var(--t3);font-size:10px">No errors logged yet.</div>';
+  }
+
+  // Weak types
+  const weakEl = document.getElementById('weakTypes');
+  if (weakEl) {
+    const typeData = [
+      {type:'True/False/NG',score:S.cbtStats&&S.cbtStats.tfng||null},
+      {type:'Multiple Choice',score:S.cbtStats&&S.cbtStats.mc||null},
+      {type:'Sentence Completion',score:S.cbtStats&&S.cbtStats.complete||null},
+      {type:'Matching Headings',score:S.cbtStats&&S.cbtStats.match||null},
+    ];
+    weakEl.innerHTML = typeData.map(t=>`<div class="data-item" style="display:flex;justify-content:space-between"><span>${t.type}</span><span style="color:${t.score===null?'var(--t3)':t.score>=70?'var(--lime)':t.score>=50?'var(--gold)':'var(--rose)'}">${t.score===null?'No data':t.score+'%'}</span></div>`).join('');
+  }
+
+  // Module performance
+  const modEl = document.getElementById('modulePerf');
+  if (modEl) {
+    const mods = [
+      {name:'Reading',score:S.cbtStats&&S.cbtStats.reading||null,color:'var(--sky)'},
+      {name:'Listening',score:S.cbtStats&&S.cbtStats.listening||null,color:'var(--violet)'},
+      {name:'Writing',score:S.writingBands&&Object.values(S.writingBands).length?Math.round(Object.values(S.writingBands).reduce((a,b)=>a+b,0)/Object.values(S.writingBands).length*10)/10:null,color:'var(--gold)'},
+      {name:'Speaking',score:S.speakingBands&&Object.values(S.speakingBands).length?Math.round(Object.values(S.speakingBands).reduce((a,b)=>a+b,0)/Object.values(S.speakingBands).length*10)/10:null,color:'var(--lime)'},
+    ];
+    modEl.innerHTML = mods.map(m=>`<div class="data-item" style="display:flex;justify-content:space-between;align-items:center"><span style="color:${m.color}">${m.name}</span><span style="color:${m.score===null?'var(--t3)':m.score>=7?'var(--lime)':m.score>=6?'var(--gold)':'var(--rose)'}">${m.score===null?'No data':m.score}</span></div>`).join('');
+  }
+
+  // Mock history
+  const mhEl = document.getElementById('mockHistory');
+  if (mhEl && S.mockTests && S.mockTests.length) {
+    mhEl.innerHTML = [...S.mockTests].reverse().slice(0,8).map(t=>`<div class="data-item"><span style="color:var(--t3);font-size:9px">${t.date}</span> <span style="color:var(--gold);font-weight:700">Band ${t.band||'—'}</span> <span style="color:var(--t3);font-size:9px">${t.modules||''}</span></div>`).join('');
+  }
+}
+
+function drawLineChart(canvasId, data, color, minY, maxY, label) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || !data.length) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 300;
+  const H = 160;
+  canvas.width = W;
+  canvas.height = H;
+  const pad = {t:10,r:10,b:24,l:36};
+  const iW = W-pad.l-pad.r;
+  const iH = H-pad.t-pad.b;
+  canvas.width = canvas.width;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = 'transparent';
+  if (data.length < 2) {
+    ctx.fillStyle = '#6070a0';
+    ctx.font = '11px Space Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText('Need 2+ data points', W/2, H/2);
+    return;
+  }
+  // Grid lines
+  ctx.strokeStyle = 'rgba(26,32,53,0.8)';
+  ctx.lineWidth = 1;
+  for (let i=0;i<=4;i++) {
+    const y = pad.t + (iH/4)*i;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+iW,y); ctx.stroke();
+    const val = (maxY - (maxY-minY)*(i/4)).toFixed(1);
+    ctx.fillStyle = '#404060'; ctx.font = '8px Space Mono'; ctx.textAlign = 'right';
+    ctx.fillText(val, pad.l-4, y+3);
+  }
+  // Line
+  const xStep = iW / (data.length-1);
+  const points = data.map((d,i) => ({
+    x: pad.l + i*xStep,
+    y: pad.t + iH - ((d.y - minY)/(maxY-minY))*iH
+  }));
+  // Fill
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, pad.t+iH);
+  points.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(points[points.length-1].x, pad.t+iH);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0,pad.t,0,pad.t+iH);
+  grad.addColorStop(0, color.replace(')',',0.25)').replace('var(--','rgba(').replace(')',',0.25)') || 'rgba(240,192,64,0.25)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  // Line
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  points.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.strokeStyle = color.startsWith('var') ? (color.includes('gold')?'#f0c040':color.includes('lime')?'#80e050':color.includes('teal')?'#40d0c0':'#60b8f8') : color;
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  // Dots
+  points.forEach(p => {
+    ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2);
+    ctx.fillStyle = ctx.strokeStyle; ctx.fill();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CBT ENGINE
+// ═══════════════════════════════════════════════════════════════
+let _cbt = {
+  module: '',        // reading | listening | writing | speaking
+  timerSecs: 0,
+  timerInterval: null,
+  currentQ: 0,
+  answers: {},       // { qIndex: value }
+  flags: {},         // { qIndex: true }
+  questions: [],     // parsed question objects
+  passage: '',
+  passageTitle: '',
+  highlights: [],
+  playedOnce: false,
+  recordingBlob: null,
+  mediaRecorder: null,
+  recordings: [],    // [{blob, url, duration, part}]
+  writingTask1: '',
+  writingTask2: '',
+  activeTask: 1,
+  task1Words: 0,
+  task2Words: 0,
+  mockModules: [],
+  mockIndex: 0,
+};
+
+// Default practice questions by type
+const CBT_SAMPLE = {
+  reading: {
+    title: 'The Science of Sleep',
+    passage: `Sleep is one of the most mysterious and vital biological processes known to science. For decades, researchers dismissed it as a passive state — a mere absence of wakefulness. Today, we understand sleep as a highly active period during which the brain performs essential maintenance and consolidation functions that are impossible during waking hours.
+
+The most significant discovery in modern sleep science has been the identification of two distinct phases: Rapid Eye Movement (REM) sleep and non-REM sleep. Non-REM sleep itself comprises three stages, ranging from light sleep to the deep, restorative slow-wave sleep that dominates the first half of the night. REM sleep, which typically begins about 90 minutes after falling asleep and grows longer with each subsequent cycle, is associated with vivid dreaming and appears critical for emotional memory processing.
+
+Neuroscientist Matthew Walker, whose 2017 book became a landmark text in the field, argues that sleep loss has catastrophic consequences that modern society systematically underestimates. A person who sleeps six hours a night for two weeks becomes as cognitively impaired as someone who has been awake for 24 hours straight — yet they typically report feeling only slightly tired. This disconnect between subjective and objective impairment makes sleep deprivation particularly dangerous.
+
+The relationship between sleep and memory consolidation is particularly well-documented. During slow-wave sleep, the hippocampus — the brain's short-term memory store — replays the day's experiences and transfers them to the cortex for long-term storage. This process, called synaptic homeostasis, also clears the molecular debris that accumulates during waking hours. Without adequate sleep, this cellular housekeeping fails, and beta-amyloid proteins — associated with Alzheimer's disease — begin to build up in the brain.
+
+Circadian rhythms, the roughly 24-hour biological clock that governs sleep-wake cycles, have emerged as a major focus of medical research. These rhythms regulate not just sleep but also metabolism, immune function, cardiovascular activity, and hormone secretion. Disrupting circadian alignment — as happens with shift work, jet lag, or chronic late-night screen use — has been linked to increased risks of type 2 diabetes, obesity, heart disease, and certain cancers.
+
+The economic and societal costs of sleep deprivation are staggering. A 2016 RAND Corporation study estimated that the United States loses approximately 411 billion dollars annually to productivity losses caused by insufficient sleep. Workers sleeping fewer than six hours a night are 13 percent more likely to die prematurely than those sleeping eight hours, and they show dramatically elevated rates of absenteeism and on-the-job errors.`,
+    questions: [
+      {type:'tf',text:'Researchers in the early period of sleep science considered sleep to be an active biological process.',answer:'FALSE'},
+      {type:'tf',text:'REM sleep is more prominent in the first half of the night.',answer:'FALSE'},
+      {type:'tf',text:'Matthew Walker published a significant book on sleep in 2017.',answer:'TRUE'},
+      {type:'tf',text:'People who are sleep-deprived always accurately recognise their own level of impairment.',answer:'FALSE'},
+      {type:'tf',text:'The hippocampus is involved in transferring memories to long-term storage.',answer:'TRUE'},
+      {type:'tf',text:'Disrupting circadian rhythms has been linked to increased cancer risk.',answer:'TRUE'},
+      {type:'mc',text:'According to paragraph 3, what makes sleep deprivation particularly dangerous?',options:['A) People are aware of how impaired they are','B) The gap between how impaired people feel and how impaired they actually are','C) Six hours of sleep always causes cognitive damage','D) Sleep loss causes permanent brain damage'],answer:'B'},
+      {type:'mc',text:'What happens during slow-wave sleep according to the passage?',options:['A) REM cycles begin','B) Beta-amyloid proteins are produced','C) Emotional memories are processed','D) The hippocampus replays experiences and transfers them to long-term storage'],answer:'D'},
+      {type:'mc',text:'Which of the following is NOT mentioned as a consequence of disrupting circadian rhythms?',options:['A) Type 2 diabetes','B) Heart disease','C) Depression','D) Obesity'],answer:'C'},
+      {type:'complete',text:'Sleep deprivation causes _____ proteins to accumulate in the brain, which are linked to _____.',answer:'beta-amyloid | Alzheimer\'s disease'},
+      {type:'complete',text:'A 2016 study found that the US loses approximately _____ annually due to insufficient sleep.',answer:'411 billion dollars'},
+    ]
+  },
+  listening: {
+    sections: [
+      {title:'Section 1 — Conversation',questions:[
+        {type:'complete',text:'The caller wants to book a room for _____ nights.',answer:'3'},
+        {type:'complete',text:'The check-in date is the _____ of July.',answer:'15th'},
+        {type:'mc',text:'What type of room does the caller prefer?',options:['A) Single','B) Double','C) Twin','D) Suite'],answer:'B'},
+        {type:'complete',text:'The hotel offers a complimentary _____ with every booking.',answer:'breakfast'},
+        {type:'tf',text:'The hotel has a swimming pool.',answer:'TRUE'},
+      ]},
+      {title:'Section 2 — Monologue',questions:[
+        {type:'mc',text:'What is the primary purpose of the community centre announcement?',options:['A) To advertise new classes','B) To announce a renovation','C) To promote membership discounts','D) To introduce new staff'],answer:'A'},
+        {type:'complete',text:'The yoga class runs every _____ morning.',answer:'Tuesday'},
+        {type:'complete',text:'Membership fees have been reduced by _____ percent.',answer:'20'},
+        {type:'tf',text:'Children under 12 attend free.',answer:'TRUE'},
+        {type:'tf',text:'The centre will be closed for two weeks for renovation.',answer:'FALSE'},
+      ]},
+    ]
+  },
+  writing: {
+    task1: `The bar chart below shows the percentage of households in five countries that owned various electronic devices in 2010 and 2020.
+
+Summarise the information by selecting and reporting the main features, and make comparisons where relevant.
+
+Write at least 150 words.`,
+    task2: `Some people believe that universities should focus on providing academic knowledge, while others argue that universities should prepare students for employment.
+
+Discuss both views and give your own opinion.
+
+Write at least 250 words.`,
+  },
+  speaking: {
+    part1: ['Tell me about where you currently live.','What do you do — are you a student or do you work?','How do you usually spend your weekends?','Do you prefer reading books or watching films? Why?','What kind of food do you enjoy most?'],
+    part2: {cue:'Describe a person who has had a significant influence on your life.\n\nYou should say:\n• who this person is\n• how you know them\n• what qualities they have\n• and explain why they have influenced you so much.',prepTime:60,talkTime:120},
+    part3: ['In what ways can family members influence a person\'s career choices?','Do you think celebrities have a positive or negative influence on young people?','How has the influence of teachers changed compared to fifty years ago?','Should governments try to control the influence of social media?'],
+  }
+};
+
+function launchCBT(module) {
+  _cbt.module = module;
+  _cbt.answers = {};
+  _cbt.flags = {};
+  _cbt.currentQ = 0;
+  _cbt.playedOnce = false;
+  _cbt.highlights = [];
+  _cbt.recordings = [];
+
+  const overlay = document.getElementById('cbtOverlay');
+  overlay.style.display = 'flex';
+  overlay.style.flexDirection = 'column';
+
+  document.getElementById('cbtSubmitBtn').style.display = 'none';
+
+  if (module === 'reading') {
+    setupCBTReading();
+  } else if (module === 'listening') {
+    setupCBTListening();
+  } else if (module === 'writing') {
+    setupCBTWriting();
+  } else if (module === 'speaking') {
+    setupCBTSpeaking();
+  }
+}
+
+function startCBTTimer(seconds, onEnd) {
+  clearInterval(_cbt.timerInterval);
+  _cbt.timerSecs = seconds;
+  updateCBTTimerDisplay();
+  _cbt.timerInterval = setInterval(() => {
+    _cbt.timerSecs--;
+    updateCBTTimerDisplay();
+    // Color warning
+    const timerEl = document.getElementById('cbtTimer');
+    if (_cbt.timerSecs <= 300) timerEl.style.color = 'var(--rose)';
+    else if (_cbt.timerSecs <= 600) timerEl.style.color = 'var(--gold)';
+    else timerEl.style.color = '#f0c040';
+    if (_cbt.timerSecs <= 0) {
+      clearInterval(_cbt.timerInterval);
+      if (onEnd) onEnd();
+    }
+  }, 1000);
+}
+
+function updateCBTTimerDisplay() {
+  const m = Math.floor(_cbt.timerSecs / 60);
+  const s = _cbt.timerSecs % 60;
+  const el = document.getElementById('cbtTimer');
+  if (el) el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function confirmExitCBT() {
+  if (!confirm('Exit CBT practice? Your answers will be lost.')) return;
+  exitCBT();
+}
+
+function exitCBT() {
+  clearInterval(_cbt.timerInterval);
+  // Stop any recording
+  if (_cbt.mediaRecorder && _cbt.mediaRecorder.state !== 'inactive') {
+    _cbt.mediaRecorder.stop();
+  }
+  document.getElementById('cbtOverlay').style.display = 'none';
+}
+
+// ── CBT READING ───────────────────────────────────────────────
+function setupCBTReading() {
+  document.getElementById('cbtModuleLabel').textContent = 'IELTS Reading';
+  document.getElementById('cbtSubmitBtn').style.display = 'block';
+
+  // Load saved passage or use sample
+  const saved = S.cbtPassages && S.cbtPassages.length ? S.cbtPassages[S.cbtPassages.length-1] : null;
+  const passage = saved ? saved.text : CBT_SAMPLE.reading.passage;
+  const title = saved ? saved.title : CBT_SAMPLE.reading.title;
+  _cbt.questions = saved ? parseCustomQuestions(saved.questions) : CBT_SAMPLE.reading.questions;
+  _cbt.passage = passage;
+  _cbt.passageTitle = title;
+
+  document.getElementById('cbtSectionLabel').textContent = title;
+  document.getElementById('cbtQuestionNav').textContent = `1 / ${_cbt.questions.length}`;
+
+  renderCBTReading();
+  renderQBubbles(_cbt.questions.length);
+  startCBTTimer(3600, () => { toast('Time is up! Submitting...', 'warn'); submitCBT(); });
+}
+
+function renderCBTReading() {
+  const body = document.getElementById('cbtBody');
+  body.innerHTML = `
+    <div class="cbt-reading-wrap">
+      <div class="cbt-passage" id="cbtPassageEl">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <div style="font-family:'Space Mono',monospace;font-size:10px;color:#6070a0;text-transform:uppercase;letter-spacing:1px">${escHtml(_cbt.passageTitle)}</div>
+          <div style="display:flex;gap:6px">
+            <button class="cbt-tool-btn" onclick="toggleHighlightMode()" id="highlightModeBtn" title="Toggle highlight mode">🖊 Highlight</button>
+            <button class="cbt-tool-btn" onclick="clearHighlights()" title="Clear all highlights">✕ Clear</button>
+          </div>
+        </div>
+        <div id="passageContent" style="user-select:text">${formatPassageText(_cbt.passage)}</div>
+      </div>
+      <div class="cbt-questions">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#6070a0;letter-spacing:1px;margin-bottom:16px;text-transform:uppercase">Questions — ${_cbt.questions.length} total</div>
+        <div id="cbtQuestionsEl"></div>
+      </div>
+    </div>`;
+  renderAllQuestions();
+}
+
+function formatPassageText(text) {
+  return text.split('\n\n').map(p => `<p style="margin-bottom:18px">${escHtml(p).replace(/\n/g,'<br>')}</p>`).join('');
+}
+
+let _highlightMode = false;
+function toggleHighlightMode() {
+  _highlightMode = !_highlightMode;
+  const btn = document.getElementById('highlightModeBtn');
+  const passage = document.getElementById('cbtPassageEl');
+  if (btn) { btn.style.borderColor = _highlightMode ? 'var(--gold)' : '#1a2035'; btn.style.color = _highlightMode ? 'var(--gold)' : '#8090c0'; btn.textContent = _highlightMode ? '✓ Highlighting ON' : '🖊 Highlight'; }
+  if (passage) { passage.classList.toggle('highlight-mode', _highlightMode); }
+  if (_highlightMode) {
+    document.getElementById('passageContent').addEventListener('mouseup', doHighlight);
+  } else {
+    document.getElementById('passageContent').removeEventListener('mouseup', doHighlight);
+  }
+}
+
+function doHighlight() {
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) return;
+  const range = sel.getRangeAt(0);
+  const span = document.createElement('span');
+  span.className = 'cbt-highlight';
+  span.title = 'Click to remove highlight';
+  span.onclick = function() { const parent = this.parentNode; while(this.firstChild) parent.insertBefore(this.firstChild, this); parent.removeChild(this); };
+  try { range.surroundContents(span); sel.removeAllRanges(); } catch(e) { sel.removeAllRanges(); }
+}
+
+function clearHighlights() {
+  document.querySelectorAll('.cbt-highlight').forEach(el => {
+    const parent = el.parentNode;
+    while(el.firstChild) parent.insertBefore(el.firstChild, el);
+    parent.removeChild(el);
+  });
+}
+
+function renderAllQuestions() {
+  const container = document.getElementById('cbtQuestionsEl');
+  if (!container) return;
+  container.innerHTML = '';
+  _cbt.questions.forEach((q, i) => {
+    container.appendChild(buildCBTQuestion(q, i));
+  });
+}
+
+function buildCBTQuestion(q, i) {
+  const div = document.createElement('div');
+  div.className = 'cbt-q-block' + (_cbt.flags[i] ? ' flagged' : '') + (_cbt.answers[i] !== undefined && _cbt.answers[i] !== '' ? ' answered' : '');
+  div.id = 'cbt-q-' + i;
+  const answered = _cbt.answers[i] !== undefined && _cbt.answers[i] !== '';
+  div.innerHTML = `<div class="cbt-q-num"><span>Q${i+1} · ${q.type==='tf'?'True/False/Not Given':q.type==='mc'?'Multiple Choice':q.type==='complete'?'Sentence Completion':'Matching'}</span><button class="cbt-flag-btn ${_cbt.flags[i]?'flagged':''}" onclick="toggleFlag(${i})">⚑ ${_cbt.flags[i]?'Flagged':'Flag'}</button></div><div class="cbt-q-text">${escHtml(q.text)}</div>`;
+  if (q.type === 'tf') {
+    const cur = _cbt.answers[i] || '';
+    div.innerHTML += `<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="cbt-tf-btn ${cur==='TRUE'?'selected-t':''}" onclick="setCBTAnswer(${i},'TRUE',this,'tf','TRUE')">TRUE</button><button class="cbt-tf-btn ${cur==='FALSE'?'selected-f':''}" onclick="setCBTAnswer(${i},'FALSE',this,'tf','FALSE')">FALSE</button><button class="cbt-tf-btn ${cur==='NOT GIVEN'?'selected-ng':''}" onclick="setCBTAnswer(${i},'NOT GIVEN',this,'tf','NG')">NOT GIVEN</button></div>`;
+  } else if (q.type === 'mc') {
+    const cur = _cbt.answers[i] || '';
+    div.innerHTML += q.options.map((opt,oi)=>{
+      const letter = opt.charAt(0);
+      const isSelected = cur === letter;
+      return `<div class="cbt-option ${isSelected?'selected':''}" id="opt-${i}-${oi}" onclick="selectMC(${i},${oi},'${letter}')">
+        <div class="opt-letter">${letter}</div>
+        <span style="flex:1">${escHtml(opt.slice(3))}</span>
+        <button onclick="event.stopPropagation();strikeOption(${i},${oi})" style="background:none;border:1px solid #252540;color:#6070a0;padding:1px 6px;border-radius:3px;font-size:9px;cursor:pointer;flex-shrink:0;font-family:'Space Mono',monospace" title="Strikethrough">✕</button>
+      </div>`;
+    }).join('');
+  } else if (q.type === 'complete') {
+    const cur = _cbt.answers[i] || '';
+    div.innerHTML += `<input class="cbt-fill-input" placeholder="Type your answer..." value="${escHtml(cur)}" oninput="setCBTAnswer(${i},this.value,null,'fill')" style="margin-top:4px">`;
+  } else if (q.type === 'match') {
+    const cur = _cbt.answers[i] || '';
+    div.innerHTML += `<input class="cbt-fill-input" placeholder="Type matching answer..." value="${escHtml(cur)}" oninput="setCBTAnswer(${i},this.value,null,'fill')" style="margin-top:4px">`;
+  }
+  return div;
+}
+
+function setCBTAnswer(qi, val, el, type, tfClass) {
+  _cbt.answers[qi] = val;
+  const block = document.getElementById('cbt-q-'+qi);
+  if (block) { block.classList.remove('answered'); if (val !== '') block.classList.add('answered'); }
+  // TF button highlighting
+  if (type === 'tf' && el) {
+    const parent = el.closest('.cbt-q-block');
+    parent.querySelectorAll('.cbt-tf-btn').forEach(b => b.classList.remove('selected-t','selected-f','selected-ng'));
+    el.classList.add(tfClass==='TRUE'?'selected-t':tfClass==='FALSE'?'selected-f':'selected-ng');
+  }
+  updateQBubble(qi);
+  updateNavCounter();
+}
+
+function selectMC(qi, optIdx, letter) {
+  _cbt.answers[qi] = letter;
+  const block = document.getElementById('cbt-q-'+qi);
+  if (block) {
+    block.querySelectorAll('.cbt-option').forEach(o => o.classList.remove('selected'));
+    const opt = document.getElementById('opt-'+qi+'-'+optIdx);
+    if (opt) opt.classList.add('selected');
+    block.classList.add('answered');
+  }
+  updateQBubble(qi);
+  updateNavCounter();
+}
+
+function strikeOption(qi, optIdx) {
+  const opt = document.getElementById('opt-'+qi+'-'+optIdx);
+  if (opt) opt.classList.toggle('struck');
+}
+
+function toggleFlag(qi) {
+  _cbt.flags[qi] = !_cbt.flags[qi];
+  const block = document.getElementById('cbt-q-'+qi);
+  if (block) {
+    block.classList.toggle('flagged', _cbt.flags[qi]);
+    const btn = block.querySelector('.cbt-flag-btn');
+    if (btn) { btn.classList.toggle('flagged', _cbt.flags[qi]); btn.textContent = '⚑ ' + (_cbt.flags[qi] ? 'Flagged' : 'Flag'); }
+  }
+  updateQBubble(qi);
+}
+
+function renderQBubbles(count) {
+  const wrap = document.getElementById('cbtQBubbles');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  for (let i=0;i<count;i++) {
+    const b = document.createElement('button');
+    b.className = 'q-bubble' + (i===0?' current':'');
+    b.textContent = i+1;
+    b.id = 'qb-'+i;
+    b.onclick = () => scrollToQuestion(i);
+    wrap.appendChild(b);
+  }
+}
+
+function updateQBubble(qi) {
+  const b = document.getElementById('qb-'+qi);
+  if (!b) return;
+  b.classList.remove('answered','flagged','current');
+  if (_cbt.flags[qi]) b.classList.add('flagged');
+  else if (_cbt.answers[qi] !== undefined && _cbt.answers[qi] !== '') b.classList.add('answered');
+}
+
+function scrollToQuestion(qi) {
+  _cbt.currentQ = qi;
+  updateNavCounter();
+  document.querySelectorAll('.q-bubble').forEach((b,i) => { b.classList.toggle('current', i===qi); });
+  const el = document.getElementById('cbt-q-'+qi);
+  if (el) el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function cbtNav(dir) {
+  const max = _cbt.questions.length - 1;
+  _cbt.currentQ = Math.max(0, Math.min(max, _cbt.currentQ + dir));
+  scrollToQuestion(_cbt.currentQ);
+}
+
+function updateNavCounter() {
+  const answered = Object.values(_cbt.answers).filter(v=>v!=='').length;
+  document.getElementById('cbtQuestionNav').textContent = `${answered} / ${_cbt.questions.length} answered`;
+}
+
+// ── CBT LISTENING ─────────────────────────────────────────────
+function setupCBTListening() {
+  document.getElementById('cbtModuleLabel').textContent = 'IELTS Listening';
+  document.getElementById('cbtSubmitBtn').style.display = 'block';
+  const sections = CBT_SAMPLE.listening.sections;
+  _cbt.questions = sections.flatMap(s => s.questions);
+  _cbt.listenSections = sections;
+  _cbt.currentSection = 0;
+  renderCBTListening();
+  renderQBubbles(_cbt.questions.length);
+  startCBTTimer(1800, () => { toast('Listening time up!', 'warn'); submitCBT(); });
+}
+
+function renderCBTListening() {
+  const body = document.getElementById('cbtBody');
+  const sec = _cbt.listenSections[_cbt.currentSection];
+  document.getElementById('cbtSectionLabel').textContent = sec ? sec.title : '';
+  body.innerHTML = `
+    <div class="cbt-listen-wrap">
+      <div class="cbt-audio-bar">
+        <button class="cbt-play-btn" id="listenPlayBtn" onclick="playListenSimulation()" ${_cbt.playedOnce?'disabled':''} title="${_cbt.playedOnce?'Audio already played — cannot replay':'Play audio (plays once only)'}">▶</button>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <div class="cbt-audio-progress"><div class="cbt-audio-fill" id="listenProgress" style="width:0%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:9px;color:#6070a0">
+            <span id="listenTime">0:00</span>
+            <span style="color:${_cbt.playedOnce?'var(--rose)':'var(--violet)'}">${_cbt.playedOnce?'⚠ Played — cannot replay':'▶ Click to play (once only)'}</span>
+            <span id="listenDur">—</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          ${_cbt.listenSections.map((s,i)=>`<button onclick="switchListenSection(${i})" style="padding:4px 10px;border-radius:4px;border:1px solid ${i===_cbt.currentSection?'var(--violet)':'#1a2035'};background:${i===_cbt.currentSection?'rgba(176,144,248,0.15)':'transparent'};color:${i===_cbt.currentSection?'var(--violet)':'#6070a0'};font-family:'Space Mono',monospace;font-size:9px;cursor:pointer">S${i+1}</button>`).join('')}
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:20px 24px;background:#080c18">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#6070a0;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px">${sec?sec.title:''} — Questions</div>
+        <div id="cbtListenQs"></div>
+      </div>
+    </div>`;
+  renderListenQuestions();
+}
+
+function switchListenSection(idx) {
+  _cbt.currentSection = idx;
+  renderCBTListening();
+  const startQ = _cbt.listenSections.slice(0,idx).reduce((a,s)=>a+s.questions.length,0);
+  _cbt.currentQ = startQ;
+}
+
+function renderListenQuestions() {
+  const container = document.getElementById('cbtListenQs');
+  if (!container) return;
+  const offset = _cbt.listenSections.slice(0,_cbt.currentSection).reduce((a,s)=>a+s.questions.length,0);
+  const qs = _cbt.listenSections[_cbt.currentSection].questions;
+  container.innerHTML = '';
+  qs.forEach((q,i) => { container.appendChild(buildCBTQuestion(q, offset+i)); });
+}
+
+let _listenSimInterval = null;
+function playListenSimulation() {
+  if (_cbt.playedOnce) { toast('Audio has already been played. In CBT, audio plays once only.', 'warn'); return; }
+  const btn = document.getElementById('listenPlayBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏸'; btn.style.background = 'rgba(176,144,248,0.3)'; }
+  _cbt.playedOnce = true;
+  // Simulate audio progress over 90 seconds (simulated — real implementation would use actual audio)
+  let elapsed = 0;
+  const total = 90;
+  document.getElementById('listenDur').textContent = '1:30';
+  _listenSimInterval = setInterval(() => {
+    elapsed++;
+    const pct = (elapsed/total)*100;
+    const prog = document.getElementById('listenProgress');
+    const timeEl = document.getElementById('listenTime');
+    if (prog) prog.style.width = pct + '%';
+    if (timeEl) { const m = Math.floor(elapsed/60); const s = elapsed%60; timeEl.textContent = m+':'+String(s).padStart(2,'0'); }
+    if (elapsed >= total) {
+      clearInterval(_listenSimInterval);
+      if (btn) { btn.textContent = '✓'; btn.style.background = 'rgba(128,224,80,0.1)'; btn.style.borderColor = 'var(--lime)'; btn.style.color = 'var(--lime)'; }
+      toast('Audio finished. You can now review and edit your answers.', 'ok');
+    }
+  }, 1000);
+  toast('Audio playing... (simulated — add your own audio file in the custom passage builder)', 'ok');
+}
+
+// ── CBT WRITING ───────────────────────────────────────────────
+function setupCBTWriting() {
+  document.getElementById('cbtModuleLabel').textContent = 'IELTS Writing';
+  document.getElementById('cbtSubmitBtn').style.display = 'block';
+  document.getElementById('cbtBottomBar').style.display = 'none';
+  _cbt.activeTask = 1;
+  _cbt.task1Words = 0;
+  _cbt.task2Words = 0;
+  renderCBTWriting();
+  startCBTTimer(3600, () => { toast('Writing time up! Submitting...', 'warn'); submitCBT(); });
+}
+
+function renderCBTWriting() {
+  const body = document.getElementById('cbtBody');
+  const task = _cbt.activeTask === 1 ? CBT_SAMPLE.writing.task1 : CBT_SAMPLE.writing.task2;
+  const words = _cbt.activeTask === 1 ? _cbt.task1Words : _cbt.task2Words;
+  const target = _cbt.activeTask === 1 ? 150 : 250;
+  const savedText = _cbt.activeTask === 1 ? (_cbt.writing1||'') : (_cbt.writing2||'');
+  const sectionLabel = document.getElementById('cbtSectionLabel');
+  if (sectionLabel) sectionLabel.textContent = `Task ${_cbt.activeTask} of 2`;
+  body.innerHTML = `
+    <div class="cbt-writing-wrap">
+      <div class="cbt-task-prompt">
+        <div style="display:flex;gap:6px;margin-bottom:16px">
+          <button onclick="switchWritingTask(1)" style="padding:5px 14px;border-radius:5px;border:1px solid ${_cbt.activeTask===1?'var(--gold)':'#1a2035'};background:${_cbt.activeTask===1?'rgba(240,192,64,0.15)':'transparent'};color:${_cbt.activeTask===1?'var(--gold)':'#6070a0'};font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;font-weight:700">TASK 1</button>
+          <button onclick="switchWritingTask(2)" style="padding:5px 14px;border-radius:5px;border:1px solid ${_cbt.activeTask===2?'var(--gold)':'#1a2035'};background:${_cbt.activeTask===2?'rgba(240,192,64,0.15)':'transparent'};color:${_cbt.activeTask===2?'var(--gold)':'#6070a0'};font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;font-weight:700">TASK 2</button>
+        </div>
+        <div style="font-size:12px;line-height:2;color:#c8d0e8;white-space:pre-line">${escHtml(task)}</div>
+      </div>
+      <div class="cbt-write-area">
+        <div style="flex-shrink:0;display:flex;gap:4px;padding:6px 10px;background:#060a14;border-bottom:1px solid #1a2035;align-items:center">
+          <button class="cbt-tool-btn" onclick="cbtWriteCmd('cut')" title="Cut selected text">✂ Cut</button>
+          <button class="cbt-tool-btn" onclick="cbtWriteCmd('copy')" title="Copy selected text">📋 Copy</button>
+          <button class="cbt-tool-btn" onclick="cbtWriteCmd('paste')" title="Paste">📌 Paste</button>
+          <div style="flex:1"></div>
+          <button class="cbt-tool-btn" onclick="cbtWriteUndo()" title="Undo">↩ Undo</button>
+          <button class="cbt-tool-btn" onclick="cbtWriteRedo()" title="Redo">↪ Redo</button>
+        </div>
+        <textarea id="cbtWriteTA" class="cbt-write-ta" placeholder="Write your response here...&#10;&#10;Spell-check is disabled as in the real CBT exam.&#10;Keyboard shortcuts are disabled — use the toolbar buttons above." spellcheck="false" autocorrect="off" autocomplete="off" oninput="updateCBTWordCount()" onpaste="handleCBTPaste(event)" onkeydown="cbtKeydown(event)">${escHtml(savedText)}</textarea>
+        <div class="cbt-word-bar">
+          <span style="color:#6070a0">Words:</span>
+          <span id="cbtWordCount" style="color:${words>=target?'var(--lime)':words>=target*0.8?'var(--gold)':'var(--rose)'};font-weight:700">${words}</span>
+          <span style="color:#404060">/ ${target} target</span>
+          <div style="flex:1"></div>
+          <span id="cbtWordPct" style="color:#6070a0">${Math.min(100,Math.round(words/target*100))}%</span>
+        </div>
+      </div>
+    </div>`;
+  setTimeout(() => {
+    const ta = document.getElementById('cbtWriteTA');
+    if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+    updateCBTWordCount();
+  }, 50);
+}
+
+function switchWritingTask(n) {
+  // Save current
+  const ta = document.getElementById('cbtWriteTA');
+  if (ta) {
+    if (_cbt.activeTask === 1) _cbt.writing1 = ta.value;
+    else _cbt.writing2 = ta.value;
+  }
+  _cbt.activeTask = n;
+  renderCBTWriting();
+}
+
+function updateCBTWordCount() {
+  const ta = document.getElementById('cbtWriteTA');
+  if (!ta) return;
+  const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+  if (_cbt.activeTask === 1) _cbt.task1Words = words;
+  else _cbt.task2Words = words;
+  const target = _cbt.activeTask === 1 ? 150 : 250;
+  const countEl = document.getElementById('cbtWordCount');
+  const pctEl = document.getElementById('cbtWordPct');
+  if (countEl) { countEl.textContent = words; countEl.style.color = words>=target?'var(--lime)':words>=target*0.8?'var(--gold)':'var(--rose)'; }
+  if (pctEl) pctEl.textContent = Math.min(100,Math.round(words/target*100))+'%';
+  // Save
+  if (_cbt.activeTask === 1) _cbt.writing1 = ta.value;
+  else _cbt.writing2 = ta.value;
+}
+
+function cbtWriteCmd(cmd) {
+  const ta = document.getElementById('cbtWriteTA');
+  if (!ta) return;
+  ta.focus();
+  if (cmd === 'cut') {
+    const sel = ta.value.substring(ta.selectionStart, ta.selectionEnd);
+    if (sel) { navigator.clipboard.writeText(sel).catch(()=>{}); ta.setRangeText('', ta.selectionStart, ta.selectionEnd, 'end'); updateCBTWordCount(); }
+  } else if (cmd === 'copy') {
+    const sel = ta.value.substring(ta.selectionStart, ta.selectionEnd);
+    if (sel) navigator.clipboard.writeText(sel).catch(()=>{});
+  } else if (cmd === 'paste') {
+    navigator.clipboard.readText().then(text => { ta.setRangeText(text, ta.selectionStart, ta.selectionEnd, 'end'); updateCBTWordCount(); }).catch(()=>toast('Paste failed — use Ctrl+V once',  'warn'));
+  }
+}
+
+let _cbtUndoStack = [], _cbtRedoStack = [];
+function cbtWriteUndo() { const ta = document.getElementById('cbtWriteTA'); if (ta && _cbtUndoStack.length) { _cbtRedoStack.push(ta.value); ta.value = _cbtUndoStack.pop(); updateCBTWordCount(); } }
+function cbtWriteRedo() { const ta = document.getElementById('cbtWriteTA'); if (ta && _cbtRedoStack.length) { _cbtUndoStack.push(ta.value); ta.value = _cbtRedoStack.pop(); updateCBTWordCount(); } }
+
+function cbtKeydown(e) {
+  // Save undo state on spacebar/enter
+  if (e.key === ' ' || e.key === 'Enter') {
+    const ta = document.getElementById('cbtWriteTA');
+    if (ta) { _cbtUndoStack.push(ta.value); if (_cbtUndoStack.length > 50) _cbtUndoStack.shift(); _cbtRedoStack = []; }
+  }
+}
+
+function handleCBTPaste(e) {
+  // Allow paste but strip formatting (plain text only)
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+  const ta = document.getElementById('cbtWriteTA');
+  if (ta) { ta.setRangeText(text, ta.selectionStart, ta.selectionEnd, 'end'); updateCBTWordCount(); }
+}
+
+// ── CBT SPEAKING ──────────────────────────────────────────────
+function setupCBTSpeaking() {
+  document.getElementById('cbtModuleLabel').textContent = 'IELTS Speaking';
+  document.getElementById('cbtSubmitBtn').style.display = 'block';
+  document.getElementById('cbtBottomBar').style.display = 'none';
+  document.getElementById('cbtTimer').textContent = '14:00';
+  _cbt.speakPart = 1;
+  _cbt.speakQ = 0;
+  renderCBTSpeaking();
+}
+
+function renderCBTSpeaking() {
+  const body = document.getElementById('cbtBody');
+  const part = _cbt.speakPart;
+  const sectionLabel = document.getElementById('cbtSectionLabel');
+  if (sectionLabel) sectionLabel.textContent = `Part ${part} of 3`;
+
+  let content = '';
+  if (part === 1) {
+    const q = CBT_SAMPLE.speaking.part1[_cbt.speakQ % CBT_SAMPLE.speaking.part1.length];
+    content = `
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#6070a0;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">PART 1 — Introduction & Interview</div>
+        <div style="font-size:13px;color:#6070a0;margin-bottom:16px">Question ${_cbt.speakQ+1} of ${CBT_SAMPLE.speaking.part1.length}</div>
+        <div style="background:#0c1220;border:2px solid #2a3550;border-radius:12px;padding:24px 28px;max-width:480px;margin:0 auto;font-size:16px;color:#e0e8ff;line-height:1.7">${escHtml(q)}</div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        ${_cbt.speakQ > 0 ? '<button onclick="_cbt.speakQ--;renderCBTSpeaking()" style="background:#0c1220;border:1px solid #2a3550;color:#8090c0;padding:8px 16px;border-radius:6px;font-family:\'Space Mono\',monospace;font-size:10px;cursor:pointer">◀ PREV Q</button>' : ''}
+        ${_cbt.speakQ < CBT_SAMPLE.speaking.part1.length-1 ? '<button onclick="_cbt.speakQ++;renderCBTSpeaking()" style="background:#0c1220;border:1px solid #2a3550;color:#8090c0;padding:8px 16px;border-radius:6px;font-family:\'Space Mono\',monospace;font-size:10px;cursor:pointer">NEXT Q ▶</button>' : ''}
+        <button onclick="_cbt.speakPart=2;_cbt.speakQ=0;renderCBTSpeaking()" style="background:rgba(128,224,80,0.1);border:1px solid var(--lime);color:var(--lime);padding:8px 16px;border-radius:6px;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;font-weight:700">GO TO PART 2 ▶</button>
+      </div>`;
+  } else if (part === 2) {
+    const cue = CBT_SAMPLE.speaking.part2;
+    const prepDone = _cbt.part2PrepDone;
+    content = `
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#6070a0;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">PART 2 — Individual Long Turn</div>
+      </div>
+      <div class="cbt-cue-card" style="margin:0 auto 20px">
+        <div style="font-size:11px;font-family:'Space Mono',monospace;color:#6070a0;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">CUE CARD</div>
+        <div style="font-size:14px;color:#e0e8ff;line-height:1.9;white-space:pre-line">${escHtml(cue.cue)}</div>
+      </div>
+      <div style="text-align:center;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        ${!prepDone ? `<button onclick="startPart2Prep()" style="background:rgba(240,192,64,0.15);border:1px solid var(--gold);color:var(--gold);padding:10px 20px;border-radius:6px;font-family:'Space Mono',monospace;font-size:11px;cursor:pointer;font-weight:700">⏱ START 1-MIN PREP</button>` : '<div style="color:var(--lime);font-family:\'Space Mono\',monospace;font-size:10px">✓ Prep time done — speak now</div>'}
+        <button onclick="_cbt.speakPart=3;_cbt.part2PrepDone=false;renderCBTSpeaking()" style="background:rgba(128,224,80,0.1);border:1px solid var(--lime);color:var(--lime);padding:10px 20px;border-radius:6px;font-family:'Space Mono',monospace;font-size:11px;cursor:pointer;font-weight:700">GO TO PART 3 ▶</button>
+      </div>`;
+  } else {
+    const q = CBT_SAMPLE.speaking.part3[_cbt.speakQ % CBT_SAMPLE.speaking.part3.length];
+    content = `
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#6070a0;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">PART 3 — Two-way Discussion</div>
+        <div style="font-size:13px;color:#6070a0;margin-bottom:16px">Question ${_cbt.speakQ+1} of ${CBT_SAMPLE.speaking.part3.length}</div>
+        <div style="background:#0c1220;border:2px solid #2a3550;border-radius:12px;padding:24px 28px;max-width:480px;margin:0 auto;font-size:15px;color:#e0e8ff;line-height:1.7">${escHtml(q)}</div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        ${_cbt.speakQ > 0 ? '<button onclick="_cbt.speakQ--;renderCBTSpeaking()" style="background:#0c1220;border:1px solid #2a3550;color:#8090c0;padding:8px 16px;border-radius:6px;font-family:\'Space Mono\',monospace;font-size:10px;cursor:pointer">◀ PREV</button>' : ''}
+        ${_cbt.speakQ < CBT_SAMPLE.speaking.part3.length-1 ? '<button onclick="_cbt.speakQ++;renderCBTSpeaking()" style="background:#0c1220;border:1px solid #2a3550;color:#8090c0;padding:8px 16px;border-radius:6px;font-family:\'Space Mono\',monospace;font-size:10px;cursor:pointer">NEXT ▶</button>' : ''}
+      </div>`;
+  }
+
+  body.innerHTML = `
+    <div class="cbt-speak-wrap">
+      ${content}
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+        <button class="cbt-mic-btn ${_cbt.isRecording?'recording':''}" id="cbtMicBtn" onclick="toggleRecording()">🎙</button>
+        <div id="recStatus" style="font-family:'Space Mono',monospace;font-size:10px;color:${_cbt.isRecording?'var(--rose)':'#6070a0'}">${_cbt.isRecording?'● RECORDING — click to stop':'Click to record your answer'}</div>
+        ${_cbt.recordings.length ? `<div style="margin-top:8px;width:100%;max-width:400px"><div style="font-family:'Space Mono',monospace;font-size:9px;color:#6070a0;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Recordings (${_cbt.recordings.length})</div>${_cbt.recordings.map((r,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#0c1220;border-radius:6px;margin-bottom:4px"><span style="font-size:9px;color:#6070a0;font-family:'Space Mono',monospace">Part ${r.part} · ${r.duration}s</span><audio src="${r.url}" controls style="flex:1;height:24px;filter:invert(0.8) hue-rotate(180deg)"></audio><button onclick="deleteRecording(${i})" style="background:none;border:1px solid rgba(240,96,128,0.3);color:var(--rose);padding:2px 6px;border-radius:3px;font-size:9px;cursor:pointer">✕</button></div>`).join('')}</div>` : ''}
+      </div>
+    </div>`;
+}
+
+function startPart2Prep() {
+  let secs = 60;
+  const updateBtn = () => {
+    const body = document.getElementById('cbtBody');
+    const btn = body ? body.querySelector('button[onclick*="startPart2Prep"]') : null;
+    if (btn) btn.textContent = `⏱ ${secs}s remaining...`;
+    const timerEl = document.getElementById('cbtTimer');
+    if (timerEl) timerEl.style.color = secs <= 10 ? 'var(--rose)' : 'var(--gold)';
+  };
+  updateBtn();
+  const interval = setInterval(() => {
+    secs--;
+    updateBtn();
+    if (secs <= 0) {
+      clearInterval(interval);
+      _cbt.part2PrepDone = true;
+      toast('Preparation time over! Begin speaking now.', 'warn');
+      renderCBTSpeaking();
+    }
+  }, 1000);
+}
+
+let _recInterval = null;
+let _recSeconds = 0;
+async function toggleRecording() {
+  if (_cbt.isRecording) {
+    // Stop
+    clearInterval(_recInterval);
+    _cbt.isRecording = false;
+    if (_cbt.mediaRecorder && _cbt.mediaRecorder.state !== 'inactive') {
+      _cbt.mediaRecorder.stop();
+    }
+    renderCBTSpeaking();
+    return;
+  }
+  // Start
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    _cbt.mediaRecorder = new MediaRecorder(stream);
+    const chunks = [];
+    _cbt.mediaRecorder.ondataavailable = e => chunks.push(e.data);
+    _recSeconds = 0;
+    _cbt.mediaRecorder.onstop = () => {
+      const blob = new Blob(chunks, {type:'audio/webm'});
+      const url = URL.createObjectURL(blob);
+      _cbt.recordings.push({blob, url, duration: _recSeconds, part: _cbt.speakPart});
+      stream.getTracks().forEach(t=>t.stop());
+      _cbt.isRecording = false;
+      renderCBTSpeaking();
+      toast('Recording saved! Play it back below.');
+    };
+    _cbt.mediaRecorder.start();
+    _cbt.isRecording = true;
+    _recInterval = setInterval(() => { _recSeconds++; }, 1000);
+    renderCBTSpeaking();
+    toast('Recording started...');
+  } catch(e) {
+    toast('Microphone access denied. Check browser permissions.', 'err');
+  }
+}
+
+function deleteRecording(i) {
+  if (_cbt.recordings[i]) URL.revokeObjectURL(_cbt.recordings[i].url);
+  _cbt.recordings.splice(i,1);
+  renderCBTSpeaking();
+}
+
+// ── CBT SUBMIT ────────────────────────────────────────────────
+function submitCBT() {
+  clearInterval(_cbt.timerInterval);
+  clearInterval(_listenSimInterval);
+  if (window._inMockTest && window._mockModuleSubmitHandler) {
+    const handler = window._mockModuleSubmitHandler;
+    window._mockModuleSubmitHandler = null;
+    exitCBT();
+    handler();
+    return;
+  }
+  if (_cbt.module === 'reading' || _cbt.module === 'listening') {
+    const answered = Object.values(_cbt.answers).filter(v=>v!=='').length;
+    const total = _cbt.questions.length;
+    const correct = _cbt.questions.filter((q,i)=>{
+      const ans = _cbt.answers[i]||'';
+      if (!q.answer) return false;
+      return ans.trim().toUpperCase() === q.answer.trim().toUpperCase();
+    }).length;
+    const pct = Math.round((correct/total)*100);
+    if (!S.cbtStats) S.cbtStats = {};
+    const moduleKey = _cbt.module;
+    S.cbtStats[moduleKey] = pct;
+    // Track by type
+    _cbt.questions.forEach((q,i)=>{
+      const ans = _cbt.answers[i]||'';
+      const isCorrect = ans.trim().toUpperCase() === (q.answer||'').trim().toUpperCase();
+      const typeKey = q.type==='tf'?'tfng':q.type==='mc'?'mc':'complete';
+      if (!S.cbtStats[typeKey+'_total']) S.cbtStats[typeKey+'_total'] = 0;
+      if (!S.cbtStats[typeKey+'_correct']) S.cbtStats[typeKey+'_correct'] = 0;
+      S.cbtStats[typeKey+'_total']++;
+      if (isCorrect) S.cbtStats[typeKey+'_correct']++;
+      S.cbtStats[typeKey] = Math.round((S.cbtStats[typeKey+'_correct']/S.cbtStats[typeKey+'_total'])*100);
+    });
+    saveStore();
+    exitCBT();
+    showCBTResults(correct, total, pct, _cbt.module);
+  } else if (_cbt.module === 'writing') {
+    const ta = document.getElementById('cbtWriteTA');
+    if (ta) {
+      if (_cbt.activeTask === 1) _cbt.writing1 = ta.value;
+      else _cbt.writing2 = ta.value;
+    }
+    exitCBT();
+    showWritingResults();
+  } else if (_cbt.module === 'speaking') {
+    if (_cbt.mediaRecorder && _cbt.mediaRecorder.state !== 'inactive') _cbt.mediaRecorder.stop();
+    exitCBT();
+    showSpeakingResults();
+  }
+}
+
+function createResultOverlay() {
+  const el = document.createElement('div');
+  el.id = 'cbtResultModal';
+  document.body.appendChild(el);
+  return el;
+}
+function showCBTResults(correct, total, pct, module) {
+  const bandEst = pct >= 90 ? 8.5 : pct >= 80 ? 7.5 : pct >= 70 ? 6.5 : pct >= 60 ? 6.0 : pct >= 50 ? 5.5 : 5.0;
+  const wrongQs = _cbt.questions.map((q,i)=>({q,i,ans:_cbt.answers[i]||''})).filter(({q,ans})=>ans.trim().toUpperCase()!==(q.answer||'').trim().toUpperCase());
+  const wrongHtml = wrongQs.slice(0,8).map(({q,i,ans})=>`<div style="padding:8px 10px;background:rgba(240,96,128,0.05);border:1px solid rgba(240,96,128,0.2);border-radius:5px;margin-bottom:6px;font-size:11px"><span style="color:#6070a0;font-family:'Space Mono',monospace;font-size:9px">Q${i+1}</span> <span style="color:#c8d0e8">${escHtml(q.text.slice(0,60))}...</span><br><span style="color:var(--rose)">Your answer: ${escHtml(ans||'(blank)')}</span> → <span style="color:var(--lime)">Correct: ${escHtml(q.answer||'')}</span></div>`).join('');
+
+  const overlay = document.getElementById('overlay') || createResultOverlay();
+  showResultModal(`${module.charAt(0).toUpperCase()+module.slice(1)} Complete`,
+    `<div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:48px;font-weight:700;color:${pct>=70?'var(--lime)':pct>=50?'var(--gold)':'var(--rose)'};font-family:'Fraunces',serif">${pct}%</div>
+      <div style="font-size:14px;color:#c8d0e8;margin:6px 0">${correct} / ${total} correct</div>
+      <div style="font-size:18px;color:var(--gold);font-weight:700">Estimated Band: ${bandEst}</div>
+    </div>
+    ${wrongQs.length ? `<div style="font-family:'Space Mono',monospace;font-size:9px;color:#6070a0;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">INCORRECT ANSWERS</div>${wrongHtml}` : '<div style="color:var(--lime);text-align:center;font-size:13px">🎉 Perfect score!</div>'}`
+  );
+}
+
+function showWritingResults() {
+  const w1 = _cbt.writing1 || '';
+  const w2 = _cbt.writing2 || '';
+  const w1count = w1.trim() ? w1.trim().split(/\s+/).length : 0;
+  const w2count = w2.trim() ? w2.trim().split(/\s+/).length : 0;
+  showResultModal('Writing Complete',
+    `<div style="margin-bottom:16px">
+      <div style="display:flex;gap:10px;margin-bottom:12px">
+        <div style="flex:1;padding:10px;background:rgba(240,192,64,0.08);border:1px solid rgba(240,192,64,0.3);border-radius:6px;text-align:center">
+          <div style="color:var(--gold);font-weight:700;font-size:18px;font-family:'Fraunces',serif">${w1count}</div>
+          <div style="font-size:9px;color:#6070a0;font-family:'Space Mono',monospace">TASK 1 WORDS</div>
+          <div style="font-size:9px;color:${w1count>=150?'var(--lime)':'var(--rose)'};margin-top:3px">${w1count>=150?'✓ Meets minimum':'✗ Under 150'}</div>
+        </div>
+        <div style="flex:1;padding:10px;background:rgba(240,192,64,0.08);border:1px solid rgba(240,192,64,0.3);border-radius:6px;text-align:center">
+          <div style="color:var(--gold);font-weight:700;font-size:18px;font-family:'Fraunces',serif">${w2count}</div>
+          <div style="font-size:9px;color:#6070a0;font-family:'Space Mono',monospace">TASK 2 WORDS</div>
+          <div style="font-size:9px;color:${w2count>=250?'var(--lime)':'var(--rose)'};margin-top:3px">${w2count>=250?'✓ Meets minimum':'✗ Under 250'}</div>
+        </div>
+      </div>
+      <button onclick="copyWritingForClaudeMarking()" style="width:100%;background:var(--gold);border:none;color:#09090e;padding:10px;border-radius:6px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;margin-bottom:6px">📋 Copy Both Tasks → Paste to Claude for Marking</button>
+      <div style="font-size:9px;color:#6070a0;text-align:center">Claude will mark both tasks with band scores and corrections</div>
+    </div>`
+  );
+}
+
+function copyWritingForClaudeMarking() {
+  const gcdPre = S.gcd ? S.gcd.slice(0,2000) + '\n[...]\n\n' : '';
+  let text = gcdPre;
+  text += `IELTS Writing Mock — Student: ${S.name} | Target: ${S.targetBand}\n\n`;
+  const t1prompt = _cbt.customTask1 || CBT_SAMPLE.writing.task1;
+  const t2prompt = _cbt.customTask2 || CBT_SAMPLE.writing.task2;
+  text += `TASK 1:\n${t1prompt}\n\nMY RESPONSE:\n${_cbt.writing1||'(no response)'}\n\n`;
+  text += `TASK 2:\n${t2prompt}\n\nMY RESPONSE:\n${_cbt.writing2||'(no response)'}\n\n`;
+  text += `Please mark both tasks with:\n• Band score for each of the 4 criteria\n• Overall band\n• All errors listed\n• A Band 8 rewrite of each task\n\nEnd with the [SESSION_DATA] block.`;
+  copyText(text);
+  toast('Copied! Paste to Claude for full band marking.');
+  closeResultModal();
+}
+
+function showSpeakingResults() {
+  showResultModal('Speaking Complete',
+    `<div style="text-align:center">
+      <div style="font-size:32px;margin-bottom:12px">🎙</div>
+      <div style="font-size:14px;color:#c8d0e8;margin-bottom:16px">${_cbt.recordings.length} recording(s) made across ${_cbt.recordings.filter((r,i,a)=>a.findIndex(x=>x.part===r.part)===i).length} part(s)</div>
+      ${_cbt.recordings.map((r,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#0c1220;border-radius:6px;margin-bottom:6px"><span style="font-size:9px;color:#6070a0;font-family:'Space Mono',monospace">Part ${r.part} · ${r.duration}s</span><audio src="${r.url}" controls style="flex:1;height:28px"></audio></div>`).join('')}
+      <div style="margin-top:14px;font-size:10px;color:#6070a0;line-height:1.8">Listen back to identify: hesitation | grammar errors | vocabulary range | pronunciation<br>Then use the AI Assistant in your study session for detailed feedback.</div>
+    </div>`
+  );
+}
+
+function showResultModal(title, bodyHtml) {
+  let modal = document.getElementById('cbtResultModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'cbtResultModal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.9);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div style="background:#0d1120;border:1px solid #2a3550;border-radius:12px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.8);">
+      <div style="padding:16px 20px;border-bottom:1px solid #1a2035;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#0d1120;z-index:2;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#e0e8ff">${title}</div>
+        <button onclick="closeResultModal()" style="background:none;border:1px solid #1a2035;color:#6070a0;width:26px;height:26px;border-radius:5px;cursor:pointer;font-size:12px;">✕</button>
+      </div>
+      <div style="padding:20px">${bodyHtml}</div>
+    </div>`;
+  modal.style.display = 'flex';
+}
+
+function closeResultModal() {
+  const modal = document.getElementById('cbtResultModal');
+  if (modal) modal.style.display = 'none';
+}
+
+// ── CUSTOM PASSAGES ───────────────────────────────────────────
+function saveCBTPassage() {
+  const title = document.getElementById('cbtPassageTitle').value.trim();
+  const text = document.getElementById('cbtPassageText').value.trim();
+  const qs = document.getElementById('cbtPassageQs').value.trim();
+  if (!title || !text) { toast('Enter title and passage text.', 'err'); return; }
+  if (!S.cbtPassages) S.cbtPassages = [];
+  S.cbtPassages.push({ title, text, questions: qs, date: new Date().toLocaleDateString() });
+  saveStore();
+  document.getElementById('cbtPassageTitle').value = '';
+  document.getElementById('cbtPassageText').value = '';
+  document.getElementById('cbtPassageQs').value = '';
+  renderSavedPassages();
+  toast('Passage saved! It will be used in the next Reading session.');
+}
+
+function renderSavedPassages() {
+  const el = document.getElementById('savedPassagesList');
+  if (!el) return;
+  const passages = S.cbtPassages || [];
+  if (!passages.length) { el.innerHTML = '<div style="color:var(--t3);font-size:10px;padding:6px 0">No custom passages yet. Add one above, or the built-in passage will be used.</div>'; return; }
+  el.innerHTML = passages.map((p,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--b1)"><div style="flex:1"><div style="font-size:11px;color:var(--t1);font-weight:700">${escHtml(p.title)}</div><div style="font-size:9px;color:var(--t3)">${escHtml(p.text.slice(0,60))}... · Added ${p.date}</div></div><button class="btn btn-sm teal" style="width:auto;padding:3px 8px" onclick="launchPassage(${i})">▶ Use</button><button class="btn btn-sm rose" style="width:auto;padding:3px 8px" onclick="deletePassage(${i})">✕</button></div>`).join('');
+}
+
+function launchPassage(i) {
+  const p = S.cbtPassages[i];
+  if (!p) return;
+  _cbt.module = 'reading';
+  _cbt.answers = {}; _cbt.flags = {}; _cbt.currentQ = 0;
+  document.getElementById('cbtOverlay').style.display = 'flex';
+  document.getElementById('cbtOverlay').style.flexDirection = 'column';
+  document.getElementById('cbtSubmitBtn').style.display = 'block';
+  document.getElementById('cbtModuleLabel').textContent = 'IELTS Reading — ' + p.title;
+  _cbt.questions = parseCustomQuestions(p.questions);
+  _cbt.passage = p.text;
+  _cbt.passageTitle = p.title;
+  document.getElementById('cbtSectionLabel').textContent = p.title;
+  renderCBTReading();
+  renderQBubbles(_cbt.questions.length);
+  startCBTTimer(3600, ()=>submitCBT());
+}
+
+function deletePassage(i) {
+  if (!confirm('Delete this passage?')) return;
+  S.cbtPassages.splice(i,1);
+  saveStore();
+  renderSavedPassages();
+}
+
+function parseCustomQuestions(raw) {
+  if (!raw) return [{type:'complete',text:'What is the main topic of this passage?',answer:''}];
+  return raw.split('\n').filter(l=>l.trim()).map(line=>{
+    if (line.startsWith('TF:')) return {type:'tf',text:line.slice(3).trim(),answer:''};
+    if (line.startsWith('MC:')) {
+      const parts = line.slice(3).split('|');
+      return {type:'mc',text:(parts[0]||'').trim(),options:(parts.slice(1).map(p=>p.trim())),answer:''};
+    }
+    if (line.startsWith('MATCH:')) return {type:'match',text:line.slice(6).trim(),answer:''};
+    if (line.startsWith('COMPLETE:')) return {type:'complete',text:line.slice(9).trim(),answer:''};
+    return {type:'complete',text:line.trim(),answer:''};
+  });
+}
+
+// ── MOCK TEST ─────────────────────────────────────────────────
+function startMockTest() {
+  const modules = [];
+  if (document.getElementById('mockIncListening').checked) modules.push('listening');
+  if (document.getElementById('mockIncReading').checked) modules.push('reading');
+  if (document.getElementById('mockIncWriting').checked) modules.push('writing');
+  if (document.getElementById('mockIncSpeaking').checked) modules.push('speaking');
+  if (!modules.length) { toast('Select at least one module.', 'err'); return; }
+  _cbt.mockModules = modules;
+  _cbt.mockIndex = 0;
+  startNextMockModule();
+}
+
+function startNextMockModule() {
+  if (_cbt.mockIndex >= _cbt.mockModules.length) {
+    finishMockTest();
+    return;
+  }
+  const module = _cbt.mockModules[_cbt.mockIndex];
+  const names = {listening:'Listening',reading:'Reading',writing:'Writing',speaking:'Speaking'};
+  const durations = {listening:'30 min',reading:'60 min',writing:'60 min',speaking:'~14 min'};
+  // Show transition screen
+  const mockO = document.getElementById('mockOverlay');
+  mockO.style.display = 'flex';
+  document.getElementById('mockStatusIcon').textContent = {listening:'🎧',reading:'📖',writing:'✍',speaking:'🎙'}[module];
+  document.getElementById('mockStatusTitle').textContent = `Module ${_cbt.mockIndex+1}/${_cbt.mockModules.length}: ${names[module]}`;
+  document.getElementById('mockStatusDesc').textContent = `Duration: ${durations[module]}\n\nYou are about to begin the ${names[module]} module.\nOnce you start, you cannot go back to a previous module.\n\nWhen ready, click Begin.`;
+  document.getElementById('mockActionBtns').innerHTML = `<button onclick="document.getElementById('mockOverlay').style.display='none';launchCBT('${module}');addMockModuleEndListener('${module}')" style="background:var(--gold);border:none;color:#09090e;padding:10px 24px;border-radius:6px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer">▶ BEGIN ${names[module].toUpperCase()}</button>`;
+}
+
+function addMockModuleEndListener(module) {
+  // Override exit to advance to next module
+  const origSubmit = window._origSubmitCBT || submitCBT;
+  const origExit = window.exitCBT;
+  window._inMockTest = true;
+  window._mockModuleSubmitHandler = function() {
+    _cbt.mockIndex++;
+    startNextMockModule();
+  };
+}
+
+function finishMockTest() {
+  window._inMockTest = false;
+  if (!S.mockTests) S.mockTests = [];
+  S.mockTests.push({
+    date: new Date().toLocaleDateString(),
+    modules: _cbt.mockModules.join('+'),
+    band: null
+  });
+  saveStore();
+  const mockO = document.getElementById('mockOverlay');
+  mockO.style.display = 'flex';
+  document.getElementById('mockStatusIcon').textContent = '🏆';
+  document.getElementById('mockStatusTitle').textContent = 'Mock Test Complete!';
+  document.getElementById('mockStatusDesc').textContent = 'You have completed all selected modules.\nYour results have been saved.\nCheck the Analytics tab for your performance breakdown.';
+  document.getElementById('mockActionBtns').innerHTML = `<button onclick="document.getElementById('mockOverlay').style.display='none';switchTab('analytics');buildAnalytics()" style="background:var(--gold);border:none;color:#09090e;padding:10px 24px;border-radius:6px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer">📊 View Results</button><button onclick="document.getElementById('mockOverlay').style.display='none'" style="background:#0c1220;border:1px solid #2a3550;color:#8090c0;padding:10px 24px;border-radius:6px;font-family:'Space Mono',monospace;font-size:12px;cursor:pointer">Close</button>`;
+  toast('Mock test complete! Check Analytics tab.');
+}
 
 // ═══════════════════════════════════════════════════════════════
 // INIT
@@ -4073,6 +5733,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   buildAITeam();
   updateUI();
   renderVocabTable();
+  renderSavedPassages();
+  if (!S.cbtStats) S.cbtStats = {};
+  if (!S.mockTests) S.mockTests = [];
+  if (!S.cbtPassages) S.cbtPassages = [];
 });
 </script>
 </body>
