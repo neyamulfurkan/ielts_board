@@ -1610,6 +1610,8 @@ const defaultStore = {
   media: {},            // { "14": "title | platform | url" }
   voiceScript: '',
   sessionNotes: {},     // { "14": "Good session..." }
+  nextDayFocus: {},     // { "14": "Zero article + Task 2 intro paragraph" } — Claude's own plan, fed into next day's prompt
+  topicsCovered: {},    // { "14": "Articles — a, an, the, zero article" } — what Claude actually taught (vs planned TOPICS[d])
   writingBands: {},     // { "14": 6.0 }
   speakingBands: {},    // { "14": 6.5 }
   gcd: '',
@@ -2006,12 +2008,69 @@ function buildFocus(d, topic, ph, rev) {
   return `Phase ${ph}: ${phNames[ph]} — Day ${d} / Week ${getWeek(d)}\n\nFocus: ${topic}\n\nClaude will guide the full 3–4 hour session. It will teach, demonstrate, make you practice, assess your writing and speaking, recommend resources, and give you a precise [SESSION_DATA] block to paste back here.`;
 }
 
+// Extracts the day number from an error entry like "Day 14: missing the before River Thames"
+function dayOfErrorEntry(entry) {
+  const m = entry.match(/^Day (\d+):/);
+  return m ? parseInt(m[1]) : null;
+}
+
+// Returns { grammar, vocab, writing } error arrays filtered to entries logged on days within [startDay, endDay]
+function getErrorsInRange(startDay, endDay) {
+  const inRange = e => { const n = dayOfErrorEntry(e); return n !== null && n >= startDay && n <= endDay; };
+  return {
+    grammar: S.errors.grammar.filter(inRange),
+    vocab: S.errors.vocab.filter(inRange),
+    writing: S.errors.writing.filter(inRange)
+  };
+}
+
+// For normal days: pulls yesterday's session_note + the next_day_focus Claude itself set yesterday,
+// plus yesterday's specific mistakes (all 3 categories), so Claude has real continuity instead of starting cold.
+function buildContinuityBlock(d) {
+  const y = d - 1;
+  if (y < 1) return '';
+  const note = S.sessionNotes[y] ? `Yesterday's Session Summary: ${S.sessionNotes[y]}\n` : '';
+  const plan = S.nextDayFocus[y] ? `Claude's Plan For Today (set yesterday): ${S.nextDayFocus[y]}\n` : '';
+  const yErrs = getErrorsInRange(y, y);
+  const yErrList = [...yErrs.grammar, ...yErrs.vocab, ...yErrs.writing];
+  const errs = yErrList.length ? `Yesterday's Mistakes (fix these first):\n${yErrList.join('\n')}\n` : '';
+  if (!note && !plan && !errs) return '';
+  return `\n━━━ CONTINUITY FROM DAY ${y} (session data) ━━━\n${note}${plan}${errs}`;
+}
+
+// For review days: gathers ALL mistakes (grammar+vocab+writing) made during the past 6 days,
+// plus the topics actually covered and the session notes/scores for each of those days,
+// so the review day has the full week's real data instead of generic instructions.
+function buildWeeklyReviewBlock(d) {
+  const start = Math.max(1, d - 6), end = d - 1;
+  const errs = getErrorsInRange(start, end);
+  const allErrs = [...errs.grammar, ...errs.vocab, ...errs.writing];
+  const errsText = allErrs.length ? allErrs.join('\n') : 'No mistakes logged this week — verify with fresh testing.';
+
+  const dayLines = [];
+  for (let dd = start; dd <= end; dd++) {
+    const t = S.topicsCovered[dd] || TOPICS[dd] || '(no topic recorded)';
+    const sc = S.dayScores[dd] !== undefined ? S.dayScores[dd] + '%' : 'not recorded';
+    const note = S.sessionNotes[dd] ? ` — ${S.sessionNotes[dd]}` : '';
+    dayLines.push(`Day ${dd}: ${t} (Score: ${sc})${note}`);
+  }
+
+  return `
+━━━ FULL WEEK DATA — DAYS ${start}–${end} (from session tracker, use this to drive the review) ━━━
+
+DAY-BY-DAY SUMMARY:
+${dayLines.join('\n')}
+
+ALL MISTAKES MADE THIS WEEK (every category — drill these specifically, do not invent generic ones):
+${errsText}
+`;
+}
+
 function buildPrompt(d, topic, ph, rev) {
-  const errors = S.errors.grammar.slice(-8).join('\n');
-  const errBlock = errors ? `\nMY RECENT ERRORS (address these):\n${errors}\n` : '';
   const prevScore = S.dayScores[d-1] ? `Previous Day Score: ${S.dayScores[d-1]}%` : '';
   const nextTopic = TOPICS[d+1] || 'next topic';
   const phNames = ['','Foundation','IELTS Mechanics','Intensive Practice','Mastery & Refinement'];
+  const errBlock = rev ? buildWeeklyReviewBlock(d) : buildContinuityBlock(d);
 
   const schemaBlock = `
 ═══ MANDATORY SESSION DATA BLOCK (copy exactly at end of your response) ═══
@@ -2051,6 +2110,7 @@ ${prevScore}
 ════════════════════════════════════════════════════════
 ${errBlock}
 TODAY IS REVIEW DAY covering Days ${d-6}–${d-1}.
+Use the FULL WEEK DATA above as your source of truth — base every re-test sentence, quiz question, and drill directly on the actual mistakes and topics listed there. Do not invent generic content if real data is present above.
 
 REVIEW SESSION STRUCTURE:
 1. RE-TEST GRAMMAR: Take every grammar rule from this week. Write 10 new sentences for me to correct. Do not repeat examples I have already seen.
@@ -2074,7 +2134,7 @@ ${prevScore}
 ════════════════════════════════════════════════════════
 ${errBlock}
 Today's Topic: ${topic}
-
+${errBlock ? 'Before teaching the new topic, briefly address the continuity data above (yesterday\'s mistakes and plan) in 2-3 sentences so the student sees direct progress, then move into Step 1.\n' : ''}
 You are my dedicated IELTS teacher. I am an analytical engineering student — give me rules and systems. Be thorough. Be strict. I want ${S.targetBand}+.
 
 FOLLOW THIS SESSION STRUCTURE EXACTLY:
@@ -2584,6 +2644,8 @@ function parseResponse() {
     if (data.media_today) S.media[day] = data.media_today;
     if (data.voice_script && data.voice_script !== 'none') S.voiceScript = data.voice_script;
     if (data.session_note) S.sessionNotes[day] = data.session_note;
+    if (data.next_day_focus && data.next_day_focus !== 'none') S.nextDayFocus[day] = data.next_day_focus;
+    if (data.topic_covered) S.topicsCovered[day] = data.topic_covered;
 
     if (!S.parsedDays.includes(day)) S.parsedDays.push(day);
   }
@@ -3805,6 +3867,8 @@ function parseFromReadMode() {
     if (data.media_today) S.media[day] = data.media_today;
     if (data.voice_script && data.voice_script !== 'none') S.voiceScript = data.voice_script;
     if (data.session_note) S.sessionNotes[day] = data.session_note;
+    if (data.next_day_focus && data.next_day_focus !== 'none') S.nextDayFocus[day] = data.next_day_focus;
+    if (data.topic_covered) S.topicsCovered[day] = data.topic_covered;
     if (!S.parsedDays.includes(day)) S.parsedDays.push(day);
   }
 
