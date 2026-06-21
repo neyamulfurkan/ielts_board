@@ -835,7 +835,8 @@ Click 'Copy GCD Generator Prompt' in the sidebar to start."></textarea>
           <div class="field-row"><span class="schema-key">speaking_band</span><span class="schema-req">REQUIRED</span><span class="schema-type">decimal or na</span><span class="schema-ex">Example: <code>speaking_band: 6.0</code></span></div>
           <div class="field-row"><span class="schema-key">next_day_focus</span><span class="schema-req">REQUIRED</span><span class="schema-type">text, specific plan</span><span class="schema-ex">Example: <code>next_day_focus: Zero article rule + Task 2 paragraph structure using PEEL</code></span></div>
           <div class="field-row"><span class="schema-key">media_today</span><span class="schema-req">REQUIRED</span><span class="schema-type">title | platform | url_or_search</span><span class="schema-ex">Example: <code>media_today: 6 Minute English - Memory | BBC Sounds | bbc.co.uk/sounds</code></span></div>
-          <div class="field-row"><span class="schema-key">notebooklm_task</span><span class="schema-req">REQUIRED</span><span class="schema-type">instruction or none</span><span class="schema-ex">Example: <code>notebooklm_task: Upload Cambridge IELTS 13 Test 1. Ask: Explain True/False/Not Given with 5 examples</code></span></div>
+          <div class="field-row"><span class="schema-key">notebooklm_task</span><span class="schema-req">REQUIRED</span><span class="schema-type">instruction or none</span><span class="schema-ex">Must name the specific Studio feature (Mind Map, Flashcards, Quiz, Audio Overview, Reports, Data Table, Infographic, Slide Deck, or Video Overview) — see GCD Section 11 routing table. Example: <code>notebooklm_task: FLASHCARDS — Upload English Grammar in Use Ch 70-75. Generate 20 cards on article rules (a/an/the/zero), IELTS academic examples only. Bring back any card missed twice.</code></span></div>
+          <div class="field-row" style="opacity:0.85"><span class="schema-key" style="visibility:hidden">spacer</span><span class="schema-type" style="visibility:hidden">spacer</span><span class="schema-ex">A second feature may be added after a semicolon if the topic warrants it, e.g. <code>...; MIND MAP — same source, centre node "Article Rules", branches a/an/the/zero, sub-branches for exceptions.</code></span></div>
           <div class="field-row"><span class="schema-key">voice_script</span><span class="schema-req">REQUIRED</span><span class="schema-type">exact script text or none</span><span class="schema-ex">Example: <code>voice_script: Be my IELTS speaking examiner. Start with Part 1. Ask about my studies and hometown. Give band feedback after 5 questions.</code></span></div>
           <div class="field-row"><span class="schema-key">session_note</span><span class="schema-req">REQUIRED</span><span class="schema-type">1 sentence summary</span><span class="schema-ex">Example: <code>session_note: Strong on zero article but needs work on uncountable nouns. Writing score improved.</code></span></div>
         </div>
@@ -861,7 +862,7 @@ speaking_done: yes<br>
 speaking_band: 6.5<br>
 next_day_focus: Zero article with plural countable and uncountable nouns — 20 drill sentences + Task 2 intro paragraph formula<br>
 media_today: 6 Minute English — Losing Sleep | BBC Sounds | bbc.co.uk/sounds/play/p0gygmnd<br>
-notebooklm_task: Upload English Grammar in Use Chapter 70–75. Ask: Give me 10 fill-in-the-blank article exercises with answers and explanations<br>
+notebooklm_task: FLASHCARDS — Upload English Grammar in Use Chapter 70-75. Generate 20 cards on a/an/the/zero article rules, IELTS academic examples only. Bring back any card missed twice; MIND MAP — same source, centre node "Article System", branches for a/an, the, zero, exceptions<br>
 voice_script: Act as an IELTS speaking examiner. Begin Part 1. Ask me 5 questions about my daily routine and studies. After my answers give me band score feedback on fluency, vocabulary, grammar, and pronunciation.<br>
 session_note: Good session — article rules understood conceptually but uncountable noun errors still appearing in spontaneous writing. Prioritise drills.<br>
 [/SESSION_DATA]
@@ -916,7 +917,7 @@ speaking_done: yes
 speaking_band: 6.5
 next_day_focus: Zero article rules + Task 2 intro paragraph
 media_today: 6 Minute English - Memory | BBC Sounds | bbc.co.uk/sounds
-notebooklm_task: Upload Grammar in Use Ch 70-75. Ask for 10 fill-in-blank exercises
+notebooklm_task: FLASHCARDS — Upload Grammar in Use Ch 70-75. Generate 15 cards on article rules
 voice_script: Act as IELTS examiner. Ask 5 Part 1 questions. Give band feedback.
 session_note: Good understanding of articles but uncountable noun errors persist.
 [/SESSION_DATA]"></textarea>
@@ -2247,7 +2248,7 @@ speaking_done: [yes or no]
 speaking_band: [band score if done, e.g. 6.0 | or: na]
 next_day_focus: [specific, actionable plan for Day ${d+1}: ${nextTopic}]
 media_today: [title | platform | url or search term]
-notebooklm_task: [exact instruction for NotebookLM | or: none]
+notebooklm_task: [MUST name the specific Studio feature(s) per GCD Section 11 routing table, e.g. "FLASHCARDS — Upload X. Generate N cards on Y" or "MIND MAP — Upload X. Centre node Y, branches Z" — or: none]
 voice_script: [exact script for student to paste when switching to Claude Voice Mode | or: none]
 session_note: [1 sentence honest summary of today's performance and main weakness]
 [/SESSION_DATA]`;
@@ -2374,11 +2375,15 @@ After I submit my response:
 Tell me exactly when to switch to Claude Voice Mode.
 Give me the exact script to start the speaking session (what to paste to start voice mode).
 
-━━━ STEP 6: AI ROUTING ━━━
-If today's topic benefits from NotebookLM, give me the EXACT instruction:
-• Which book/document to have uploaded
-• Exactly what to paste or ask
-• What to bring back to this conversation
+━━━ STEP 6: AI ROUTING — NOTEBOOKLM (use the Section 11 routing table, not a generic default) ━━━
+NotebookLM has 9 Studio features: Audio Overview, Video Overview, Slide Deck, Mind Map, Reports, Flashcards, Quiz, Infographic, Data Table. I have access to all of them. Do NOT default to "ask it a question" every day — match today's topic type ("${topic}") to a row in the GCD's Section 11 routing table and instruct accordingly.
+
+Give me, explicitly:
+• Which feature(s) to use today (name the exact Studio button, e.g. "Mind Map" or "Flashcards") — one or two, whichever the topic type calls for
+• Which book/document/PDF to have uploaded as the source for it
+• Exactly what to type or configure when generating that feature (e.g. for Flashcards: how many cards, what scope; for Quiz: how many questions, what question types; for Mind Map: what central topic to centre it on)
+• What exactly to bring back to this conversation (a list of cards I got wrong, a quiz score, the mind map's main branches, etc.) so the next session can use it
+If two features are warranted, give both, in the order I should do them.
 
 ━━━ STEP 7: MEDIA RECOMMENDATION ━━━
 Recommend 1 specific piece of English media (YouTube video, BBC podcast episode, TED talk) that connects to today's topic.
@@ -2616,7 +2621,7 @@ MANDATORY FIELDS (all 18 must appear every session):
 14. speaking_band — decimal if done | na if not done
 15. next_day_focus — specific, actionable plan for next day
 16. media_today — title | platform | url or search term (all 3 parts required)
-17. notebooklm_task — exact instruction | or: none
+17. notebooklm_task — must name the specific Studio feature(s) per Section 11 routing table (e.g. "FLASHCARDS — ...", "MIND MAP — ...") | or: none
 18. voice_script — exact script for Voice Mode | or: none
 19. session_note — 1 sentence honest summary of day
 
@@ -2648,7 +2653,7 @@ speaking_done: yes
 speaking_band: 6.5
 next_day_focus: Zero article with plural countable and uncountable nouns — 20 drills + Task 2 intro paragraph formula
 media_today: 6 Minute English — Losing Sleep | BBC Sounds | bbc.co.uk/sounds/play/p0gygmnd
-notebooklm_task: Upload English Grammar in Use Chapter 70-75. Ask: Give me 10 article fill-in-the-blank exercises with full explanations
+notebooklm_task: FLASHCARDS — Upload English Grammar in Use Chapter 70-75. Generate 20 cards covering a/an/the/zero article rules, IELTS academic examples only. Bring back any card missed twice; MIND MAP — same source, centre node "Article System", branches for a/an, the, zero article, and the 5 most common Bengali-speaker exceptions
 voice_script: Be my IELTS speaking examiner. Start Part 1. Ask me 5 questions about my daily routine and university studies. After each answer, note my errors. At the end give me band scores for fluency, vocabulary, grammar, and pronunciation.
 session_note: Article rules understood conceptually but uncountable noun errors still appearing under pressure — prioritise drills next session.
 [/SESSION_DATA]
@@ -2658,11 +2663,59 @@ SECTION 11: AI ROUTING RULES
 ═══════════════════════════════════════════════════════════════
 Claude must follow these routing rules every session:
 
-NOTEBOOKLM — use when:
-— Student needs to study from an uploaded book (Cambridge IELTS, Grammar in Use)
-— Student needs quiz generation from a specific text
-— Student needs explanation of a concept from an official source
-Free books to upload: English Grammar in Use (Raymond Murphy PDF) | Cambridge IELTS 13-18 (search for free PDFs) | IELTS Official Guide (Pauline Cullen)
+NOTEBOOKLM — FULL FEATURE ROUTING SYSTEM
+══════════════════════════════════════════
+NotebookLM Studio has 9 output types: Audio Overview, Video Overview, Slide Deck, Mind Map,
+Reports, Flashcards, Quiz, Infographic, Data Table. The student has access to all of them.
+Claude must NOT default to one generic "ask it a question" pattern every day. Instead, Claude
+selects the 1–2 features that best match TODAY'S TOPIC TYPE, using the table below, and must
+explicitly name which feature(s) to use and why — never leave the student to guess which
+button to click.
+
+This is mandatory in Step 6 of every daily session (see prompt template) and must also be
+reflected in the notebooklm_task field of SESSION_DATA — which must now name the specific
+feature, not just say "ask it questions."
+
+ROUTING TABLE — match topic type to NotebookLM feature:
+
+| Topic type (from syllabus) | Primary feature | Secondary feature | Why |
+|---|---|---|---|
+| New grammar rule (articles, tenses, conditionals, passives, relative clauses) | Mind Map | Flashcards | Mind Map shows the branching rule structure (e.g. all article sub-rules in one diagram); Flashcards drill the sub-rules into memory afterward |
+| Vocabulary day (AWL sublists, topic vocabulary, collocations) | Flashcards | Quiz | Flashcards are built for spaced recall of word/definition/collocation; Quiz tests active retrieval afterward |
+| Reading strategy day (TFNG, matching headings, skimming/scanning) | Quiz | Data Table | Quiz on an uploaded Cambridge passage mimics real exam question types; Data Table logs accuracy per question type across sessions so weak types are visible over time |
+| Listening strategy day | Audio Overview | — | Turns the day's grammar/strategy material into spoken audio — doubles as extra listening exposure to natural English while reinforcing the rule |
+| Writing Task 1 technique day (graphs, charts, processes, maps) | Mind Map | Reports | Mind Map for the structural template (overview → body 1 → body 2); Reports to synthesize what separates Band 6 from Band 8 model answers |
+| Writing Task 2 technique day (templates, PEEL, essay types) | Reports | Mind Map | Reports give a structured breakdown comparing Band 6/7/8 sample essays; Mind Map for the paragraph-by-paragraph template |
+| Speaking technique day (Part 1/2/3, pronunciation, fluency) | Audio Overview | — | Converts pronunciation/IELTS speaking chapters into audio — passive listening reinforcement before active speaking practice |
+| Weekly review day (Day 7, 14, 21, 28...) | Quiz | Flashcards | Comprehensive recall test across the week's material, paired with flashcards for anything scoring low |
+| Phase-end / milestone day (Day 90, 180, 300, 365) | Infographic | Data Table | Infographic gives a one-page visual summary of the phase's progress and key rules; Data Table tracks band score trend across all milestone tests to date |
+| Error-elimination / persistent mistake day (Phase 3 onward) | Flashcards | Quiz | Build flashcards from the student's OWN error log (not generic content) for targeted drilling, then quiz to confirm retention |
+| Day 100/200/250/330 big-picture progress day | Slide Deck | Data Table | Slide Deck for a presentable visual journey summary; Data Table for the underlying numbers |
+| Vocabulary-heavy consolidation (Day 131, 174, 296 — full AWL review) | Video Overview | Flashcards | Video Overview for a richer multi-sense review of 500+ words; Flashcards for the final drilling pass |
+
+RULES FOR USING THIS TABLE:
+1. Claude looks up today's topic type, picks the matching row, and tells the student exactly
+   which feature(s) to click in the Studio panel (right-hand column in the NotebookLM UI).
+2. Claude always specifies: (a) which book/PDF must be uploaded as the source, (b) which
+   feature button to click, (c) what to type/configure when generating it (e.g. for Flashcards:
+   "generate 20 cards covering articles a/an/the/zero, IELTS academic examples only"), and
+   (d) what exactly to bring back to the Claude conversation (a list, a screenshot summary,
+   scores from the quiz, etc).
+3. Default fallback (only if no row clearly matches): Reports — ask NotebookLM to summarise
+   the relevant chapter with IELTS-specific examples.
+4. Do not recommend a feature the student cannot meaningfully act on. If Claude recommends
+   Quiz or Flashcards, it must also tell the student what score/threshold to bring back to
+   Claude for follow-up (e.g. "bring back any card you got wrong twice").
+5. Claude is not bound by exactly 1 feature — if a day genuinely benefits from two (e.g. Mind
+   Map for the rule, then Flashcards to drill it), instruct both, in sequence, with time guidance
+   left flexible to the student rather than capped.
+6. Free books/sources to upload, by category:
+   — Grammar topics → English Grammar in Use (Raymond Murphy PDF), chapter matched to today's rule
+   — Reading/Listening strategy or practice → Cambridge IELTS 13–18 (relevant test/passage)
+   — Writing technique/models → IELTS Official Guide (Pauline Cullen) or Academic Writing for
+     IELTS (Sam McCarter) for Band 8+ model essays
+   — Vocabulary → IELTS Academic Word List (Pauline Cullen) or the student's own error log
+     pasted in as a custom source for personalised Flashcards/Quiz
 
 VOICE MODE — use when:
 — Speaking practice is scheduled
@@ -2689,7 +2742,7 @@ resource_3: IELTS.org | ielts.org/preparation | Official sample questions | Use 
 resource_4: IELTS Liz | ieltsliz.com | Video lessons all modules | Phase 1-2 reference
 resource_5: IELTS Simon | ielts-simon.com | Writing focused daily lessons | Task 1 & 2 templates
 resource_6: E2 IELTS YouTube | youtube.com/@E2IELTS | Full mock tests, band 9 models | Phase 3-4
-resource_7: NotebookLM | notebooklm.google.com | AI study from uploaded books | Daily
+resource_7: NotebookLM | notebooklm.google.com | AI study from uploaded books — Audio/Video Overview, Mind Map, Reports, Flashcards, Quiz, Infographic, Slide Deck, Data Table | Daily, feature varies by topic (see Section 11 routing table)
 resource_8: TED Talks | ted.com/talks | Academic English listening | 3x per week
 resource_9: BBC Sounds Podcasts | bbc.co.uk/sounds | 6 Minute English, In Our Time | Daily listening
 resource_10: Quizlet IELTS AWL | quizlet.com/subject/ielts-academic-word-list | AWL flashcards | Phase 1-2 daily
@@ -2750,7 +2803,7 @@ speaking_done: no
 speaking_band: na
 next_day_focus: Day 1 — Orientation and Baseline Assessment across all 4 IELTS modules. Start fresh. Be honest about starting level.
 media_today: IELTS Band 9 — Full Test Example | E2 IELTS YouTube | search: E2 IELTS full band 9 test
-notebooklm_task: Upload English Grammar in Use PDF. Explore the article system chapters (70-75). Ask it to explain the zero article rule with 10 examples.
+notebooklm_task: MIND MAP — Upload English Grammar in Use PDF, article chapters (70-75). Centre node "Articles", branches a/an, the, zero article, with sub-branches for IELTS-specific exceptions (geographic names, institutions). Bring back the main branches to discuss on Day 1.
 voice_script: I am starting IELTS preparation. Be my speaking examiner for a diagnostic assessment. Ask me 5 Part 1 questions about myself — studies, hometown, daily routine. Then give me honest band score feedback on fluency, vocabulary, grammar, and pronunciation. Be strict.
 session_note: GCD initialized. Student ready to begin 365-day journey from Band 6.0 to 8.5. Day 1 is a diagnostic session — do not teach, only assess.
 [/SESSION_DATA]
@@ -2922,7 +2975,7 @@ const RESOURCES = [
   {tag:'YOUTUBE',tc:'var(--rose)',name:'IELTS Simon',desc:'Daily lessons. Strong on writing Task 1 & 2 structure.',url:'https://ielts-simon.com'},
   {tag:'YOUTUBE',tc:'var(--rose)',name:'E2 IELTS',desc:'Full mock tests, Band 9 responses, module strategies.',url:'https://www.youtube.com/@E2IELTS'},
   {tag:'GRAMMAR',tc:'var(--violet)',name:'Grammar in Use (Murphy)',desc:'The blue book. Best grammar reference for IELTS. Find free PDF.',url:'https://www.cambridge.org/gb/cambridgeenglish/catalog/grammar-vocabulary-and-pronunciation/english-grammar-use'},
-  {tag:'AI BOOK',tc:'var(--orange)',name:'NotebookLM',desc:'Upload IELTS books. AI quizzes you, explains concepts, generates exercises.',url:'https://notebooklm.google.com'},
+  {tag:'AI BOOK',tc:'var(--orange)',name:'NotebookLM',desc:'Upload IELTS books. Use Mind Map, Flashcards, Quiz, Audio/Video Overview, Reports, Infographic, Slide Deck, or Data Table — Claude tells you which one to use each day.',url:'https://notebooklm.google.com'},
   {tag:'VOCAB',tc:'var(--sky)',name:'Quizlet IELTS AWL',desc:'Free AWL flashcards. Search "IELTS Academic Word List".',url:'https://quizlet.com/subject/ielts-academic-word-list/'},
   {tag:'LISTENING',tc:'var(--lime)',name:'TED Talks',desc:'Academic English at natural speed. Claude recommends specific talks.',url:'https://www.ted.com/talks'},
   {tag:'PODCAST',tc:'var(--lime)',name:'BBC Sounds / 6 Min English',desc:'Free daily English. In Our Time, The Inquiry, 6 Minute English.',url:'https://www.bbc.co.uk/sounds/podcasts'},
@@ -2932,7 +2985,7 @@ const RESOURCES = [
 
 const AI_TEAM = [
   {name:'🤖 Claude',color:'var(--gold)',status:'PRIMARY BRAIN',sc:'gold',role:'Your main teacher every day. Paste the full daily prompt here. Claude teaches, corrects, assesses, and routes you to other tools. Never start with another AI — always start here.'},
-  {name:'📓 NotebookLM',color:'var(--sky)',status:'BOOK STUDY AI',sc:'teal',role:'Upload Cambridge IELTS 13–18, English Grammar in Use, and other PDFs. When Claude says "Go to NotebookLM and ask [exact question]" — do it, bring back the response.'},
+  {name:'📓 NotebookLM',color:'var(--sky)',status:'BOOK STUDY AI',sc:'teal',role:'Upload Cambridge IELTS 13–18, English Grammar in Use, and other PDFs. Claude\'s notebooklm_task tells you which Studio feature to use each day (Mind Map, Flashcards, Quiz, Audio/Video Overview, Reports, Infographic, Slide Deck, or Data Table) and exactly what to generate — follow it, bring back the result.'},
   {name:'💬 ChatGPT',color:'var(--violet)',status:'VARIETY PRACTICE',sc:'violet',role:'Used only when Claude instructs you. Good for alternative writing feedback or second opinion. Claude provides the exact prompt to paste.'},
   {name:'🎙 Voice Mode',color:'var(--orange)',status:'SPEAKING SIM',sc:'orange',role:'Switch to Claude Voice Mode when Claude says "switch to voice mode — paste this script". Use the Voice Script button in sidebar to copy the latest script from your parsed session.'},
   {name:'🔍 Gemini',color:'var(--lime)',status:'SEARCH & VERIFY',sc:'lime',role:'Used when Claude instructs you to find a specific resource, verify facts, or search for a YouTube video. Claude gives the exact search term.'},
