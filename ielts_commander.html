@@ -2683,10 +2683,12 @@ ROUTING TABLE — match topic type to NotebookLM feature:
 | New grammar rule (articles, tenses, conditionals, passives, relative clauses) | Mind Map | Flashcards | Mind Map shows the branching rule structure (e.g. all article sub-rules in one diagram); Flashcards drill the sub-rules into memory afterward |
 | Vocabulary day (AWL sublists, topic vocabulary, collocations) | Flashcards | Quiz | Flashcards are built for spaced recall of word/definition/collocation; Quiz tests active retrieval afterward |
 | Reading strategy day (TFNG, matching headings, skimming/scanning) | Quiz | Data Table | Quiz on an uploaded Cambridge passage mimics real exam question types; Data Table logs accuracy per question type across sessions so weak types are visible over time |
-| Listening strategy day | Audio Overview | — | Turns the day's grammar/strategy material into spoken audio — doubles as extra listening exposure to natural English while reinforcing the rule |
+| Listening strategy day (Section 1/2 — dialogue, monologue) | Audio Overview (Deep Dive, listen only) | — | Turns the day's grammar/strategy material into a two-host spoken discussion — extra listening exposure to natural English pacing and vocabulary while reinforcing the rule |
+| Listening Section 3/4 day (academic discussion/lecture) | Audio Overview (Deep Dive, listen only, on a Cambridge IELTS passage) | Quiz | A Deep Dive on an academic source IS structurally similar to a real Section 3/4 recording (2+ speakers discussing an academic topic) — better ear training than grammar-book audio; Quiz to test comprehension afterward |
 | Writing Task 1 technique day (graphs, charts, processes, maps) | Mind Map | Reports | Mind Map for the structural template (overview → body 1 → body 2); Reports to synthesize what separates Band 6 from Band 8 model answers |
 | Writing Task 2 technique day (templates, PEEL, essay types) | Reports | Mind Map | Reports give a structured breakdown comparing Band 6/7/8 sample essays; Mind Map for the paragraph-by-paragraph template |
-| Speaking technique day (Part 1/2/3, pronunciation, fluency) | Audio Overview | — | Converts pronunciation/IELTS speaking chapters into audio — passive listening reinforcement before active speaking practice |
+| Speaking Part 3 day / fluency & spontaneity day | Audio Overview — INTERACTIVE MODE (join + speak) | — | This is the single best NotebookLM feature for IELTS Speaking. Generate a Deep Dive on the day's topic, then tap the waving-hand "Join" button and speak to the AI hosts live. This forces real spontaneous spoken response on an abstract topic under time pressure — much closer to actual Part 3 conditions than scripted Voice Mode Q&A, because the hosts steer the conversation and the student must react in real time, not recite a prepared answer |
+| Speaking Part 1/2 technique day, pronunciation drilling | Audio Overview (Deep Dive, listen only) | — | Converts pronunciation/IELTS speaking chapters into audio — passive listening reinforcement before active Voice Mode speaking practice |
 | Weekly review day (Day 7, 14, 21, 28...) | Quiz | Flashcards | Comprehensive recall test across the week's material, paired with flashcards for anything scoring low |
 | Phase-end / milestone day (Day 90, 180, 300, 365) | Infographic | Data Table | Infographic gives a one-page visual summary of the phase's progress and key rules; Data Table tracks band score trend across all milestone tests to date |
 | Error-elimination / persistent mistake day (Phase 3 onward) | Flashcards | Quiz | Build flashcards from the student's OWN error log (not generic content) for targeted drilling, then quiz to confirm retention |
@@ -2716,6 +2718,36 @@ RULES FOR USING THIS TABLE:
      IELTS (Sam McCarter) for Band 8+ model essays
    — Vocabulary → IELTS Academic Word List (Pauline Cullen) or the student's own error log
      pasted in as a custom source for personalised Flashcards/Quiz
+7. INTERACTIVE AUDIO OVERVIEW — special handling (this is the single highest-value feature
+   for Speaking practice, use it deliberately, not as an afterthought):
+   — Setup must happen BEFORE generating, not after. Audio Overviews cannot be edited once
+     generated — only deleted and regenerated. So when instructing this feature, Claude must
+     give the exact custom-prompt text to type into the "Customize" field before clicking
+     Generate, e.g.: "Discuss this topic at IELTS Speaking Part 3 depth — abstract, analytical,
+     multiple perspectives. Speak at natural academic pace. Use Band 8+ vocabulary. Format:
+     Deep Dive." Format must always be set to Deep Dive — Interactive (join) mode only works
+     in Deep Dive, not Brief, Critique, or Debate format.
+   — Joining: after the audio finishes generating, the student taps the waving-hand "Join"
+     icon, lets it start playing, then speaks naturally to interrupt and ask or answer.
+     Claude should give the student 3–5 concrete things to say or ask once joined — e.g. for a
+     Part 3 day on technology and society: "ask the hosts to argue the opposing view, then
+     push back with a counterargument" or "ask them to go deeper on one specific consequence
+     they mentioned, then summarise your own position in 60–90 seconds."
+   — Known limitations to set expectations honestly: there is often a short delay after
+     joining or speaking before the hosts respond; occasional audio glitches (dropped words,
+     a stray third voice) can occur; the hosts sometimes misunderstand unusually phrased
+     questions, so the student should keep questions clear and not be discouraged by an
+     occasional mismatched answer — this is a known product limitation, not a sign the
+     student spoke incorrectly.
+   — What to bring back to this conversation: NOT a transcript (none is reliably available)
+     — instead, the student should self-report: which questions they asked, how long they
+     spoke for each turn, where they hesitated or ran out of vocabulary, and any moment the
+     hosts asked something they couldn't answer well. Claude scores this self-report the same
+     way it would score a live Voice Mode Part 3 session — fluency, vocabulary range, ability
+     to extend an answer — and logs it in errors_grammar/speaking_band as usual.
+   — Do not route to Interactive Mode for Part 1 practice (too short, predictable, scripted
+     Voice Mode is better suited) or for grammar/vocabulary days (passive Deep Dive listening
+     is the better fit there — see routing table above).
 
 VOICE MODE — use when:
 — Speaking practice is scheduled
