@@ -2034,7 +2034,7 @@ function openDayModal(d) {
 function buildFocus(d, topic, ph, rev) {
   const phNames = ['','Foundation','IELTS Mechanics','Intensive Practice','Mastery & Refinement'];
   if (rev) return `REVIEW DAY — Week ${getWeek(d)} | Phase ${ph}: ${phNames[ph]}\n\nRe-examine everything from Days ${d-6}–${d-1}. Re-test grammar, vocabulary, writing, speaking. Identify your 3 weakest points and drill them. This is the most critical session of every week.`;
-  return `Phase ${ph}: ${phNames[ph]} — Day ${d} / Week ${getWeek(d)}\n\nFocus: ${topic}\n\nClaude will guide the full 3–4 hour session. It will teach, demonstrate, make you practice, assess your writing and speaking, recommend resources, and give you a precise [SESSION_DATA] block to paste back here.`;
+  return `Phase ${ph}: ${phNames[ph]} — Day ${d} / Week ${getWeek(d)}\n\nFocus: ${topic}\n\nIf there's data from yesterday, the session opens with a 10-15 min Quick Revision — drilling yesterday's content and fixing every unresolved mistake — before moving into today's new topic. Claude will then teach, demonstrate, make you practice, assess your writing and speaking, recommend resources, and give you a precise [SESSION_DATA] block to paste back here.`;
 }
 
 // Extracts the day number from an error entry like "Day 14: missing the before River Thames"
@@ -2218,11 +2218,21 @@ ${prevScore}
 ════════════════════════════════════════════════════════
 ${errBlock}
 Today's Topic: ${topic}
-${errBlock ? 'Before teaching the new topic, briefly address the continuity data above (this week\'s open mistakes, yesterday\'s plan, and any recurring patterns) in 2-3 sentences so the student sees direct progress, then move into Step 1.\n' : ''}
+
 You are my dedicated IELTS teacher. I am an analytical engineering student — give me rules and systems. Be thorough. Be strict. I want ${S.targetBand}+.
 
-FOLLOW THIS SESSION STRUCTURE EXACTLY:
+Format your entire response in clean, well-structured markdown-style text (use the ━━━ STEP N ━━━ dividers exactly as shown below for each section, plus #/##/### headers, • bullets, numbered lists, and | tables where useful) so it reads cleanly when rendered — no walls of unbroken text.
 
+FOLLOW THIS SESSION STRUCTURE EXACTLY:
+${errBlock ? `
+━━━ STEP 0: QUICK REVISION (10–15 min) — DO THIS FIRST, BEFORE ANYTHING NEW ━━━
+Before teaching anything new, run a fast, complete revision of Day ${d-1} using the CONTINUITY DATA above. Do not skip this or merge it into Step 1 — it is its own short, separate block:
+• Recap what we covered yesterday in 2-3 sentences, and state plainly how today's topic ("${topic}") builds on it.
+• Quiz me with 5-8 rapid-fire questions covering yesterday's core material (grammar rules, vocabulary in context, writing points). Mix them up — do not reuse the exact same example sentences I already saw.
+• Go through EVERY item listed in "All Unresolved Mistakes So Far This Week" above, one at a time: give a fresh sentence testing that exact mistake, have me correct it, then correct me and confirm I've actually fixed it before moving to the next one. Do not let any slide past unaddressed.
+• If "Recurring Patterns From Past Weeks" is present above, drill those hardest of all — they have already survived at least one full weekly review and are the real priority.
+Keep this tight — 10-15 minutes, not the whole session — then move straight into STEP 1. Do not let revision eat into today's new teaching time.
+` : ''}
 ━━━ STEP 1: TEACH (30 min) ━━━
 Explain "${topic}" completely. Cover:
 • The full rule system with all sub-rules
@@ -4063,14 +4073,24 @@ function renderSessionReadMode(raw) {
   let inSessionData = false;
   let tableBuffer = [];
 
+  // Each STEP/section gets a slightly different, low-opacity tint so the eye can tell parts
+  // apart while reading a long session — cycles through the theme's accent colors.
+  const sectionColors = [
+    { bg: 'rgba(64,208,192,0.045)',  accent: 'rgba(64,208,192,0.4)' },   // teal
+    { bg: 'rgba(96,184,248,0.045)',  accent: 'rgba(96,184,248,0.4)' },   // sky
+    { bg: 'rgba(128,224,80,0.045)',  accent: 'rgba(128,224,80,0.4)' },   // lime
+    { bg: 'rgba(176,144,248,0.045)', accent: 'rgba(176,144,248,0.4)' }, // violet
+    { bg: 'rgba(240,144,64,0.045)',  accent: 'rgba(240,144,64,0.4)' },   // orange
+    { bg: 'rgba(240,96,128,0.045)',  accent: 'rgba(240,96,128,0.4)' },   // rose
+  ];
+  let sectionIdx = -1;
+  let sectionOpen = false;
+
   for (const line of lines) {
-    if (/^\[SESSION_DATA\]/.test(line)) { inSessionData = true; }
-    if (/^\[\/SESSION_DATA\]/.test(line)) { inSessionData = false; html += `<div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--t3);padding:1px 0">${escHtml(line)}</div>`; continue; }
-    if (inSessionData) {
-      html += `<div style="font-family:'Space Mono',monospace;font-size:10px;color:#505068;padding:1px 0 1px 8px">${escHtml(line)}</div>`;
-      continue;
-    }
-    if (/^\[SESSION_DATA\]/.test(line)) { html += `<div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--t3);padding:1px 0">${escHtml(line)}</div>`; continue; }
+    // SESSION_DATA is machine-readable bookkeeping for the parser only — never shown in Read Mode.
+    if (/^\[SESSION_DATA\]/.test(line)) { inSessionData = true; continue; }
+    if (/^\[\/SESSION_DATA\]/.test(line)) { inSessionData = false; continue; }
+    if (inSessionData) { continue; }
 
     if (!line.trim()) {
       if (tableBuffer.length > 0) { html += flushTable(tableBuffer); tableBuffer = []; }
@@ -4094,7 +4114,12 @@ function renderSessionReadMode(raw) {
     const boxHead = !h1 && !h2 && !h3 && !h4 && (line.match(/^[━═]{3,}(.+?)[━═]{3,}/) || line.match(/^──+(.+?)──+/));
 
     if (stepHead) {
+      if (sectionOpen) { html += '</div>'; sectionOpen = false; }
+      sectionIdx++;
+      const c = sectionColors[sectionIdx % sectionColors.length];
       html += `<div style="margin:30px 0 16px;padding:12px 16px;background:linear-gradient(90deg,rgba(240,192,64,0.18),rgba(240,192,64,0.03));border-left:4px solid var(--gold);border-radius:0 8px 8px 0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(13px,3.5vw,15px);color:var(--gold);letter-spacing:0.3px;word-break:break-word;overflow-wrap:anywhere">${escHtml(stepHead[1].trim())}</div>`;
+      html += `<div style="background:${c.bg};border-left:2px solid ${c.accent};border-radius:0 10px 10px 0;padding:2px 16px 6px 18px">`;
+      sectionOpen = true;
       continue;
     }
     if (h1) {
@@ -4146,6 +4171,7 @@ function renderSessionReadMode(raw) {
 
   // Flush any table still buffered at end of content
   if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
+  if (sectionOpen) { html += '</div>'; sectionOpen = false; }
   const readMins = Math.max(1, Math.round(wordCount / 200));
   document.getElementById('readModeProgress').textContent = wordCount.toLocaleString() + ' words · ~' + readMins + ' min read';
   contentEl.innerHTML = '<div class="read-inner">' + html + '</div>';
