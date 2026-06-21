@@ -41,8 +41,8 @@ body {
   background: var(--bg);
   color: var(--t1);
   font-family: 'Space Mono', monospace;
-  font-size: 12px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.7;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -70,7 +70,7 @@ body {
   display:flex; align-items:center; gap:5px;
   padding:3px 9px; border-radius:20px;
   border:1px solid var(--b1); background:var(--s2);
-  font-size:10px; white-space:nowrap;
+  font-size:11px; white-space:nowrap;
 }
 .chip-label { color:var(--t3); }
 .chip-val { font-weight:700; }
@@ -144,7 +144,7 @@ body {
   display:inline-flex; align-items:center; gap:7px;
   padding:7px 12px; border-radius:var(--r); border:1px solid var(--b1);
   background:var(--s2); color:var(--t2);
-  font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
+  font-family:'Space Mono',monospace; font-size:11px; font-weight:700;
   cursor:pointer; transition:all 0.12s; text-align:left; width:100%;
   text-transform:uppercase; letter-spacing:0.5px;
 }
@@ -164,7 +164,7 @@ body {
 .qa-item {
   display:flex; align-items:center; gap:7px;
   padding:6px 8px; border-radius:var(--r); border:1px solid var(--b1);
-  background:var(--s2); font-size:10px; color:var(--t2);
+  background:var(--s2); font-size:11px; color:var(--t2);
   cursor:pointer; transition:all 0.12s; text-align:left; width:100%;
 }
 .qa-item:hover { border-color:var(--b2); color:var(--t1); }
@@ -172,7 +172,7 @@ body {
 
 /* MINI ERROR LOG */
 .mini-log { background:var(--s2); border:1px solid var(--b1); border-radius:var(--r); padding:8px; max-height:120px; overflow-y:auto; }
-.mini-err { display:flex; gap:5px; padding:3px 0; border-bottom:1px solid var(--b1); font-size:9px; color:var(--t2); line-height:1.4; }
+.mini-err { display:flex; gap:5px; padding:3px 0; border-bottom:1px solid var(--b1); font-size:10px; color:var(--t2); line-height:1.4; }
 .mini-err:last-child { border-bottom:none; }
 .etag { padding:1px 4px; border-radius:3px; background:var(--rose-dim); color:var(--rose); font-size:8px; flex-shrink:0; margin-top:1px; font-weight:700; }
 
@@ -184,7 +184,7 @@ body {
 .tab {
   flex:1; padding:7px 10px; border-radius:var(--r); border:none;
   background:transparent; color:var(--t3);
-  font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
+  font-family:'Space Mono',monospace; font-size:11px; font-weight:700;
   cursor:pointer; transition:all 0.12s; text-transform:uppercase; letter-spacing:0.5px;
 }
 .tab:hover { color:var(--t1); background:var(--s2); }
@@ -197,7 +197,8 @@ body {
 .notice {
   background:var(--s2); border-left:3px solid var(--gold);
   border-radius:0 var(--r) var(--r) 0; padding:10px 14px;
-  font-size:10px; color:var(--t2); line-height:1.8;
+  font-size:12px; color:var(--t2); line-height:1.9;
+  text-align:justify;
 }
 .notice strong { color:var(--gold); }
 .notice.teal { border-left-color:var(--teal); }
@@ -256,10 +257,46 @@ body {
 .panel-acts { display:flex; gap:5px; }
 .gcd-textarea {
   width:100%; min-height:420px; background:var(--bg); border:none;
-  color:var(--t1); font-family:'Space Mono',monospace; font-size:11px;
-  line-height:1.8; padding:14px; resize:vertical; outline:none;
+  color:var(--t1); font-family:'Space Mono',monospace; font-size:13px;
+  line-height:1.9; padding:14px; resize:vertical; outline:none;
 }
 .gcd-textarea::placeholder { color:var(--t3); }
+
+/* WRITING TASK PANEL — readability overhaul */
+.writing-toolbar { background:transparent; }
+.writing-label-row { font-size:11px; color:var(--t2); font-family:'Space Mono',monospace; letter-spacing:0.4px; }
+.writing-task-wrap { background:transparent; border-bottom:1px solid rgba(37,37,53,0.6); }
+.writing-task-card {
+  background:rgba(255,255,255,0.0075); border:1px solid rgba(37,37,53,0.55); border-radius:8px;
+  padding:12px 14px; max-height:240px; overflow-y:auto;
+}
+.writing-task-chip {
+  display:inline-block; font-size:10px; font-weight:700; color:var(--gold);
+  background:var(--gold-dim); padding:2px 8px; border-radius:4px;
+  text-transform:uppercase; letter-spacing:0.6px; margin-bottom:8px;
+}
+.writing-task-body { font-size:14.5px; line-height:1.85; color:var(--t1); font-family:'Space Grotesk',sans-serif; }
+.writing-task-body strong { color:var(--gold); font-weight:700; }
+.writing-task-body .md-bullet { display:block; padding-left:2px; margin:2px 0; color:var(--t1); }
+.writing-task-note { font-size:11px; color:var(--t2); margin-top:7px; line-height:1.6; }
+.writing-ta {
+  flex:1; min-height:160px; background:rgba(255,255,255,0.015); border:1.5px solid rgba(37,37,53,0.7);
+  color:var(--t1); font-family:'Space Grotesk',sans-serif; font-size:15px; line-height:1.95;
+  padding:14px 16px; border-radius:8px; outline:none; resize:none;
+  transition:border-color 0.2s; text-align:left;
+}
+.writing-ta::placeholder { color:var(--t2); opacity:1; line-height:1.9; }
+.writing-ta:focus { border-color:rgba(128,224,80,0.55); }
+.writing-meta-row { font-size:12px; color:var(--t2); font-family:'Space Mono',monospace; }
+.writing-submit-label { font-size:10.5px; color:var(--t2); margin-bottom:6px; text-transform:uppercase; letter-spacing:1px; font-weight:700; }
+.writing-progress-track {
+  width:100%; height:7px; background:rgba(255,255,255,0.06);
+  border-radius:999px; overflow:hidden; flex-shrink:0;
+}
+.writing-progress-fill {
+  height:100%; width:0%; border-radius:999px; background:var(--rose);
+  transition:width 0.25s ease, background-color 0.25s ease;
+}
 .panel-foot {
   padding:8px 14px; border-top:1px solid var(--b1); background:var(--s2);
   display:flex; align-items:center; gap:10px; font-size:10px;
@@ -282,8 +319,8 @@ body {
 /* PARSE PANEL */
 .parse-textarea {
   width:100%; min-height:220px; background:var(--bg); border:none;
-  color:var(--t1); font-family:'Space Mono',monospace; font-size:11px;
-  line-height:1.8; padding:14px; resize:vertical; outline:none;
+  color:var(--t1); font-family:'Space Mono',monospace; font-size:13px;
+  line-height:1.9; padding:14px; resize:vertical; outline:none;
 }
 .parsed-table { width:100%; border-collapse:collapse; font-size:11px; }
 .parsed-table tr { border-bottom:1px solid var(--b1); }
@@ -354,7 +391,7 @@ body {
 /* RULE BLOCK */
 .rule-block { background:var(--s2); border:1px solid var(--b1); border-radius:var(--r2); overflow:hidden; }
 .rule-block-head { background:var(--s3); padding:8px 14px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--gold); border-bottom:1px solid var(--b1); }
-.rule-body { padding:12px 14px; font-size:10px; color:var(--t2); line-height:2; }
+.rule-body { padding:12px 14px; font-size:12px; color:var(--t2); line-height:2; text-align:justify; }
 .rule-body code { background:var(--s3); color:var(--teal); padding:1px 5px; border-radius:3px; font-family:'Space Mono',monospace; }
 .rule-body strong { color:var(--t1); }
 
@@ -414,7 +451,7 @@ body {
 .cbt-cue-card { background:#0c1220; border:2px solid #2a3550; border-radius:12px; padding:24px 28px; max-width:480px; width:100%; }
 
 /* ===== READ MODE — visual redesign for long study sessions ===== */
-.read-inner { max-width:760px; margin:0 auto; }
+.read-inner { max-width:none; margin:0; }
 #sessionReadContent {
   scrollbar-width: thin;
   scrollbar-color: rgba(240,192,64,0.3) transparent;
@@ -425,6 +462,8 @@ body {
 #sessionReadContent::-webkit-scrollbar-thumb:hover { background:rgba(240,192,64,0.5); }
 #btnBackToTop { opacity:0; pointer-events:none; }
 #btnBackToTop.visible { opacity:1; pointer-events:auto; }
+#panelDragHandleV:hover, #panelDragHandleV.dragging { background:#161624; }
+#panelDragHandleV:hover > div, #panelDragHandleV.dragging > div { background:rgba(176,144,248,0.6); }
 @keyframes readFadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 .read-inner > * { animation: readFadeIn 0.35s ease-out both; }
 
@@ -482,6 +521,7 @@ body {
     max-height:0 !important;
     min-height:0 !important;
   }
+  #panelDragHandleV { display:none !important; }
   /* Read mode top bar */
   #readModeOverlay > div:first-child {
     flex-wrap:wrap;
@@ -1273,7 +1313,7 @@ session_note: Good understanding of articles but uncountable noun errors persist
       </div>
 
       <div id="sessionEditWrap">
-        <textarea id="daySessionTA" style="width:100%;min-height:280px;background:var(--bg);border:1px solid var(--b1);color:var(--t1);font-family:'Space Mono',monospace;font-size:11px;line-height:1.8;padding:12px;resize:vertical;outline:none;border-radius:var(--r);" placeholder="Paste Claude's full response here. You can paste multiple turns — use Append to add more content without losing what's already here.&#10;&#10;This stores everything Claude taught you today. Switch to Read Mode to read it nicely and click words for Bangla."></textarea>
+        <textarea id="daySessionTA" style="width:100%;min-height:280px;background:var(--bg);border:1px solid var(--b1);color:var(--t1);font-family:'Space Mono',monospace;font-size:13px;line-height:1.9;padding:12px;resize:vertical;outline:none;border-radius:var(--r);" placeholder="Paste Claude's full response here. You can paste multiple turns — use Append to add more content without losing what's already here.&#10;&#10;This stores everything Claude taught you today. Switch to Read Mode to read it nicely and click words for Bangla."></textarea>
         <div style="font-size:9px;color:var(--t3);margin-top:4px;" id="sessionCharCount">0 chars</div>
       </div>
 
@@ -1289,6 +1329,7 @@ session_note: Good understanding of articles but uncountable noun errors persist
           <div id="readModeProgress" style="font-size:10px;color:var(--t3);font-family:'Space Mono',monospace;white-space:nowrap"></div>
           <div id="readModeAnswerProgress" style="font-size:10px;color:var(--lime);font-family:'Space Mono',monospace;white-space:nowrap;margin-left:8px"></div>
           <button onclick="toggleAnswerPanel()" id="btnTogglePanel" style="background:rgba(176,144,248,0.1);border:1px solid var(--violet);color:var(--violet);padding:5px 12px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">📝 EXERCISES</button>
+          <button onclick="copyFullDayForAssessment()" title="Copies today's session reading + all your exercise answers + your writing task together, with one assessment prompt asking Claude to grade you, briefly re-teach your mistakes, and give the [SESSION_DATA] block for the next day." style="background:var(--gold);border:1px solid var(--gold);color:#09090e;padding:5px 12px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">🎯 FINISH DAY</button>
           <button onclick="openReadModeParser()" style="background:rgba(64,208,192,0.1);border:1px solid var(--teal);color:var(--teal);padding:5px 12px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">⚡ PARSE</button>
           <button onclick="closeReadMode()" style="background:var(--rose-dim);border:1px solid var(--rose);color:var(--rose);padding:5px 12px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px">✕ CLOSE</button>
           <div style="position:absolute;left:0;right:0;bottom:-1px;height:2px;background:rgba(255,255,255,0.04);overflow:hidden;">
@@ -1314,14 +1355,19 @@ session_note: Good understanding of articles but uncountable noun errors persist
 
           <!-- LEFT: STUDY CONTENT -->
           <div id="sessionReadAmbient" style="flex:1;position:relative;overflow:hidden;background:radial-gradient(ellipse 70% 45% at 50% 0%, rgba(240,192,64,0.05), transparent 60%), #07080f;">
-            <div id="sessionReadContent" style="height:100%;overflow-y:auto;padding:40px 36px 120px;font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:2.1;color:#c8c8e0;scroll-behavior:smooth;"></div>
+            <div id="sessionReadContent" style="height:100%;overflow-y:auto;padding:40px 60px 120px;font-family:'Space Grotesk',sans-serif;font-size:17px;line-height:2.2;color:#c8c8e0;scroll-behavior:smooth;text-align:justify;"></div>
             <button id="btnBackToTop" onclick="scrollReadToTop()" title="Back to top" style="position:absolute;right:24px;bottom:24px;width:42px;height:42px;border-radius:50%;background:rgba(15,15,22,0.92);border:1px solid var(--gold);color:var(--gold);font-size:16px;cursor:pointer;backdrop-filter:blur(8px);box-shadow:0 6px 20px rgba(0,0,0,0.4);transition:opacity 0.2s,transform 0.15s;z-index:5;">↑</button>
           </div>
 
-          <!-- DRAG HANDLE (mobile only) -->
+          <!-- DRAG HANDLE (mobile only — vertical resize) -->
           <div id="panelDragHandle" style="display:none;flex-shrink:0;width:100%;height:28px;background:#0b0b12;border-top:1px solid #2a2a3a;cursor:ns-resize;touch-action:none;flex-direction:column;align-items:center;justify-content:center;gap:4px;user-select:none;" title="Drag to resize panel">
             <div style="width:36px;height:3px;background:#303048;border-radius:2px;"></div>
             <div style="width:24px;height:2px;background:#252535;border-radius:2px;"></div>
+          </div>
+
+          <!-- DRAG HANDLE (desktop only — horizontal resize) -->
+          <div id="panelDragHandleV" style="display:none;flex-shrink:0;width:7px;background:#0b0b12;border-left:1px solid #1d1d28;border-right:1px solid #1d1d28;cursor:ew-resize;touch-action:none;align-items:center;justify-content:center;user-select:none;transition:background 0.12s;" title="Drag to resize panel">
+            <div style="width:3px;height:36px;background:#303048;border-radius:2px;"></div>
           </div>
 
           <!-- RIGHT: ANSWER PANEL -->
@@ -1340,47 +1386,52 @@ session_note: Good understanding of articles but uncountable noun errors persist
             <div id="rightTabExercises" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
               <!-- Exercises toolbar -->
               <div style="flex-shrink:0;padding:10px 12px 8px;border-bottom:1px solid #1d1d28;background:#0d0d16;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                <div id="panelProgress" style="font-size:10px;color:var(--lime);font-family:'Space Mono',monospace;font-weight:700;flex:1;"></div>
+                <div id="panelProgress" style="font-size:11.5px;color:var(--lime);font-family:'Space Mono',monospace;font-weight:700;flex:1;"></div>
                 <button onclick="addManualQuestion()" style="background:rgba(64,208,192,0.1);border:1px solid var(--teal);color:var(--teal);padding:3px 9px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;">＋ ADD Q</button>
                 <button onclick="copyAllAnswers()" style="background:rgba(240,192,64,0.1);border:1px solid var(--gold);color:var(--gold);padding:3px 9px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;">📋 COPY ALL</button>
                 <button onclick="clearAllAnswers()" style="background:var(--rose-dim);border:1px solid var(--rose);color:var(--rose);padding:3px 9px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;">🗑 CLEAR</button>
               </div>
               <!-- Question cards -->
               <div id="questionCardsWrap" style="flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;">
-                <div id="noQuestionsMsg" style="color:var(--t3);font-size:11px;text-align:center;padding:30px 10px;line-height:1.8;">
+                <div id="noQuestionsMsg" style="color:var(--t3);font-size:13px;text-align:center;padding:30px 10px;line-height:1.8;">
                   No exercises found yet.<br>
-                  <span style="font-size:10px">Claude will include a <code style="background:#1d1d28;padding:1px 5px;border-radius:3px;color:var(--teal)">[QUESTIONS]</code> block.<br>Or click <strong style="color:var(--teal)">＋ ADD Q</strong> to add manually.</span>
+                  <span style="font-size:11.5px">Claude will include a <code style="background:#1d1d28;padding:1px 5px;border-radius:3px;color:var(--teal)">[QUESTIONS]</code> block.<br>Or click <strong style="color:var(--teal)">＋ ADD Q</strong> to add manually.</span>
                 </div>
               </div>
               <!-- Compiled answer sheet -->
               <div style="flex-shrink:0;padding:10px 12px;border-top:1px solid #1d1d28;background:#0d0d16;">
                 <div style="font-size:9px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Compiled Answer Sheet</div>
-                <div id="compiledQA" style="background:#07080f;border:1px solid #1d1d28;border-radius:var(--r);padding:8px 10px;max-height:100px;overflow-y:auto;font-family:'Space Mono',monospace;font-size:9px;color:var(--t2);line-height:1.7;white-space:pre-wrap;word-break:break-word;">Write your answers above to see them compiled here.</div>
+                <div id="compiledQA" style="background:#07080f;border:1px solid #1d1d28;border-radius:var(--r);padding:8px 10px;max-height:120px;overflow-y:auto;font-family:'Space Mono',monospace;font-size:11px;color:var(--t2);line-height:1.7;white-space:pre-wrap;word-break:break-word;">Write your answers above to see them compiled here.</div>
               </div>
             </div>
 
             <!-- WRITING TASK VIEW -->
             <div id="rightTabWriting" style="flex:1;display:none;flex-direction:column;overflow:hidden;">
-              <div style="flex-shrink:0;padding:10px 12px 8px;border-bottom:1px solid #1d1d28;background:#0d0d16;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                <div style="font-size:9px;color:var(--t3);flex:1;font-family:'Space Mono',monospace;">IELTS Writing Task — Task 1 or Task 2</div>
-                <button onclick="saveWritingTask()" style="background:rgba(128,224,80,0.1);border:1px solid var(--lime);color:var(--lime);padding:3px 9px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;">💾 SAVE</button>
-                <button onclick="copyWritingForSubmit()" style="background:rgba(240,192,64,0.1);border:1px solid var(--gold);color:var(--gold);padding:3px 9px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;">📋 COPY</button>
-                <button onclick="clearWritingTask()" style="background:var(--rose-dim);border:1px solid var(--rose);color:var(--rose);padding:3px 9px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;">🗑 CLEAR</button>
+              <div class="writing-toolbar" style="flex-shrink:0;padding:10px 12px 8px;border-bottom:1px solid #1d1d28;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <div class="writing-label-row" style="flex:1;">IELTS WRITING — AUTO-SAVED</div>
+                <button onclick="saveWritingTask()" style="background:rgba(128,224,80,0.1);border:1px solid var(--lime);color:var(--lime);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;">💾 SAVE</button>
+                <button onclick="copyWritingForSubmit()" style="background:rgba(240,192,64,0.1);border:1px solid var(--gold);color:var(--gold);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;">📋 COPY</button>
+                <button onclick="clearWritingTask()" style="background:var(--rose-dim);border:1px solid var(--rose);color:var(--rose);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;">🗑 CLEAR</button>
               </div>
-              <div style="flex-shrink:0;padding:8px 12px;border-bottom:1px solid #1d1d28;background:#0a0a14;">
-                <div id="writingTaskPrompt" style="font-size:10px;color:var(--sky);font-family:'Space Grotesk',sans-serif;line-height:1.6;max-height:80px;overflow-y:auto;padding:6px 8px;background:#07080f;border:1px solid #1d1d28;border-radius:var(--r);"></div>
-                <div style="font-size:8px;color:var(--t3);margin-top:4px;">Task prompt auto-extracted from session. You can edit below.</div>
+              <div class="writing-task-wrap" style="flex-shrink:0;padding:10px 12px;">
+                <div id="writingTaskPrompt" class="writing-task-card"></div>
+                <div class="writing-task-note">📌 Task auto-extracted from session. Auto-saves as you type.</div>
               </div>
-              <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;padding:10px 12px;gap:6px;">
-                <textarea id="writingTaskTA" placeholder="Write your IELTS response here...&#10;&#10;Task 1: Describe the chart/graph/diagram in 150+ words.&#10;Task 2: Write an essay in 250+ words.&#10;&#10;Your response will be included when you copy everything for Claude to mark." style="flex:1;min-height:120px;background:#07080f;border:1px solid #252535;color:#e8e8f4;font-family:'Space Grotesk',sans-serif;font-size:12px;line-height:1.7;padding:10px 12px;border-radius:6px;outline:none;resize:none;transition:border-color 0.2s;" oninput="updateWritingWordCount()" onfocus="this.style.borderColor='rgba(128,224,80,0.5)'" onblur="this.style.borderColor='#252535'"></textarea>
-                <div style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
-                  <div id="writingWordCount" style="font-size:9px;color:var(--t3);font-family:'Space Mono',monospace;">0 words</div>
-                  <div id="writingWordTarget" style="font-size:9px;font-family:'Space Mono',monospace;color:var(--t3);">Target: 150+ (Task 1) / 250+ (Task 2)</div>
+              <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;padding:12px;gap:8px;">
+                <textarea id="writingTaskTA" class="writing-ta" placeholder="Write your IELTS response here...&#10;&#10;Task 1: Describe the chart/graph/diagram in 150+ words.&#10;Task 2: Write an essay in 250+ words.&#10;&#10;Auto-saved as you type — your work will not be lost." oninput="updateWritingWordCount();autoSaveWritingTask()"></textarea>
+                <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div id="writingWordCount" class="writing-meta-row" style="font-weight:700;">0 words</div>
+                    <div id="writingWordTarget" class="writing-meta-row">Target: 150+ (Task 1) / 250+ (Task 2)</div>
+                  </div>
+                  <div class="writing-progress-track">
+                    <div id="writingProgressFill" class="writing-progress-fill"></div>
+                  </div>
                 </div>
               </div>
-              <div style="flex-shrink:0;padding:10px 12px;border-top:1px solid #1d1d28;background:#0d0d16;">
-                <div style="font-size:9px;color:var(--t3);margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">Submit for Feedback</div>
-                <button onclick="copyWritingForMark()" style="width:100%;background:var(--gold);border:none;color:#09090e;padding:8px 12px;border-radius:6px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">📋 COPY TASK + MY RESPONSE → Paste to Claude</button>
+              <div style="flex-shrink:0;padding:10px 12px;border-top:1px solid rgba(37,37,53,0.6);">
+                <div class="writing-submit-label">Submit for Feedback</div>
+                <button onclick="copyWritingForMark()" style="width:100%;background:var(--gold);border:none;color:#09090e;padding:9px 12px;border-radius:6px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">📋 COPY TASK + MY RESPONSE → Paste to Claude</button>
               </div>
             </div>
 
@@ -2085,15 +2136,32 @@ function getPersistentPatterns(beforeDay, minWeeks) {
     .map(v => `${v.text} (recurred across Days ${[...new Set(v.days)].sort((x, y) => x - y).join(', ')})`);
 }
 
-// For normal days: pulls yesterday's session_note + the next_day_focus Claude itself set yesterday,
-// PLUS every unresolved mistake from every day since the last review day (so the list grows day by
-// day through the week instead of only showing yesterday), PLUS a cross-week "persistent patterns"
-// watchlist of mistakes that survived a previous review and are still recurring.
+// For normal days: pulls an explicit, day-tagged list of topics actually covered over the last
+// few days (so Claude can't confuse which day taught what), PLUS yesterday's session_note + the
+// next_day_focus Claude itself set yesterday, PLUS every unresolved mistake from every day since
+// the last review day (so the list grows day by day through the week instead of only showing
+// yesterday), PLUS a cross-week "persistent patterns" watchlist of mistakes that survived a
+// previous review and are still recurring.
 function buildContinuityBlock(d) {
   const y = d - 1;
   if (y < 1) return '';
   const note = S.sessionNotes[y] ? `Yesterday's Session Summary: ${S.sessionNotes[y]}\n` : '';
   const plan = S.nextDayFocus[y] ? `Claude's Plan For Today (set yesterday): ${S.nextDayFocus[y]}\n` : '';
+
+  // Explicit topic-by-day list for the last up to 3 days. This is the unambiguous source of
+  // truth for "what was covered when" — Claude's Step 0 recap must use these exact day/topic
+  // pairs instead of inferring the topic from the freeform note above, which is what was causing
+  // wrong-day recaps (e.g. citing Day 6's topic when Day 8 was actually the most recent one).
+  const LOOKBACK_DAYS = 3;
+  const recentStart = Math.max(1, d - LOOKBACK_DAYS);
+  const recentLines = [];
+  for (let dd = recentStart; dd <= y; dd++) {
+    const t = S.topicsCovered[dd] || TOPICS[dd] || '(no topic recorded)';
+    recentLines.push(`Day ${dd}: ${t}`);
+  }
+  const recentBlock = recentLines.length
+    ? `Topics Covered In The Last ${recentLines.length} Day(s) — exact, use these day numbers, do not mix them up or swap which day taught what:\n${recentLines.join('\n')}\n`
+    : '';
 
   const weekStart = getCurrentWeekStart(d);
   const weekEnd = y;
@@ -2112,8 +2180,8 @@ function buildContinuityBlock(d) {
     ? `\nRecurring Patterns From Past Weeks (these have survived at least one full review — give extra drilling):\n${patterns.join('\n')}\n`
     : '';
 
-  if (!note && !plan && !errs && !patternsBlock) return '';
-  return `\n━━━ CONTINUITY FROM DAY ${y} (session data) ━━━\n${note}${plan}${errs}${patternsBlock}`;
+  if (!recentBlock && !note && !plan && !errs && !patternsBlock) return '';
+  return `\n━━━ CONTINUITY FROM DAY ${y} (session data) ━━━\n${recentBlock}${note}${plan}${errs}${patternsBlock}`;
 }
 
 // For review days: gathers ALL mistakes (grammar+vocab+writing) made during the past 6 days,
@@ -2271,8 +2339,8 @@ Use these three blocks only when a real graph, tree, or process actually helps t
 FOLLOW THIS SESSION STRUCTURE EXACTLY:
 ${errBlock ? `
 ━━━ STEP 0: QUICK REVISION (5 min, KEEP IT SHORT) — DO THIS FIRST, BEFORE ANYTHING NEW ━━━
-This is a FAST refresher, not a second lesson. Do not re-teach in full, do not give worked examples, do not re-test me here — save all real teaching for STEP 1 onward. Keep this entire step short, ideally under 150 words total, no matter how many mistakes are listed:
-• In ONE sentence, recap what we covered yesterday and how today's topic ("${topic}") connects to it.
+This is a FAST refresher, not a second lesson. Do not re-teach in full, do not give worked examples, do not re-test me here — save all real teaching for STEP 1 onward. Keep this entire step short, ideally under 180 words total, no matter how many mistakes are listed:
+• Look at the "Topics Covered In The Last N Day(s)" list above. In 2–3 short sentences, briefly revise EACH day shown there — one short clause per day, in day order, naming that day's topic exactly as listed. Do not blend two days into one, do not guess, and do not swap which day taught what. Then in one closing sentence, connect today's topic ("${topic}") to the most recent of those days.
 • Go through EVERY item listed in "All Unresolved Mistakes So Far This Week" above — none skipped — but give each one only a single short line stating the correct rule/form plainly (e.g. "Remember: 'an EU country', not 'the EU country' — countries take a/an on first mention."). No explanations beyond one line, no new example sentences, no back-and-forth checking.
 • If "Recurring Patterns From Past Weeks" is present, just flag it in one line as still unresolved — do not drill it here.
 Then move straight into STEP 1 — that's where the real, detailed teaching happens.
@@ -3521,6 +3589,7 @@ function switchSessionView(mode) {
     _answerPanelVisible = true;
     const ap = document.getElementById('answerPanel');
     const dh = document.getElementById('panelDragHandle');
+    const dhv = document.getElementById('panelDragHandleV');
     ap.style.display = 'flex';
     ap.style.flexDirection = 'column';
     if (window.innerWidth <= 768) {
@@ -3528,11 +3597,14 @@ function switchSessionView(mode) {
       ap.style.maxHeight = '80vh';
       ap.style.overflow = 'hidden';
       if (dh) { dh.style.display = 'flex'; }
+      if (dhv) { dhv.style.display = 'none'; }
     } else {
       ap.style.height = '';
       ap.style.maxHeight = '';
       ap.style.overflow = '';
       if (dh) dh.style.display = 'none';
+      if (dhv) dhv.style.display = 'flex';
+      applySavedPanelWidth();
     }
     btnEdit.style.borderColor = 'var(--b1)'; btnEdit.style.color = 'var(--t2)';
     btnRead.style.borderColor = 'var(--gold)'; btnRead.style.color = 'var(--gold)';
@@ -3582,6 +3654,7 @@ function toggleAnswerPanel() {
   const panel = document.getElementById('answerPanel');
   const btn = document.getElementById('btnTogglePanel');
   const handle = document.getElementById('panelDragHandle');
+  const handleV = document.getElementById('panelDragHandleV');
   _answerPanelVisible = !_answerPanelVisible;
   const isMobile = window.innerWidth <= 768;
   if (isMobile) {
@@ -3592,12 +3665,14 @@ function toggleAnswerPanel() {
       panel.style.display = 'flex';
       panel.style.flexDirection = 'column';
       if (handle) { handle.style.display = 'flex'; }
+      if (handleV) { handleV.style.display = 'none'; }
       btn.textContent = '📝 EXERCISES';
     } else {
       panel.style.height = '0px';
       panel.style.maxHeight = '0px';
       panel.style.overflow = 'hidden';
       if (handle) { handle.style.display = 'none'; }
+      if (handleV) { handleV.style.display = 'none'; }
       btn.textContent = '📝 SHOW PANEL';
     }
   } else {
@@ -3607,6 +3682,7 @@ function toggleAnswerPanel() {
     panel.style.maxHeight = '';
     panel.style.overflow = '';
     if (handle) handle.style.display = 'none';
+    if (handleV) handleV.style.display = _answerPanelVisible ? 'flex' : 'none';
   }
   btn.style.background = _answerPanelVisible ? 'rgba(176,144,248,0.2)' : 'rgba(176,144,248,0.05)';
   btn.style.color = _answerPanelVisible ? 'var(--violet)' : 'var(--t3)';
@@ -3664,16 +3740,16 @@ function buildQuestionCard(index, questionText, savedAnswer) {
   const card = document.createElement('div');
   card.className = 'q-card';
   card.setAttribute('data-qindex', index);
-  card.style.cssText = 'background:#10101a;border:1px solid #1d1d28;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px;transition:border-color 0.2s;';
+  card.style.cssText = 'background:#10101a;border:1px solid #1d1d28;border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:9px;transition:border-color 0.2s;';
 
   // Question header
   const header = document.createElement('div');
   header.style.cssText = 'display:flex;align-items:flex-start;gap:8px;';
   const badge = document.createElement('div');
-  badge.style.cssText = 'flex-shrink:0;width:22px;height:22px;background:rgba(240,192,64,0.15);border:1px solid rgba(240,192,64,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Space Mono,monospace;font-size:9px;font-weight:700;color:var(--gold);margin-top:1px;';
+  badge.style.cssText = 'flex-shrink:0;width:24px;height:24px;background:rgba(240,192,64,0.15);border:1px solid rgba(240,192,64,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Space Mono,monospace;font-size:10.5px;font-weight:700;color:var(--gold);margin-top:1px;';
   badge.textContent = index + 1;
   const qText = document.createElement('div');
-  qText.style.cssText = 'font-size:12px;color:#c8c8e0;line-height:1.6;font-family:Space Grotesk,sans-serif;flex:1;';
+  qText.style.cssText = 'font-size:15px;color:#c8c8e0;line-height:1.65;font-family:Space Grotesk,sans-serif;flex:1;';
   const _qVocabMap = {};
   (S.vocabulary || []).forEach(function(v) { if (v.word) _qVocabMap[v.word.toLowerCase()] = v; });
   qText.innerHTML = tokenizeLine(questionText, _qVocabMap);
@@ -3683,7 +3759,7 @@ function buildQuestionCard(index, questionText, savedAnswer) {
 
   // Answer textarea
   const ta = document.createElement('textarea');
-  ta.style.cssText = 'width:100%;min-height:70px;background:#07080f;border:1px solid #252535;color:#e8e8f4;font-family:Space Grotesk,sans-serif;font-size:12px;line-height:1.6;padding:8px 10px;border-radius:6px;outline:none;resize:vertical;transition:border-color 0.2s;';
+  ta.style.cssText = 'width:100%;min-height:78px;background:#07080f;border:1px solid #252535;color:#e8e8f4;font-family:Space Grotesk,sans-serif;font-size:14.5px;line-height:1.6;padding:8px 10px;border-radius:6px;outline:none;resize:vertical;transition:border-color 0.2s;';
   ta.placeholder = 'Write your answer here…';
   ta.value = savedAnswer;
   ta.addEventListener('focus', () => { ta.style.borderColor = 'rgba(176,144,248,0.6)'; card.style.borderColor = 'rgba(176,144,248,0.4)'; });
@@ -3704,11 +3780,11 @@ function buildQuestionCard(index, questionText, savedAnswer) {
   footer.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
   const savedInd = document.createElement('div');
   savedInd.className = 'saved-ind';
-  savedInd.style.cssText = 'font-size:9px;font-family:Space Mono,monospace;';
+  savedInd.style.cssText = 'font-size:10.5px;font-family:Space Mono,monospace;';
   savedInd.style.color = savedAnswer.trim() ? 'var(--lime)' : 'var(--t3)';
   savedInd.textContent = savedAnswer.trim() ? '✓ answered' : '○ unanswered';
   const delBtn = document.createElement('button');
-  delBtn.style.cssText = 'background:none;border:1px solid #252535;color:#555570;padding:2px 7px;border-radius:4px;font-family:Space Mono,monospace;font-size:8px;cursor:pointer;';
+  delBtn.style.cssText = 'background:none;border:1px solid #252535;color:#555570;padding:3px 8px;border-radius:4px;font-family:Space Mono,monospace;font-size:9.5px;cursor:pointer;';
   delBtn.textContent = '✕ remove';
   delBtn.addEventListener('click', () => {
     if (!confirm('Remove this question?')) return;
@@ -3827,20 +3903,125 @@ function copyAllAnswers() {
   toast('Full session + answers copied! Paste to Claude for feedback.');
 }
 
+// Common "Finish Day" action — bundles everything (session reading + every
+// exercise answer + the writing task and response) into one export, with a
+// dedicated assessment prompt asking Claude to grade the day, briefly
+// re-teach the mistakes, and hand back the [SESSION_DATA] block so the
+// student can move on to the next day.
+function copyFullDayForAssessment() {
+  const sessionText = (S.sessionContent && S.sessionContent[modalDay]) ? S.sessionContent[modalDay] : '';
+  const cards = document.querySelectorAll('.q-card');
+  const writingPromptEl = document.getElementById('writingTaskPrompt');
+  const writingTaskText = writingPromptEl ? (writingPromptEl.innerText || writingPromptEl.textContent || '').trim() : '';
+  const writingResponseEl = document.getElementById('writingTaskTA');
+  const writingResponse = writingResponseEl ? writingResponseEl.value.trim() : '';
+  const topic = TOPICS[modalDay] || 'Study Session';
+  const gcdPrefix = S.gcd ? S.gcd + '\n\n' + '═'.repeat(60) + '\n\n' : '';
+
+  if (!sessionText && cards.length === 0 && !writingResponse) {
+    toast('Nothing to submit yet — paste session content, answer some exercises, or write your essay first.', 'warn');
+    return;
+  }
+
+  let text = gcdPrefix;
+  text += '═'.repeat(60) + '\n';
+  text += `IELTS COMMANDER — DAY ${modalDay} COMPLETE — REQUEST FOR ASSESSMENT\n`;
+  text += `Student: ${S.name} | Current Band: ${S.currentBand} | Target: ${S.targetBand}\n`;
+  text += '═'.repeat(60) + '\n\n';
+
+  text += '─'.repeat(60) + '\n';
+  text += `1) TODAY'S SESSION CONTENT (Day ${modalDay} — ${topic})\n`;
+  text += '─'.repeat(60) + '\n\n';
+  text += (sessionText || '(no session content saved)') + '\n\n';
+
+  text += '─'.repeat(60) + '\n';
+  text += `2) MY EXERCISE ANSWERS\n`;
+  text += '─'.repeat(60) + '\n\n';
+  if (cards.length > 0) {
+    cards.forEach((card, i) => {
+      const headerDiv = card.querySelector('div');
+      const qEl = headerDiv ? headerDiv.children[1] : null;
+      const question = qEl ? qEl.textContent.trim() : `Question ${i + 1}`;
+      const ta = card.querySelector('textarea');
+      const answer = ta ? ta.value.trim() : '';
+      text += `Q${i + 1}: ${question}\n`;
+      text += `A${i + 1}: ${answer || '(no answer written)'}\n\n`;
+    });
+  } else {
+    text += '(no exercises answered today)\n\n';
+  }
+
+  text += '─'.repeat(60) + '\n';
+  text += `3) WRITING TASK\n`;
+  text += '─'.repeat(60) + '\n\n';
+  if (writingTaskText) text += 'TASK:\n' + writingTaskText + '\n\n';
+  text += 'MY RESPONSE:\n' + (writingResponse || '(no writing response submitted)') + '\n\n';
+
+  text += '═'.repeat(60) + '\n';
+  text += 'ASSESSMENT REQUEST\n';
+  text += '═'.repeat(60) + '\n';
+  text += `Please treat everything above as my complete Day ${modalDay} submission and:\n\n`;
+  text += '1. Give an honest overall performance score (0-100) and a band estimate for today.\n';
+  text += '2. Mark the writing task on all 4 IELTS criteria (Task Response, Coherence & Cohesion, Lexical Resource, Grammatical Range & Accuracy) with a band for each plus an overall band, if a response was submitted.\n';
+  text += '3. List every grammar, vocabulary, and writing mistake found across my exercise answers AND my essay, with the correction next to each.\n';
+  text += '4. Briefly re-teach each mistake — a short 1-2 line explanation of the rule I got wrong and how to apply it correctly next time. Keep this concise and practical, not a full re-lecture, just enough to close the gap.\n';
+  text += `5. Tell me clearly whether I'm ready to move on to Day ${modalDay + 1}, or whether today's topic needs another round first.\n\n`;
+  text += 'Then end your response with the mandatory [SESSION_DATA] block exactly as defined in your instructions, so I can parse it here and move forward.';
+
+  copyText(text.trim());
+  toast('Day ' + modalDay + ' fully copied — session + answers + writing! Paste to Claude for assessment.');
+}
+
 // ── WRITING TASK FUNCTIONS ────────────────────────────────────
+
+// Scans extracted task/requirement text for explicit word-count requirements
+// ("Minimum 280 words", "150+ words", "at least 250 words"...) so the target
+// shown in the UI always matches what the task actually asks for.
+function extractWordTargetsFromText(text) {
+  const nums = [];
+  const re = /(\d{2,4})\+?\s*words?\b/gi;
+  let m;
+  while ((m = re.exec(text || '')) !== null) {
+    const n = parseInt(m[1], 10);
+    if (n >= 50 && n <= 1000 && !nums.includes(n)) nums.push(n);
+  }
+  nums.sort((a, b) => a - b);
+  return nums;
+}
+
+let _writingWordTargets = [];
 
 function updateWritingWordCount() {
   const ta = document.getElementById('writingTaskTA');
   const countEl = document.getElementById('writingWordCount');
   const targetEl = document.getElementById('writingWordTarget');
+  const fillEl = document.getElementById('writingProgressFill');
   if (!ta || !countEl) return;
   const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
   countEl.textContent = words + ' words';
-  const isTask2 = words >= 200 || (ta.value.toLowerCase().includes('essay') || ta.value.toLowerCase().includes('opinion'));
-  const target = isTask2 ? 250 : 150;
+  let target;
+  const nums = _writingWordTargets;
+  if (nums.length === 1) {
+    // Only one word-count requirement detected in the task — use it directly.
+    target = nums[0];
+  } else if (nums.length >= 2) {
+    // Two targets detected (e.g. Task 1 + Task 2) — pick the relevant one
+    // based on what the student has written so far.
+    const isTask2 = words >= Math.round(nums[0] * 1.3) || (ta.value.toLowerCase().includes('essay') || ta.value.toLowerCase().includes('opinion'));
+    target = isTask2 ? nums[nums.length - 1] : nums[0];
+  } else {
+    // No explicit requirement found in the task text — fall back to standard IELTS defaults.
+    const isTask2 = words >= 200 || (ta.value.toLowerCase().includes('essay') || ta.value.toLowerCase().includes('opinion'));
+    target = isTask2 ? 250 : 150;
+  }
   const pct = Math.min(100, Math.round((words / target) * 100));
-  countEl.style.color = words >= target ? 'var(--lime)' : words >= target * 0.8 ? 'var(--gold)' : 'var(--rose)';
+  const barColor = words >= target ? 'var(--lime)' : words >= target * 0.8 ? 'var(--gold)' : 'var(--rose)';
+  countEl.style.color = barColor;
   if (targetEl) targetEl.textContent = `${pct}% of ${target} word target`;
+  if (fillEl) {
+    fillEl.style.width = pct + '%';
+    fillEl.style.background = barColor;
+  }
 }
 
 function saveWritingTask() {
@@ -3852,6 +4033,28 @@ function saveWritingTask() {
   S.sessionAnswers[dayKey]['__writing__'] = ta.value;
   saveStore();
   toast('Writing task saved for Day ' + modalDay + '!');
+}
+
+let _writingAutoSaveTimer = null;
+function autoSaveWritingTask() {
+  // Debounced auto-save — fires 800ms after last keystroke
+  clearTimeout(_writingAutoSaveTimer);
+  _writingAutoSaveTimer = setTimeout(() => {
+    const ta = document.getElementById('writingTaskTA');
+    if (!ta) return;
+    const dayKey = String(modalDay);
+    if (!S.sessionAnswers) S.sessionAnswers = {};
+    if (!S.sessionAnswers[dayKey]) S.sessionAnswers[dayKey] = {};
+    S.sessionAnswers[dayKey]['__writing__'] = ta.value;
+    saveStore();
+    // Subtle saved indicator update
+    const countEl = document.getElementById('writingWordCount');
+    if (countEl) {
+      const prev = countEl.textContent;
+      countEl.textContent = '✓ saved';
+      setTimeout(() => { countEl.textContent = prev; }, 900);
+    }
+  }, 800);
 }
 
 function clearWritingTask() {
@@ -3879,7 +4082,7 @@ function copyWritingForSubmit() {
 function copyWritingForMark() {
   const ta = document.getElementById('writingTaskTA');
   const promptEl = document.getElementById('writingTaskPrompt');
-  const taskPrompt = promptEl ? promptEl.textContent.trim() : '';
+  const taskPrompt = promptEl ? (promptEl.innerText || promptEl.textContent || '').trim() : '';
   const myResponse = ta ? ta.value.trim() : '';
   if (!myResponse) { toast('Write your response first!', 'warn'); return; }
   const sessionText = (S.sessionContent && S.sessionContent[modalDay]) ? S.sessionContent[modalDay].slice(0, 2000) : '';
@@ -3904,19 +4107,97 @@ function copyWritingForMark() {
 }
 
 function extractWritingTaskFromSession(sessionText) {
-  if (!sessionText) return '';
-  // Look for common IELTS writing task patterns
-  const patterns = [
-    /(?:WRITING TASK|TASK [12]|IELTS Writing Task)[^\n]*\n([\s\S]{80,600}?)(?:\n\n|\n━|$)/i,
-    /(?:You should spend|Write at least|In this task)[^\n]*\n([\s\S]{80,500}?)(?:\n\n|$)/i,
-    /(?:The (chart|graph|table|diagram|map|process) (?:below |above )?shows?)[^\n]*([\s\S]{0,400}?)(?:\n\n|$)/i,
-    /(?:Some people|Many people|It is argued|Governments|In many countries)[^\n]{20,}(?:\nDiscuss|To what extent|Do you agree|Give your)[^\n]*/i,
-  ];
-  for (const re of patterns) {
-    const m = sessionText.match(re);
-    if (m) return (m[1] || m[0] || '').trim().slice(0, 500);
+  if (!sessionText) return [];
+  const found = [];
+
+  // Robust dedup: treats two chunks as the same task if one contains the
+  // other (not just an exact prefix match), so near-identical matches from
+  // different strategies collapse into a single card.
+  function isDuplicate(text) {
+    const norm = s => String(s).replace(/\s+/g, ' ').trim().toLowerCase();
+    const nt = norm(text);
+    if (!nt) return true;
+    return found.some(f => {
+      const nf = norm(f.text);
+      return nf === nt || nf.includes(nt) || nt.includes(nf);
+    });
   }
-  return '';
+
+  // Strategy 1: Find STEP 4 / WRITING TASK section headers, grab everything up to next STEP or end
+  const step4Patterns = [
+    /━+\s*STEP\s*4[^━]*WRITING[^━]*━+\s*([\s\S]{60,1200}?)(?=━+\s*STEP\s*[5-9]|━+\s*STEP\s*10|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
+    /##\s*(?:━+\s*)?STEP\s*4[^\n]*\n([\s\S]{60,1200}?)(?=##\s*━|##\s*STEP\s*[5-9]|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
+    /STEP\s*4[^\n]*WRITING[^\n]*\n([\s\S]{60,1000}?)(?=STEP\s*[5-9]|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
+  ];
+  for (const re of step4Patterns) {
+    const m = sessionText.match(re);
+    if (m && m[1] && m[1].trim().length > 40) {
+      const block = m[1].trim().slice(0, 1200);
+      // Extract the question part — look for the IELTS task question
+      const qMatch = block.match(/(?:Question|QUESTION|Task)[^\n]*:\n?([\s\S]{30,800}?)(?:\n\n\*\*Requirements|\n\nRequirements|\nAfter you submit|$)/i);
+      if (qMatch) {
+        const txt = qMatch[1].trim().slice(0, 900);
+        if (!isDuplicate(txt)) found.push({ label: 'Essay Question', text: txt });
+      } else if (!isDuplicate(block)) {
+        found.push({ label: 'Writing Task (Step 4)', text: block.slice(0, 900) });
+      }
+    }
+  }
+
+  // Strategy 2: IELTS Writing Task 2 — essay question patterns
+  const essayPatterns = [
+    /(?:IELTS Writing Task [12][^\n]*\n(?:[^\n]*\n){0,3})(>?\s*[\*_]?[^.\n]{20,}\.\s*(?:Discuss both|To what extent|Do you agree|Give your opinion|Some people|Many people|It is argued|In many countries|Governments)[^.]+\.[\s\S]{20,400}?)(?:\n\n|\*\*Requirements|Requirements:)/i,
+    /(?:Question:?\n)([\s\S]{40,600}?)(?:\n\n\*\*Requirements|\nAfter you submit|\nRequirements)/i,
+  ];
+  for (const re of essayPatterns) {
+    const m = sessionText.match(re);
+    if (m) {
+      const txt = (m[1] || m[0]).trim().slice(0, 800);
+      if (txt.length > 40 && !isDuplicate(txt)) {
+        found.push({ label: 'IELTS Essay Task', text: txt });
+      }
+    }
+  }
+
+  // Strategy 3: Blockquote essay question (lines starting with ">")
+  const bqMatch = sessionText.match(/(?:^|\n)(>\s*.{30,}(?:\n>.+)*)/m);
+  if (bqMatch) {
+    const txt = bqMatch[1].replace(/^>\s*/gm, '').trim();
+    if (txt.length > 40 && !isDuplicate(txt)) {
+      found.push({ label: 'Essay Question', text: txt.slice(0, 700) });
+    }
+  }
+
+  // Strategy 4: Italic essay questions (*Some people believe...*)
+  const italicMatch = sessionText.match(/\*{1,2}((?:Some people|Many people|It is argued|Governments|In many countries)[^*]{30,500})\*{1,2}/i);
+  if (italicMatch) {
+    const txt = italicMatch[1].trim();
+    if (txt.length > 40 && !isDuplicate(txt)) {
+      found.push({ label: 'Essay Question', text: txt.slice(0, 700) });
+    }
+  }
+
+  // Strategy 5: Requirements block — kept as TWO separate cards (question vs.
+  // requirements) so they render as distinct boxes instead of one wall of text.
+  const reqMatch = sessionText.match(/(?:Question|QUESTION):\n>([\s\S]{30,600}?)(?:\n\n\*\*Requirements:?\*?\*?\n([\s\S]{20,400}?)(?:\n\n|\n━|\*\*After|After you submit|$))/i);
+  if (reqMatch) {
+    const question = reqMatch[1].trim();
+    const reqs = reqMatch[2] ? reqMatch[2].trim() : '';
+    if (question && !isDuplicate(question)) {
+      found.push({ label: 'Essay Question', text: question.slice(0, 700) });
+    }
+    if (reqs && !isDuplicate(reqs)) {
+      found.push({ label: 'Requirements', text: reqs.slice(0, 600) });
+    }
+  }
+
+  // If nothing found, fall back to looking for Task 1 data descriptions
+  if (found.length === 0) {
+    const t1 = sessionText.match(/(?:The (?:graph|chart|table|diagram|map|bar chart|line graph|pie chart)[^.]*shows?[^.]*\.[\s\S]{30,400}?)(?:\n\n|$)/i);
+    if (t1) found.push({ label: 'Task 1 Prompt', text: t1[0].trim().slice(0, 600) });
+  }
+
+  return found;
 }
 
 function loadWritingTaskForDay(day) {
@@ -3924,14 +4205,39 @@ function loadWritingTaskForDay(day) {
   const ta = document.getElementById('writingTaskTA');
   const promptEl = document.getElementById('writingTaskPrompt');
   if (!ta) return;
-  // Load saved answer
+  // Load saved answer — NEVER overwrite if already has content
   const savedWriting = S.sessionAnswers && S.sessionAnswers[dayKey] && S.sessionAnswers[dayKey]['__writing__'];
-  ta.value = savedWriting || '';
-  updateWritingWordCount();
-  // Extract task prompt from session content
+  if (savedWriting !== undefined) {
+    ta.value = savedWriting;
+  }
+  // Extract task prompt(s) from session content
   const sessionText = S.sessionContent && S.sessionContent[day] ? S.sessionContent[day] : '';
-  const extracted = extractWritingTaskFromSession(sessionText);
-  if (promptEl) promptEl.textContent = extracted || 'No writing task detected yet. Paste session content first, or write the task prompt here manually.';
+  const tasks = extractWritingTaskFromSession(sessionText);
+  // Work out the real word-count target(s) from the extracted task text
+  // BEFORE updating the word counter, so it shows the correct figure (e.g.
+  // "280" instead of a guessed default) the moment the task loads.
+  _writingWordTargets = extractWordTargetsFromText(tasks.map(t => t.text).join('\n'));
+  updateWritingWordCount();
+  if (promptEl) {
+    if (tasks.length === 0) {
+      promptEl.innerHTML = '<span style="color:var(--t2);font-size:13px;line-height:1.7">No writing task detected yet. Paste session content and re-open, or type the task prompt here.</span>';
+      promptEl.contentEditable = 'true';
+    } else if (tasks.length === 1) {
+      promptEl.innerHTML = `<div class="writing-task-chip">${escHtml(tasks[0].label)}</div><div class="writing-task-body">${mdLiteToHtml(tasks[0].text)}</div>`;
+      promptEl.contentEditable = 'false';
+    } else {
+      // Multiple distinct tasks/sections found — render each in its own card.
+      let html = '';
+      tasks.forEach((t, i) => {
+        html += `<div style="margin-bottom:${i < tasks.length-1 ? '10px' : '0'};padding:10px 12px;background:rgba(255,255,255,0.0075);border:1px solid rgba(37,37,53,0.55);border-radius:6px;">`;
+        html += `<div class="writing-task-chip">${escHtml(t.label)}</div>`;
+        html += `<div class="writing-task-body">${mdLiteToHtml(t.text)}</div>`;
+        html += '</div>';
+      });
+      promptEl.innerHTML = html;
+      promptEl.contentEditable = 'false';
+    }
+  }
 }
 
 // ── READ MODE PARSER ─────────────────────────────────────────
@@ -4099,6 +4405,18 @@ function escHtml(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+// Lightweight markdown renderer for writing-task display: strips ">" quote
+// markers, converts **bold**, and turns "- " lines into clean bullets so raw
+// markdown symbols never show up unrendered in the UI.
+function mdLiteToHtml(raw) {
+  let t = escHtml(String(raw || '').trim());
+  t = t.replace(/^&gt;\s?/gm, '');
+  t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  t = t.replace(/^- (.+)$/gm, '<span class="md-bullet">• $1</span>');
+  t = t.split(/\n{2,}/).map(p => p.replace(/\n/g, '<br>')).join('<div style="height:10px"></div>');
+  return t;
+}
+
 function renderSessionReadMode(raw) {
   const contentEl = document.getElementById('sessionReadContent');
   if (!raw || !raw.trim()) {
@@ -4130,15 +4448,43 @@ function renderSessionReadMode(raw) {
   // its response (see buildPrompt) — not auto-cycled by the renderer. The tag is parsed out and
   // never shown as text; only the resulting subtle background tint remains visible.
   const BG_COLOR_MAP = {
-    gold:   { bg: 'rgba(240,192,64,0.045)',  accent: 'rgba(240,192,64,0.4)' },
-    teal:   { bg: 'rgba(64,208,192,0.045)',  accent: 'rgba(64,208,192,0.4)' },
-    sky:    { bg: 'rgba(96,184,248,0.045)',  accent: 'rgba(96,184,248,0.4)' },
-    lime:   { bg: 'rgba(128,224,80,0.045)',  accent: 'rgba(128,224,80,0.4)' },
-    violet: { bg: 'rgba(176,144,248,0.045)', accent: 'rgba(176,144,248,0.4)' },
-    orange: { bg: 'rgba(240,144,64,0.045)',  accent: 'rgba(240,144,64,0.4)' },
-    rose:   { bg: 'rgba(240,96,128,0.045)',  accent: 'rgba(240,96,128,0.4)' },
+    gold:   { bg: 'rgba(240,192,64,0.015)',  accent: 'rgba(240,192,64,0.09)' },
+    teal:   { bg: 'rgba(64,208,192,0.015)',  accent: 'rgba(64,208,192,0.09)' },
+    sky:    { bg: 'rgba(96,184,248,0.015)',  accent: 'rgba(96,184,248,0.09)' },
+    lime:   { bg: 'rgba(128,224,80,0.015)',  accent: 'rgba(128,224,80,0.09)' },
+    violet: { bg: 'rgba(176,144,248,0.015)', accent: 'rgba(176,144,248,0.09)' },
+    orange: { bg: 'rgba(240,144,64,0.015)',  accent: 'rgba(240,144,64,0.09)' },
+    rose:   { bg: 'rgba(240,96,128,0.015)',  accent: 'rgba(240,96,128,0.09)' },
   };
   let sectionOpen = false;
+
+  // Every STEP divider in the prompt (STEP 0 Revision, STEP 1 Teach, STEP 2 Demonstrate, etc.) is
+  // guaranteed to appear in every NEW response — unlike the manual [BG:] tag above, which only
+  // shows up if Claude remembers to add one. So instead of leaving the long stretch of body text
+  // under each STEP as flat, undifferentiated text, each STEP automatically gets its own full-width
+  // color wash (header + body together) in a color tied to what that step actually is — giving a
+  // long reading session clear, navigable, visually distinct zones instead of one boring wall of
+  // text. Colors are reused deliberately, not random: gold = revision/highlight, teal = new
+  // teaching, violet = comparison/demonstration, orange = numbered practice drills, sky = writing,
+  // lime = speaking, rose = routing/admin. STEP 9 (questions) and STEP 10 (data block) are excluded
+  // since their real content is stripped out of Read Mode entirely (shown in the side panel instead).
+  const STEP_COLORS = {
+    0: 'gold', 1: 'teal', 2: 'violet', 3: 'orange', 4: 'sky',
+    5: 'lime', 6: 'rose', 7: 'gold', 8: 'teal'
+  };
+  let stepSectionOpen = false;
+
+  // Divider characters tolerated as "this is a decorated header line", not just the exact ━ glyph
+  // the prompt shows as an example — a live response can come back with =, -, or ═ instead, and
+  // older saved days (from before this STEP structure existed) may have none at all.
+  const DIV = '[-=~━═]';
+  const hasStepDividers = new RegExp(`^${DIV}{2,}\\s*STEP\\s*\\d+`, 'im').test(displayRaw);
+
+  // FALLBACK: if this content has no STEP dividers anywhere (older saved day, or a response that
+  // didn't use the divider format), color by ## section headers instead, cycling the same palette,
+  // so every day still gets visual variation on re-render — not just days created after this change.
+  const FALLBACK_PALETTE = ['gold', 'teal', 'violet', 'orange', 'sky', 'lime', 'rose'];
+  let fallbackColorIdx = -1;
 
   for (const line of lines) {
     // A pre-rendered chart/tree/process visual goes in here verbatim, bypassing the text formatter.
@@ -4155,7 +4501,7 @@ function renderSessionReadMode(raw) {
       if (sectionOpen) { html += '</div>'; sectionOpen = false; }
       const c = BG_COLOR_MAP[bgMatch[1].toLowerCase()];
       if (c) {
-        html += `<div style="background:${c.bg};border-left:2px solid ${c.accent};border-radius:0 10px 10px 0;padding:6px 16px 6px 18px;margin:6px 0">`;
+        html += `<div style="background:${c.bg};border-left:2px solid ${c.accent};padding:6px 16px 6px 18px;margin:6px 0">`;
         sectionOpen = true;
       }
       continue;
@@ -4180,23 +4526,39 @@ function renderSessionReadMode(raw) {
     if (/^\s*\|.*\|\s*$/.test(line)) { tableBuffer.push(line); continue; }
     if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
 
-    const stepHead = line.match(/^━+\s*(STEP\s*\d+[^━]*?)\s*━+/i);
-    const h1 = line.match(/^#\s+(.*)/);
-    const h2 = line.match(/^##\s+(.*)/);
-    const h3 = line.match(/^###\s+(.*)/);
-    const h4 = line.match(/^####\s+(.*)/);
-    const boxHead = !h1 && !h2 && !h3 && !h4 && (line.match(/^[━═]{3,}(.+?)[━═]{3,}/) || line.match(/^──+(.+?)──+/));
+    const stepHead = line.match(/^(?:#{1,4}\s*)?[-=~━═]{2,}\s*(STEP\s*\d+[^━═\-=~\n]*?)\s*[-=~━═]{2,}/i)
+                  || line.match(/^(?:#{1,4}\s*)?(STEP\s*\d+\s*[:\-—][^\n]{0,80})$/i);
+    const h1 = !stepHead && line.match(/^#\s+(.*)/);
+    const h2 = !stepHead && line.match(/^##\s+(.*)/);
+    const h3 = !stepHead && !h2 && line.match(/^###\s+(.*)/);
+    const h4 = !stepHead && !h2 && !h3 && line.match(/^####\s+(.*)/);
+    const boxHead = !stepHead && !h1 && !h2 && !h3 && !h4 && (line.match(/^[━═]{3,}(.+?)[━═]{3,}/) || line.match(/^──+(.+?)──+/));
 
     if (stepHead) {
       if (sectionOpen) { html += '</div>'; sectionOpen = false; }
-      html += `<div style="margin:30px 0 16px;padding:12px 16px;background:linear-gradient(90deg,rgba(240,192,64,0.18),rgba(240,192,64,0.03));border-left:4px solid var(--gold);border-radius:0 8px 8px 0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(13px,3.5vw,15px);color:var(--gold);letter-spacing:0.3px;word-break:break-word;overflow-wrap:anywhere">${escHtml(stepHead[1].trim())}</div>`;
+      if (stepSectionOpen) { html += '</div>'; stepSectionOpen = false; }
+      const stepNumMatch = stepHead[1].match(/STEP\s*(\d+)/i);
+      const stepNum = stepNumMatch ? parseInt(stepNumMatch[1], 10) : null;
+      const colorName = stepNum !== null ? STEP_COLORS[stepNum] : null;
+      const c = colorName ? BG_COLOR_MAP[colorName] : null;
+      const accentVar = colorName ? `var(--${colorName})` : 'var(--gold)';
+      const gradStart = c ? c.accent.replace('0.28', '0.07') : 'rgba(240,192,64,0.035)';
+      const gradEnd = 'transparent';
+      if (c) {
+        html += `<div style="background:${c.bg};border-left:2px solid ${c.accent};margin:30px 0 18px;padding:2px 20px 16px 20px">`;
+        stepSectionOpen = true;
+      }
+      html += `<div style="margin:${c?'0 0 16px':'30px 0 16px'};padding:${c ? '10px 0' : '10px 16px'};background:linear-gradient(90deg,${gradStart},transparent);border-left:3px solid ${accentVar};font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(14px,3.5vw,16px);color:${accentVar};letter-spacing:0.3px;word-break:break-word;overflow-wrap:anywhere">${escHtml(stepHead[1].trim())}</div>`;
       continue;
     }
     if (h1) {
+      if (sectionOpen) { html += '</div>'; sectionOpen = false; }
+      if (stepSectionOpen) { html += '</div>'; stepSectionOpen = false; }
       html += `<div style="margin:36px 0 18px;font-family:'Fraunces',serif;font-size:clamp(20px,6vw,28px);font-weight:700;color:var(--gold);line-height:1.2;border-bottom:2px solid rgba(240,192,64,0.25);padding-bottom:12px;word-break:break-word;overflow-wrap:anywhere">${tokenizeLine(h1[1], vocabMap)}</div>`;
       continue;
     }
     if (h2) {
+      if (stepSectionOpen) { html += '</div>'; stepSectionOpen = false; }
       html += `<div style="margin:28px 0 14px;font-family:'Space Grotesk',sans-serif;font-size:clamp(15px,4vw,20px);font-weight:700;color:var(--teal);display:flex;align-items:flex-start;gap:10px;word-break:break-word;overflow-wrap:anywhere"><span style="width:4px;min-height:20px;align-self:stretch;background:var(--teal);border-radius:2px;flex-shrink:0;margin-top:3px"></span><span style="flex:1;min-width:0">${tokenizeLine(h2[1], vocabMap)}</span></div>`;
       continue;
     }
@@ -4217,14 +4579,14 @@ function renderSessionReadMode(raw) {
     const bullet = line.match(/^(\s*)[•\-\*]\s+(.*)/);
     if (bullet) {
       const indent = bullet[1].length > 0 ? 'padding-left:28px' : '';
-      html += `<div style="display:flex;gap:12px;padding:4px 0;${indent}"><span style="color:var(--lime);flex-shrink:0;margin-top:4px;font-size:10px">▸</span><span style="flex:1">${tokenizeLine(bullet[2], vocabMap)}</span></div>`;
+      html += `<div style="display:flex;gap:12px;padding:5px 0;${indent}"><span style="color:var(--lime);flex-shrink:0;margin-top:5px;font-size:11px">▸</span><span style="flex:1;font-size:15px;line-height:2.0;text-align:justify">${tokenizeLine(bullet[2], vocabMap)}</span></div>`;
       wordCount += (bullet[2].match(/\w+/g) || []).length;
       continue;
     }
 
     const numbered = line.match(/^(\d+)\.\s+(.*)/);
     if (numbered) {
-      html += `<div style="display:flex;gap:12px;padding:4px 0;align-items:flex-start"><span style="color:var(--orange);font-weight:700;flex-shrink:0;min-width:24px;font-family:'Space Mono',monospace;font-size:12px;margin-top:3px">${escHtml(numbered[1])}.</span><span style="flex:1">${tokenizeLine(numbered[2], vocabMap)}</span></div>`;
+      html += `<div style="display:flex;gap:12px;padding:5px 0;align-items:flex-start"><span style="color:var(--orange);font-weight:700;flex-shrink:0;min-width:28px;font-family:'Space Mono',monospace;font-size:13px;margin-top:4px">${escHtml(numbered[1])}.</span><span style="flex:1;font-size:15px;line-height:2.0;text-align:justify">${tokenizeLine(numbered[2], vocabMap)}</span></div>`;
       wordCount += (numbered[2].match(/\w+/g) || []).length;
       continue;
     }
@@ -4236,12 +4598,13 @@ function renderSessionReadMode(raw) {
 
     const tokenized = tokenizeLine(line, vocabMap);
     wordCount += (line.match(/\w+/g) || []).length;
-    html += `<div style="padding:4px 0">${tokenized}</div>`;
+    html += `<div style="padding:4px 0;text-align:justify">${tokenized}</div>`;
   }
 
   // Flush any table still buffered at end of content
   if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
   if (sectionOpen) { html += '</div>'; sectionOpen = false; }
+  if (stepSectionOpen) { html += '</div>'; stepSectionOpen = false; }
   const readMins = Math.max(1, Math.round(wordCount / 200));
   document.getElementById('readModeProgress').textContent = wordCount.toLocaleString() + ' words · ~' + readMins + ' min read';
   contentEl.innerHTML = '<div class="read-inner">' + html + '</div>';
@@ -4508,35 +4871,67 @@ function flushTable(rows, vocabMap) {
 }
 
 function tokenizeLine(text, vocabMap) {
+  if (!text) return '';
+  // Pre-process: Replace ∅ (zero article marker) with a styled badge
+  // Claude uses ∅ as a linguistics notation meaning "no article here"
+  text = text.replace(/∅/g, '<span title="Zero article — no article needed here" style="display:inline-flex;align-items:center;justify-content:center;background:rgba(96,184,248,0.18);border:1px solid rgba(96,184,248,0.5);color:var(--sky);border-radius:3px;font-size:10px;font-family:\'Space Mono\',monospace;font-weight:700;padding:0 4px;margin:0 1px;vertical-align:middle;line-height:1.6;letter-spacing:0.3px">∅</span>');
+
   // Process markdown inline: **bold**, *italic*, `code`
   // We'll build segments to avoid double-escaping
   const segments = [];
   let remaining = text;
 
-  // Replace inline patterns — work left to right
-  const inlineRe = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
-  let lastIdx = 0;
-  let match;
-  while ((match = inlineRe.exec(text)) !== null) {
-    if (match.index > lastIdx) segments.push({ type: 'text', val: text.slice(lastIdx, match.index) });
-    if (match[0].startsWith('**')) segments.push({ type: 'bold', val: match[2] });
-    else if (match[0].startsWith('*')) segments.push({ type: 'italic', val: match[3] });
-    else if (match[0].startsWith('`')) segments.push({ type: 'code', val: match[4] });
-    lastIdx = match.index + match[0].length;
+  // Since we've already injected HTML for ∅, we need to split on HTML spans vs plain text
+  // Use a placeholder approach: split text into html-safe chunks first
+  const htmlChunkRe = /<span[^>]*>[\s\S]*?<\/span>/g;
+  const htmlChunks = [];
+  let plainText = text;
+  // Extract already-rendered HTML spans (∅ badges) so inline markdown doesn't corrupt them
+  const preParts = [];
+  let lastHtmlIdx = 0;
+  let hMatch;
+  const tempRe = /<span[^>]*title="Zero article[^"]*"[^>]*>[\s\S]*?<\/span>/g;
+  while ((hMatch = tempRe.exec(text)) !== null) {
+    if (hMatch.index > lastHtmlIdx) {
+      preParts.push({ type: 'plain', val: text.slice(lastHtmlIdx, hMatch.index) });
+    }
+    preParts.push({ type: 'html', val: hMatch[0] });
+    lastHtmlIdx = hMatch.index + hMatch[0].length;
   }
-  if (lastIdx < text.length) segments.push({ type: 'text', val: text.slice(lastIdx) });
+  if (lastHtmlIdx < text.length) preParts.push({ type: 'plain', val: text.slice(lastHtmlIdx) });
 
-  return segments.map(seg => {
-    if (seg.type === 'bold') return `<strong style="color:#f0f0ff;font-weight:700">${wordify(seg.val, vocabMap)}</strong>`;
-    if (seg.type === 'italic') return `<em style="color:#b0b0d0">${wordify(seg.val, vocabMap)}</em>`;
-    if (seg.type === 'code') return `<code style="background:#1a1a28;color:var(--teal);padding:2px 7px;border-radius:4px;font-family:'Space Mono',monospace;font-size:12px">${escHtml(seg.val)}</code>`;
-    return wordify(seg.val, vocabMap);
-  }).join('');
+  // Now process each plain part for markdown inline, pass html parts through untouched
+  const processPlain = (str) => {
+    if (!str) return '';
+    const segs = [];
+    const inlineRe = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
+    let lastIdx = 0;
+    let match;
+    while ((match = inlineRe.exec(str)) !== null) {
+      if (match.index > lastIdx) segs.push({ type: 'text', val: str.slice(lastIdx, match.index) });
+      if (match[0].startsWith('**')) segs.push({ type: 'bold', val: match[2] || '' });
+      else if (match[0].startsWith('*')) segs.push({ type: 'italic', val: match[3] || '' });
+      else if (match[0].startsWith('`')) segs.push({ type: 'code', val: match[4] || '' });
+      lastIdx = match.index + match[0].length;
+    }
+    if (lastIdx < str.length) segs.push({ type: 'text', val: str.slice(lastIdx) });
+    return segs.map(seg => {
+      if (seg.type === 'bold') return `<strong style="color:#f0f0ff;font-weight:700">${wordify(seg.val, vocabMap)}</strong>`;
+      if (seg.type === 'italic') return `<em style="color:#b0b0d0">${wordify(seg.val, vocabMap)}</em>`;
+      if (seg.type === 'code') return `<code style="background:#1a1a28;color:var(--teal);padding:2px 7px;border-radius:4px;font-family:'Space Mono',monospace;font-size:12px">${escHtml(seg.val)}</code>`;
+      return wordify(seg.val, vocabMap);
+    }).join('');
+  };
+
+  return preParts.map(p => p.type === 'html' ? p.val : processPlain(p.val)).join('');
 }
 
 function wordify(text, vocabMap) {
+  if (!text) return '';
   // Make every English word clickable; vocab-bank words get teal highlight
-  return text.replace(/([a-zA-Z][a-zA-Z'-]*[a-zA-Z]|[a-zA-Z])/g, (word) => {
+  // Skip any HTML tags already in the string (e.g. ∅ badge spans injected before this)
+  return text.replace(/(<[^>]+>)|([a-zA-Z][a-zA-Z'-]*[a-zA-Z]|[a-zA-Z])/g, (full, tag, word) => {
+    if (tag) return tag; // Pass HTML through untouched
     const key = word.toLowerCase().replace(/['-]$/g, '');
     const vEntry = vocabMap[key] || vocabMap[word.toLowerCase()];
     const safeWord = escHtml(word);
@@ -5087,7 +5482,101 @@ function clearAIChat() {
 })();
 
 // ═══════════════════════════════════════════════════════════════
-// ANALYTICS
+// PANEL DRAG TO RESIZE (DESKTOP — horizontal width)
+// ═══════════════════════════════════════════════════════════════
+const PANEL_WIDTH_KEY = 'ielts_answerPanelWidth';
+const PANEL_MIN_W = 280;
+
+function getPanelMaxWidth() {
+  return Math.round(window.innerWidth * 0.7);
+}
+
+function setAnswerPanelWidth(px) {
+  const panel = document.getElementById('answerPanel');
+  if (!panel) return;
+  const clamped = Math.max(PANEL_MIN_W, Math.min(getPanelMaxWidth(), px));
+  panel.style.flex = '0 0 ' + clamped + 'px';
+  panel.style.width = clamped + 'px';
+  return clamped;
+}
+
+// Restores the user's last chosen Exercises-panel width when entering Read Mode on desktop.
+function applySavedPanelWidth() {
+  if (window.innerWidth <= 768) return;
+  const saved = parseInt(localStorage.getItem(PANEL_WIDTH_KEY), 10);
+  if (saved && !isNaN(saved)) setAnswerPanelWidth(saved);
+}
+
+(function initPanelDragHorizontal() {
+  let dragging = false;
+  let startX = 0;
+  let startW = 0;
+
+  function getHandle() { return document.getElementById('panelDragHandleV'); }
+  function getPanel() { return document.getElementById('answerPanel'); }
+
+  function onDragStart(e) {
+    if (window.innerWidth <= 768) return;
+    dragging = true;
+    startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+    const panel = getPanel();
+    startW = panel ? panel.getBoundingClientRect().width : 340;
+    document.addEventListener('touchmove', onDragMove, { passive: false });
+    document.addEventListener('touchend', onDragEnd);
+    document.addEventListener('mousemove', onDragMove);
+    document.addEventListener('mouseup', onDragEnd);
+    const h = getHandle();
+    if (h) h.classList.add('dragging');
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'ew-resize';
+  }
+
+  function onDragMove(e) {
+    if (!dragging) return;
+    e.preventDefault();
+    const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+    // Panel sits on the right side — dragging the handle left grows the panel.
+    const delta = startX - clientX;
+    setAnswerPanelWidth(startW + delta);
+  }
+
+  function onDragEnd() {
+    if (!dragging) return;
+    dragging = false;
+    document.removeEventListener('touchmove', onDragMove);
+    document.removeEventListener('touchend', onDragEnd);
+    document.removeEventListener('mousemove', onDragMove);
+    document.removeEventListener('mouseup', onDragEnd);
+    const h = getHandle();
+    if (h) h.classList.remove('dragging');
+    document.body.style.userSelect = '';
+    document.body.style.cursor = '';
+    const panel = getPanel();
+    if (panel) {
+      try { localStorage.setItem(PANEL_WIDTH_KEY, String(Math.round(panel.getBoundingClientRect().width))); } catch(e) {}
+    }
+  }
+
+  function attachDragHandle() {
+    const handle = document.getElementById('panelDragHandleV');
+    if (!handle) return;
+    handle.addEventListener('touchstart', onDragStart, { passive: false });
+    handle.addEventListener('mousedown', onDragStart);
+  }
+  window.addEventListener('resize', () => {
+    const overlay = document.getElementById('readModeOverlay');
+    if (!overlay || overlay.style.display !== 'flex') return;
+    const panel = getPanel();
+    if (panel && window.innerWidth > 768 && /px$/.test(panel.style.width || '')) {
+      setAnswerPanelWidth(parseInt(panel.style.width, 10));
+    }
+  });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachDragHandle);
+  } else {
+    attachDragHandle();
+  }
+})();
 // ═══════════════════════════════════════════════════════════════
 function buildAnalytics() {
   // KPI cards
