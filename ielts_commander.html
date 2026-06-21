@@ -2034,7 +2034,7 @@ function openDayModal(d) {
 function buildFocus(d, topic, ph, rev) {
   const phNames = ['','Foundation','IELTS Mechanics','Intensive Practice','Mastery & Refinement'];
   if (rev) return `REVIEW DAY — Week ${getWeek(d)} | Phase ${ph}: ${phNames[ph]}\n\nRe-examine everything from Days ${d-6}–${d-1}. Re-test grammar, vocabulary, writing, speaking. Identify your 3 weakest points and drill them. This is the most critical session of every week.`;
-  return `Phase ${ph}: ${phNames[ph]} — Day ${d} / Week ${getWeek(d)}\n\nFocus: ${topic}\n\nIf there's data from yesterday, the session opens with a 10-15 min Quick Revision — drilling yesterday's content and fixing every unresolved mistake — before moving into today's new topic. Claude will then teach, demonstrate, make you practice, assess your writing and speaking, recommend resources, and give you a precise [SESSION_DATA] block to paste back here.`;
+  return `Phase ${ph}: ${phNames[ph]} — Day ${d} / Week ${getWeek(d)}\n\nFocus: ${topic}\n\nIf there's data from yesterday, the session opens with a 10-15 min Quick Revision — re-teaching yesterday's content and the correct form for every unresolved mistake — before moving into today's new topic. Claude will then teach, demonstrate, make you practice, assess your writing and speaking, recommend resources, and give you a precise [SESSION_DATA] block to paste back here.`;
 }
 
 // Extracts the day number from an error entry like "Day 14: missing the before River Thames"
@@ -2196,12 +2196,24 @@ ${errBlock}
 TODAY IS REVIEW DAY covering Days ${d-6}–${d-1}.
 Use the FULL WEEK DATA above as your source of truth — base every re-test sentence, quiz question, and drill directly on the actual mistakes and topics listed there. Do not invent generic content if real data is present above. If a PERSISTENT WEAK PATTERNS section is present, those items have already survived at least one earlier review — treat them as the top priority, not just one more bullet in the list.
 
+Format your entire response in clean, well-structured markdown-style text (headers, • bullets, numbered lists, | tables) so it reads cleanly when rendered — no walls of unbroken text. This app can also render a real chart, tree diagram, or process diagram inline if you use these exact formats (never plain ASCII art — it will not render):
+[CHART]
+type: bar
+title: This Week's Daily Scores
+x_label: Day
+y_label: Score
+unit: %
+Day ${d-6}: 70
+Day ${d-5}: 75
+[/CHART]
+(type can be bar, line, or pie — use the FULL WEEK DATA day scores above for a real score-trend chart in WEAK POINTS below. For trees use 2-space indent: [TREE title="..."]...[/TREE]. For step sequences: [PROCESS title="..."] with numbered lines.)
+
 REVIEW SESSION STRUCTURE:
 1. RE-TEST GRAMMAR: Take every grammar rule from this week. Write 10 new sentences for me to correct. Do not repeat examples I have already seen.
 2. VOCABULARY QUIZ: Re-test all words from this week in context (fill-in-the-blank, 15 questions).
 3. WRITING ASSESSMENT: Give me a fresh writing task related to this week's topics. Assess with band scores for all 4 criteria.
 4. SPEAKING REVIEW: Tell me exactly when to switch to Voice Mode. Provide exact script.
-5. WEAK POINTS: Identify my 3 biggest weaknesses — pull from PERSISTENT WEAK PATTERNS first if present, then this week's mistakes. Create intensive 10-minute drills for each. Tell me plainly if something is still unresolved after a previous review.
+5. WEAK POINTS: Identify my 3 biggest weaknesses — pull from PERSISTENT WEAK PATTERNS first if present, then this week's mistakes. Create intensive 10-minute drills for each. Tell me plainly if something is still unresolved after a previous review. Include a [CHART] of this week's daily scores from the FULL WEEK DATA above if at least 2 days have recorded scores.
 6. NOTEBOOKLM TASK: Give me an exact instruction for NotebookLM to deepen one key concept from this week.
 7. MEDIA: Recommend 1 specific video or podcast episode. Include title, platform, and URL or search term.
 8. SCORE ME: Give honest 0-100 score based on my performance in this review.
@@ -2223,14 +2235,46 @@ You are my dedicated IELTS teacher. I am an analytical engineering student — g
 
 Format your entire response in clean, well-structured markdown-style text (use the ━━━ STEP N ━━━ dividers exactly as shown below for each section, plus #/##/### headers, • bullets, numbered lists, and | tables where useful) so it reads cleanly when rendered — no walls of unbroken text.
 
+This app can render real visuals (an actual chart/graph, a tree diagram, or a process diagram) directly inside your response, but ONLY if you use these exact block formats. Never use plain ASCII art, hand-drawn boxes, or any other diagram style for these — they will not render and will look broken. Use a real example with specific numbers/content, never placeholders.
+
+• GRAPH/CHART — for any bar chart, line graph, or pie chart (e.g. IELTS Task 1 data, score trends, before/after comparisons):
+[CHART]
+type: bar
+title: Chart Title Here
+x_label: X Axis Label
+y_label: Y Axis Label
+unit: %
+series: Series A, Series B
+Category 1: 10, 20
+Category 2: 15, 25
+[/CHART]
+(type is bar, line, or pie. For pie charts give exactly one value per category and omit the series line. Every field on its own line, exactly as shown.)
+
+• TREE / HIERARCHY — for sentence-structure trees, grammar trees, mind maps, essay/idea outlines:
+[TREE title="Tree Title Here"]
+Top Level Node
+  Child Node A
+    Grandchild Node
+  Child Node B
+[/TREE]
+(indent each level by exactly 2 spaces. No bullets, dashes, or ASCII connector characters — indentation alone defines the tree.)
+
+• PROCESS DIAGRAM — for IELTS Task 1 process diagrams or any step-by-step sequence:
+[PROCESS title="Process Title Here"]
+1. First step described in full
+2. Second step described in full
+3. Third step described in full
+[/PROCESS]
+
+Use these three blocks only when a real graph, tree, or process actually helps the explanation — not for every list. Everything else still uses normal text, headers, bullets, and tables as described above.
+
 FOLLOW THIS SESSION STRUCTURE EXACTLY:
 ${errBlock ? `
 ━━━ STEP 0: QUICK REVISION (10–15 min) — DO THIS FIRST, BEFORE ANYTHING NEW ━━━
-Before teaching anything new, run a fast, complete revision of Day ${d-1} using the CONTINUITY DATA above. Do not skip this or merge it into Step 1 — it is its own short, separate block:
-• Recap what we covered yesterday in 2-3 sentences, and state plainly how today's topic ("${topic}") builds on it.
-• Quiz me with 5-8 rapid-fire questions covering yesterday's core material (grammar rules, vocabulary in context, writing points). Mix them up — do not reuse the exact same example sentences I already saw.
-• Go through EVERY item listed in "All Unresolved Mistakes So Far This Week" above, one at a time: give a fresh sentence testing that exact mistake, have me correct it, then correct me and confirm I've actually fixed it before moving to the next one. Do not let any slide past unaddressed.
-• If "Recurring Patterns From Past Weeks" is present above, drill those hardest of all — they have already survived at least one full weekly review and are the real priority.
+Before teaching anything new, RE-TEACH Day ${d-1} using the CONTINUITY DATA above. This is teaching, not testing — I should come out of this actually understanding the rule again, not just having been quizzed on it. Do not skip this or merge it into Step 1 — it is its own short, separate block:
+• Re-explain the core rule(s)/concept(s) from yesterday properly — a real mini re-teach, not just a 2-3 sentence summary. State plainly how today's topic ("${topic}") builds on it.
+• Go through EVERY item listed in "All Unresolved Mistakes So Far This Week" above, one at a time: explain clearly WHY it was wrong and what the correct rule/form actually is, with a worked example. Then give me ONE fresh sentence to apply the corrected rule myself, check my answer, and re-explain again if I get it wrong — don't just mark it and move on. Do not let any item slide past without being properly re-taught.
+• If "Recurring Patterns From Past Weeks" is present above, re-teach those most carefully of all — they've already survived a full weekly review, so explain them a different way this time rather than repeating the same explanation that didn't stick.
 Keep this tight — 10-15 minutes, not the whole session — then move straight into STEP 1. Do not let revision eat into today's new teaching time.
 ` : ''}
 ━━━ STEP 1: TEACH (30 min) ━━━
@@ -4065,7 +4109,16 @@ function renderSessionReadMode(raw) {
   (S.vocabulary || []).forEach(v => { if (v.word) vocabMap[v.word.toLowerCase()] = v; });
 
   // Strip [QUESTIONS] block from display — shown in panel instead
-  const displayRaw = raw.replace(/\[QUESTIONS\][\s\S]*?\[\/QUESTIONS\]/g, '').trim();
+  let displayRaw = raw.replace(/\[QUESTIONS\][\s\S]*?\[\/QUESTIONS\]/g, '').trim();
+
+  // Extract visual blocks (charts/graphs, trees, process diagrams) and pre-render them to HTML/SVG,
+  // swapping each block for a placeholder line so the normal text loop below can drop the rendered
+  // visual in at the exact right spot in the flow.
+  const visualBlocks = [];
+  const stashBlock = (html) => { visualBlocks.push(html); return `\n\u0001VBLOCK${visualBlocks.length - 1}\u0001\n`; };
+  displayRaw = displayRaw.replace(/\[CHART([^\]]*)\]([\s\S]*?)\[\/CHART\]/gi, (m, attrs, body) => stashBlock(renderChartBlock(body, attrs)));
+  displayRaw = displayRaw.replace(/\[TREE([^\]]*)\]([\s\S]*?)\[\/TREE\]/gi, (m, attrs, body) => stashBlock(renderTreeBlock(body, attrs)));
+  displayRaw = displayRaw.replace(/\[PROCESS([^\]]*)\]([\s\S]*?)\[\/PROCESS\]/gi, (m, attrs, body) => stashBlock(renderProcessBlock(body, attrs)));
 
   const lines = displayRaw.split('\n');
   let html = '';
@@ -4087,6 +4140,14 @@ function renderSessionReadMode(raw) {
   let sectionOpen = false;
 
   for (const line of lines) {
+    // A pre-rendered chart/tree/process visual goes in here verbatim, bypassing the text formatter.
+    const vMatch = line.trim().match(/^\u0001VBLOCK(\d+)\u0001$/);
+    if (vMatch) {
+      if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
+      html += visualBlocks[parseInt(vMatch[1], 10)];
+      continue;
+    }
+
     // SESSION_DATA is machine-readable bookkeeping for the parser only — never shown in Read Mode.
     if (/^\[SESSION_DATA\]/.test(line)) { inSessionData = true; continue; }
     if (/^\[\/SESSION_DATA\]/.test(line)) { inSessionData = false; continue; }
@@ -4175,6 +4236,214 @@ function renderSessionReadMode(raw) {
   const readMins = Math.max(1, Math.round(wordCount / 200));
   document.getElementById('readModeProgress').textContent = wordCount.toLocaleString() + ' words · ~' + readMins + ' min read';
   contentEl.innerHTML = '<div class="read-inner">' + html + '</div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VISUAL BLOCK RENDERERS — [CHART] / [TREE] / [PROCESS]
+// These let Claude's response embed a real, parseable graph, hierarchy diagram, or
+// step-by-step process diagram that Read Mode renders as an actual SVG/HTML visual
+// instead of dumping it as plain text. See buildPrompt() for the exact syntax taught
+// to the AI — keep these parsers and that syntax in sync if either one changes.
+// ═══════════════════════════════════════════════════════════════
+
+const VIZ_PALETTE = ['#f0c040','#40d0c0','#60b8f8','#80e050','#b090f8','#f09040','#f06080'];
+
+function hexToRgba(hex, alpha) {
+  const h = (hex || '#888888').replace('#', '');
+  const r = parseInt(h.substring(0, 2), 16) || 0;
+  const g = parseInt(h.substring(2, 4), 16) || 0;
+  const b = parseInt(h.substring(4, 6), 16) || 0;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function vizAttr(attrsStr, name) {
+  const m = (attrsStr || '').match(new RegExp(name + '\\s*=\\s*"([^"]*)"', 'i'));
+  return m ? m[1] : '';
+}
+
+// Parses a [CHART] body of "key: value" meta lines (type/title/x_label/y_label/series/unit)
+// plus "Label: v1, v2, ..." data rows into { meta, rows }.
+function parseChartBody(body) {
+  const metaKeys = ['type', 'title', 'x_label', 'y_label', 'series', 'unit'];
+  const meta = { type: 'bar', title: '', x_label: '', y_label: '', series: [], unit: '' };
+  const rows = [];
+  (body || '').split('\n').forEach(raw => {
+    const line = raw.trim();
+    if (!line) return;
+    const m = line.match(/^([^:]+):\s*(.+)$/);
+    if (!m) return;
+    const rawKey = m[1].trim();
+    const key = rawKey.toLowerCase();
+    const val = m[2].trim();
+    if (metaKeys.includes(key)) {
+      if (key === 'series') meta.series = val.split(',').map(s => s.trim()).filter(Boolean);
+      else meta[key] = val;
+    } else {
+      const values = val.split(',').map(s => parseFloat(s.trim().replace(/[^0-9.\-]/g, ''))).filter(n => !isNaN(n));
+      if (values.length) rows.push({ label: rawKey, values });
+    }
+  });
+  return { meta, rows };
+}
+
+// Renders a [CHART] block as a real inline SVG bar / line / pie chart with legend.
+function renderChartBlock(body, attrsStr) {
+  const { meta, rows } = parseChartBody(body);
+  if (!rows.length) return '';
+  const title = meta.title || vizAttr(attrsStr, 'title');
+  const colors = VIZ_PALETTE;
+  const W = 640, H = 320;
+  const padL = 56, padR = 20, padT = title ? 44 : 20, padB = 56;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  let svgInner = '';
+  let legend = '';
+
+  if (meta.type === 'pie') {
+    const total = rows.reduce((s, r) => s + (r.values[0] || 0), 0) || 1;
+    const cx = W / 2, cy = padT + plotH / 2, r = Math.min(plotW, plotH) / 2 - 8;
+    let angle = -Math.PI / 2;
+    rows.forEach((row, i) => {
+      const val = row.values[0] || 0;
+      const slice = (val / total) * Math.PI * 2;
+      const x1 = cx + r * Math.cos(angle), y1 = cy + r * Math.sin(angle);
+      const endAngle = angle + slice;
+      const x2 = cx + r * Math.cos(endAngle), y2 = cy + r * Math.sin(endAngle);
+      const largeArc = slice > Math.PI ? 1 : 0;
+      const color = colors[i % colors.length];
+      svgInner += `<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${largeArc} 1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${color}" fill-opacity="0.85" stroke="#09090e" stroke-width="2"/>`;
+      const midAngle = angle + slice / 2;
+      const pct = Math.round((val / total) * 100);
+      if (pct >= 5) {
+        const lx = cx + r * 0.65 * Math.cos(midAngle), ly = cy + r * 0.65 * Math.sin(midAngle);
+        svgInner += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" fill="#09090e" font-size="12" font-weight="700" text-anchor="middle" font-family="'Space Grotesk',sans-serif">${pct}%</text>`;
+      }
+      legend += `<div style="display:flex;align-items:center;gap:6px;margin:3px 14px 3px 0"><span style="width:11px;height:11px;border-radius:3px;background:${color};display:inline-block;flex-shrink:0"></span><span style="font-size:12px;color:var(--t2)">${escHtml(row.label)} — ${val}${meta.unit || ''}</span></div>`;
+      angle = endAngle;
+    });
+  } else if (meta.type === 'line') {
+    const seriesCount = Math.max(1, ...rows.map(r => r.values.length));
+    let maxVal = 0;
+    rows.forEach(r => r.values.forEach(v => { if (v > maxVal) maxVal = v; }));
+    maxVal = (maxVal * 1.15) || 10;
+    const stepX = rows.length > 1 ? plotW / (rows.length - 1) : 0;
+    for (let g = 0; g <= 4; g++) {
+      const y = padT + plotH - (g / 4) * plotH;
+      svgInner += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#1d1d28" stroke-width="1"/>`;
+      svgInner += `<text x="${padL - 8}" y="${y + 4}" fill="#9898b8" font-size="10" text-anchor="end" font-family="'Space Mono',monospace">${Math.round((g / 4) * maxVal)}</text>`;
+    }
+    rows.forEach((r, i) => {
+      const x = padL + i * stepX;
+      svgInner += `<text x="${x}" y="${H - padB + 18}" fill="#9898b8" font-size="10" text-anchor="middle" font-family="'Space Mono',monospace">${escHtml(r.label)}</text>`;
+    });
+    for (let s = 0; s < seriesCount; s++) {
+      const color = colors[s % colors.length];
+      const pts = rows.map((r, i) => {
+        const v = r.values[s] !== undefined ? r.values[s] : 0;
+        return `${(padL + i * stepX).toFixed(1)},${(padT + plotH - (v / maxVal) * plotH).toFixed(1)}`;
+      });
+      svgInner += `<polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2.5"/>`;
+      rows.forEach((r, i) => {
+        const v = r.values[s] !== undefined ? r.values[s] : 0;
+        svgInner += `<circle cx="${(padL + i * stepX).toFixed(1)}" cy="${(padT + plotH - (v / maxVal) * plotH).toFixed(1)}" r="3.5" fill="${color}"/>`;
+      });
+      legend += `<div style="display:flex;align-items:center;gap:6px;margin:3px 14px 3px 0"><span style="width:14px;height:3px;border-radius:2px;background:${color};display:inline-block;flex-shrink:0"></span><span style="font-size:12px;color:var(--t2)">${escHtml(meta.series[s] || ('Series ' + (s + 1)))}</span></div>`;
+    }
+  } else {
+    // bar (grouped if multiple series)
+    const seriesCount = Math.max(1, ...rows.map(r => r.values.length));
+    let maxVal = 0;
+    rows.forEach(r => r.values.forEach(v => { if (v > maxVal) maxVal = v; }));
+    maxVal = (maxVal * 1.15) || 10;
+    for (let g = 0; g <= 4; g++) {
+      const y = padT + plotH - (g / 4) * plotH;
+      svgInner += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#1d1d28" stroke-width="1"/>`;
+      svgInner += `<text x="${padL - 8}" y="${y + 4}" fill="#9898b8" font-size="10" text-anchor="end" font-family="'Space Mono',monospace">${Math.round((g / 4) * maxVal)}</text>`;
+    }
+    const groupW = plotW / rows.length;
+    const barGap = 6;
+    const barW = Math.max(4, (groupW - barGap * 2) / seriesCount);
+    rows.forEach((r, i) => {
+      const groupX = padL + i * groupW;
+      for (let s = 0; s < seriesCount; s++) {
+        const v = r.values[s] !== undefined ? r.values[s] : 0;
+        const bh = (v / maxVal) * plotH;
+        const bx = groupX + barGap + s * barW;
+        const by = padT + plotH - bh;
+        svgInner += `<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${(barW - 3).toFixed(1)}" height="${bh.toFixed(1)}" fill="${colors[s % colors.length]}" fill-opacity="0.85" rx="2"/>`;
+      }
+      svgInner += `<text x="${(groupX + groupW / 2).toFixed(1)}" y="${H - padB + 18}" fill="#9898b8" font-size="10" text-anchor="middle" font-family="'Space Mono',monospace">${escHtml(r.label)}</text>`;
+    });
+    if (seriesCount > 1) {
+      for (let s = 0; s < seriesCount; s++) {
+        legend += `<div style="display:flex;align-items:center;gap:6px;margin:3px 14px 3px 0"><span style="width:11px;height:11px;border-radius:3px;background:${colors[s % colors.length]};display:inline-block;flex-shrink:0"></span><span style="font-size:12px;color:var(--t2)">${escHtml(meta.series[s] || ('Series ' + (s + 1)))}</span></div>`;
+      }
+    }
+  }
+
+  if (meta.type !== 'pie') {
+    svgInner += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}" stroke="#252535" stroke-width="1.5"/>`;
+    svgInner += `<line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="#252535" stroke-width="1.5"/>`;
+  }
+  const titleSvg = title ? `<text x="${W / 2}" y="24" fill="#f0c040" font-size="14" font-weight="700" text-anchor="middle" font-family="'Space Grotesk',sans-serif">${escHtml(title)}</text>` : '';
+
+  return `<div style="margin:24px 0;padding:16px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" preserveAspectRatio="xMidYMid meet">${titleSvg}${svgInner}</svg>
+    ${legend ? `<div style="display:flex;flex-wrap:wrap;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #1d1d28">${legend}</div>` : ''}
+  </div>`;
+}
+
+// Renders a [TREE] block (2-space-indented hierarchy) as a nested, color-coded tree —
+// for sentence-structure trees, grammar trees, mind maps, essay/idea outlines.
+function renderTreeBlock(body, attrsStr) {
+  const title = vizAttr(attrsStr, 'title');
+  const rawLines = (body || '').split('\n').filter(l => l.trim().length > 0);
+  if (!rawLines.length) return '';
+  const colors = VIZ_PALETTE;
+  const nodes = rawLines.map(line => {
+    const m = line.match(/^(\s*)(.*)$/);
+    const indent = (m[1] || '').replace(/\t/g, '  ').length;
+    return { depth: Math.round(indent / 2), text: (m[2] || '').trim() };
+  });
+
+  let inner = '';
+  nodes.forEach(node => {
+    const color = colors[node.depth % colors.length];
+    inner += `<div style="margin-left:${node.depth * 22}px;margin-top:4px;padding:5px 12px;border-left:3px solid ${color};background:${hexToRgba(color, 0.06)};border-radius:0 6px 6px 0">`;
+    inner += `<span style="color:${color};font-weight:700;font-size:11px;margin-right:5px">${node.depth > 0 ? '▸' : '●'}</span>`;
+    inner += `<span style="color:var(--t1);font-size:13px">${escHtml(node.text)}</span></div>`;
+  });
+
+  return `<div style="margin:24px 0;padding:16px 18px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
+    ${title ? `<div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:var(--gold);margin-bottom:12px">${escHtml(title)}</div>` : ''}
+    ${inner}
+  </div>`;
+}
+
+// Renders a [PROCESS] block (numbered steps) as a connected vertical step flow —
+// for IELTS Task 1 process diagrams and any step-by-step sequence.
+function renderProcessBlock(body, attrsStr) {
+  const title = vizAttr(attrsStr, 'title');
+  const steps = (body || '').split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+    const m = l.match(/^\d+\.\s*(.*)$/);
+    return m ? m[1] : l.replace(/^[-•]\s*/, '');
+  });
+  if (!steps.length) return '';
+  const colors = VIZ_PALETTE;
+  let inner = '';
+  steps.forEach((s, i) => {
+    const color = colors[i % colors.length];
+    inner += `<div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:${hexToRgba(color, 0.18)};border:2px solid ${color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:${color};font-family:'Space Mono',monospace">${i + 1}</div>
+      <div style="flex:1;padding:4px 0 ${i < steps.length - 1 ? '16px' : '2px'};font-size:13px;color:var(--t1);line-height:1.6">${escHtml(s)}</div>
+    </div>`;
+    if (i < steps.length - 1) {
+      inner += `<div style="margin-left:13px;width:2px;height:12px;background:linear-gradient(${color}, ${colors[(i + 1) % colors.length]})"></div>`;
+    }
+  });
+  return `<div style="margin:24px 0;padding:16px 18px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
+    ${title ? `<div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:var(--gold);margin-bottom:14px">${escHtml(title)}</div>` : ''}
+    ${inner}
+  </div>`;
 }
 
 function flushTable(rows, vocabMap) {
