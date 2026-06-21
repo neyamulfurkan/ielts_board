@@ -2034,7 +2034,7 @@ function openDayModal(d) {
 function buildFocus(d, topic, ph, rev) {
   const phNames = ['','Foundation','IELTS Mechanics','Intensive Practice','Mastery & Refinement'];
   if (rev) return `REVIEW DAY — Week ${getWeek(d)} | Phase ${ph}: ${phNames[ph]}\n\nRe-examine everything from Days ${d-6}–${d-1}. Re-test grammar, vocabulary, writing, speaking. Identify your 3 weakest points and drill them. This is the most critical session of every week.`;
-  return `Phase ${ph}: ${phNames[ph]} — Day ${d} / Week ${getWeek(d)}\n\nFocus: ${topic}\n\nIf there's data from yesterday, the session opens with a 10-15 min Quick Revision — re-teaching yesterday's content and the correct form for every unresolved mistake — before moving into today's new topic. Claude will then teach, demonstrate, make you practice, assess your writing and speaking, recommend resources, and give you a precise [SESSION_DATA] block to paste back here.`;
+  return `Phase ${ph}: ${phNames[ph]} — Day ${d} / Week ${getWeek(d)}\n\nFocus: ${topic}\n\nIf there's data from yesterday, the session opens with a short (~5 min) Quick Revision — a one-line correction reminder for every unresolved mistake, not a full re-teach — before moving into today's new topic, which gets the full detailed session. Claude will teach, demonstrate, make you practice, assess your writing and speaking, recommend resources, and give you a precise [SESSION_DATA] block to paste back here.`;
 }
 
 // Extracts the day number from an error entry like "Day 14: missing the before River Thames"
@@ -2270,12 +2270,12 @@ Use these three blocks only when a real graph, tree, or process actually helps t
 
 FOLLOW THIS SESSION STRUCTURE EXACTLY:
 ${errBlock ? `
-━━━ STEP 0: QUICK REVISION (10–15 min) — DO THIS FIRST, BEFORE ANYTHING NEW ━━━
-Before teaching anything new, RE-TEACH Day ${d-1} using the CONTINUITY DATA above. This is teaching, not testing — I should come out of this actually understanding the rule again, not just having been quizzed on it. Do not skip this or merge it into Step 1 — it is its own short, separate block:
-• Re-explain the core rule(s)/concept(s) from yesterday properly — a real mini re-teach, not just a 2-3 sentence summary. State plainly how today's topic ("${topic}") builds on it.
-• Go through EVERY item listed in "All Unresolved Mistakes So Far This Week" above, one at a time: explain clearly WHY it was wrong and what the correct rule/form actually is, with a worked example. Then give me ONE fresh sentence to apply the corrected rule myself, check my answer, and re-explain again if I get it wrong — don't just mark it and move on. Do not let any item slide past without being properly re-taught.
-• If "Recurring Patterns From Past Weeks" is present above, re-teach those most carefully of all — they've already survived a full weekly review, so explain them a different way this time rather than repeating the same explanation that didn't stick.
-Keep this tight — 10-15 minutes, not the whole session — then move straight into STEP 1. Do not let revision eat into today's new teaching time.
+━━━ STEP 0: QUICK REVISION (5 min, KEEP IT SHORT) — DO THIS FIRST, BEFORE ANYTHING NEW ━━━
+This is a FAST refresher, not a second lesson. Do not re-teach in full, do not give worked examples, do not re-test me here — save all real teaching for STEP 1 onward. Keep this entire step short, ideally under 150 words total, no matter how many mistakes are listed:
+• In ONE sentence, recap what we covered yesterday and how today's topic ("${topic}") connects to it.
+• Go through EVERY item listed in "All Unresolved Mistakes So Far This Week" above — none skipped — but give each one only a single short line stating the correct rule/form plainly (e.g. "Remember: 'an EU country', not 'the EU country' — countries take a/an on first mention."). No explanations beyond one line, no new example sentences, no back-and-forth checking.
+• If "Recurring Patterns From Past Weeks" is present, just flag it in one line as still unresolved — do not drill it here.
+Then move straight into STEP 1 — that's where the real, detailed teaching happens.
 ` : ''}
 ━━━ STEP 1: TEACH (30 min) ━━━
 Explain "${topic}" completely. Cover:
@@ -4126,17 +4126,18 @@ function renderSessionReadMode(raw) {
   let inSessionData = false;
   let tableBuffer = [];
 
-  // Each STEP/section gets a slightly different, low-opacity tint so the eye can tell parts
-  // apart while reading a long session — cycles through the theme's accent colors.
-  const sectionColors = [
-    { bg: 'rgba(64,208,192,0.045)',  accent: 'rgba(64,208,192,0.4)' },   // teal
-    { bg: 'rgba(96,184,248,0.045)',  accent: 'rgba(96,184,248,0.4)' },   // sky
-    { bg: 'rgba(128,224,80,0.045)',  accent: 'rgba(128,224,80,0.4)' },   // lime
-    { bg: 'rgba(176,144,248,0.045)', accent: 'rgba(176,144,248,0.4)' }, // violet
-    { bg: 'rgba(240,144,64,0.045)',  accent: 'rgba(240,144,64,0.4)' },   // orange
-    { bg: 'rgba(240,96,128,0.045)',  accent: 'rgba(240,96,128,0.4)' },   // rose
-  ];
-  let sectionIdx = -1;
+  // A section's background tint is chosen by Claude itself via an explicit [BG:colorname] tag in
+  // its response (see buildPrompt) — not auto-cycled by the renderer. The tag is parsed out and
+  // never shown as text; only the resulting subtle background tint remains visible.
+  const BG_COLOR_MAP = {
+    gold:   { bg: 'rgba(240,192,64,0.045)',  accent: 'rgba(240,192,64,0.4)' },
+    teal:   { bg: 'rgba(64,208,192,0.045)',  accent: 'rgba(64,208,192,0.4)' },
+    sky:    { bg: 'rgba(96,184,248,0.045)',  accent: 'rgba(96,184,248,0.4)' },
+    lime:   { bg: 'rgba(128,224,80,0.045)',  accent: 'rgba(128,224,80,0.4)' },
+    violet: { bg: 'rgba(176,144,248,0.045)', accent: 'rgba(176,144,248,0.4)' },
+    orange: { bg: 'rgba(240,144,64,0.045)',  accent: 'rgba(240,144,64,0.4)' },
+    rose:   { bg: 'rgba(240,96,128,0.045)',  accent: 'rgba(240,96,128,0.4)' },
+  };
   let sectionOpen = false;
 
   for (const line of lines) {
@@ -4145,6 +4146,18 @@ function renderSessionReadMode(raw) {
     if (vMatch) {
       if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
       html += visualBlocks[parseInt(vMatch[1], 10)];
+      continue;
+    }
+
+    // [BG:colorname] marks the start of a new tinted section — invisible in the rendered output.
+    const bgMatch = line.trim().match(/^\[BG:\s*([a-zA-Z]+)\s*\]$/i);
+    if (bgMatch) {
+      if (sectionOpen) { html += '</div>'; sectionOpen = false; }
+      const c = BG_COLOR_MAP[bgMatch[1].toLowerCase()];
+      if (c) {
+        html += `<div style="background:${c.bg};border-left:2px solid ${c.accent};border-radius:0 10px 10px 0;padding:6px 16px 6px 18px;margin:6px 0">`;
+        sectionOpen = true;
+      }
       continue;
     }
 
@@ -4176,11 +4189,7 @@ function renderSessionReadMode(raw) {
 
     if (stepHead) {
       if (sectionOpen) { html += '</div>'; sectionOpen = false; }
-      sectionIdx++;
-      const c = sectionColors[sectionIdx % sectionColors.length];
       html += `<div style="margin:30px 0 16px;padding:12px 16px;background:linear-gradient(90deg,rgba(240,192,64,0.18),rgba(240,192,64,0.03));border-left:4px solid var(--gold);border-radius:0 8px 8px 0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(13px,3.5vw,15px);color:var(--gold);letter-spacing:0.3px;word-break:break-word;overflow-wrap:anywhere">${escHtml(stepHead[1].trim())}</div>`;
-      html += `<div style="background:${c.bg};border-left:2px solid ${c.accent};border-radius:0 10px 10px 0;padding:2px 16px 6px 18px">`;
-      sectionOpen = true;
       continue;
     }
     if (h1) {
