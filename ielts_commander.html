@@ -2389,10 +2389,9 @@ This is mandatory — not optional.
 Give me 10 test questions on today's topic. Wait for my answers.
 Score me 0–100. Be honest. Do not inflate.
 
-━━━ STEP 9: QUESTIONS BLOCK (MANDATORY) ━━━
-At the end of the session, after all teaching and exercises, you MUST produce a [QUESTIONS] block listing every exercise, practice question, fill-in-the-blank, correction task, and assessment question from today's session. This block is parsed automatically by the student's tracker.
+━━━ STEP 9: QUESTIONS BLOCK (MANDATORY — DO NOT SKIP, EVEN IF THE REST OF THE RESPONSE USES MARKDOWN LISTS) ━━━
+This is a SEPARATE, ADDITIONAL block — not a restatement in prose. Steps 3, 4, and 8 above will already contain numbered exercises formatted nicely for reading. That formatting is for the human eye and is NOT machine-parsed. Regardless of how those steps were formatted, you must ALSO collect every single item from Steps 3, 4, and 8 into one literal, separately-tagged block placed near the end of your response, using EXACTLY this syntax:
 
-Format exactly:
 [QUESTIONS]
 Q1: [full question text on one line — include all context needed to answer]
 Q2: [full question text on one line]
@@ -2400,11 +2399,12 @@ Q3: [full question text on one line]
 [/QUESTIONS]
 
 Rules:
-— Every question, exercise, correction task, and practice item must appear here
-— Each question on its own line starting with Q1:, Q2:, Q3: etc.
+— Every question, exercise, correction task, and practice item from Steps 3, 4, and 8 must appear here — nothing may be left out, and nothing may be summarized or shortened
+— Each line must start with the literal text Q1:, Q2:, Q3:, etc. — no other numbering style (no "1.", no "1)") will be parsed
 — No blank lines inside the block
-— Write the full question including any sentence to correct or blank to fill
+— Write the full question including any sentence to correct or blank to fill — do not write "see above" or otherwise refer back to earlier text
 — This block comes BEFORE the [SESSION_DATA] block
+— BEFORE finalizing your response, re-read it once and count: does a [QUESTIONS]...[/QUESTIONS] block exist, and does the count of Q-lines inside it match the total number of exercises you actually gave across Steps 3, 4, and 8 (typically 20 + 1 + 10 = 31)? If the block is missing or incomplete, add or fix it now — a response without this block is treated as incomplete and breaks the student's tracker.
 
 ━━━ STEP 10: MANDATORY DATA BLOCK ━━━
 ${schemaBlock}`;
@@ -3577,8 +3577,8 @@ function switchSessionView(mode) {
     // Parse and render content
     renderSessionReadMode(raw);
     // Parse questions
-    const questions = parseQuestionsBlock(raw);
-    renderAnswerPanel(questions);
+    const parsed = parseQuestionsBlock(raw);
+    renderAnswerPanel(parsed.questions, parsed.source);
     // Load writing task for this day
     loadWritingTaskForDay(modalDay);
     // Show overlay
@@ -3689,10 +3689,25 @@ function toggleAnswerPanel() {
 }
 
 // ── QUESTION PARSING ──────────────────────────────────────────
-
+// Returns { questions: string[], source: 'tagged' | 'fallback' | 'none' }
+// 'tagged'   = a proper [QUESTIONS]...[/QUESTIONS] block was found and parsed (preferred, reliable)
+// 'fallback' = no tagged block was found; numbered list lines were heuristically extracted instead
+//              (Claude skipped Step 9 — this is a best-effort recovery, not a guarantee of completeness)
+// 'none'     = nothing usable found at all
 function parseQuestionsBlock(raw) {
+  const tagged = parseTaggedQuestionsBlock(raw);
+  if (tagged.length > 0) {
+    return { questions: tagged, source: 'tagged' };
+  }
+  const fallback = parseFallbackNumberedQuestions(raw);
+  if (fallback.length > 0) {
+    return { questions: fallback, source: 'fallback' };
+  }
+  return { questions: [], source: 'none' };
+}
+
+function parseTaggedQuestionsBlock(raw) {
   const questions = [];
-  // Try [QUESTIONS]...[/QUESTIONS] block first
   const blockMatch = raw.match(/\[QUESTIONS\]([\s\S]*?)\[\/QUESTIONS\]/);
   if (blockMatch) {
     const block = blockMatch[1];
@@ -3707,18 +3722,63 @@ function parseQuestionsBlock(raw) {
   return questions;
 }
 
+// Best-effort recovery when Claude forgot the [QUESTIONS] tag entirely.
+// Scans the whole response for lines that look like genuine numbered exercise
+// items (e.g. "1. Fill in the blank: ___ government...") while excluding lines
+// that are clearly something else (markdown table rows, the ━━━ STEP dividers,
+// markdown headers, and the SESSION_DATA/QUESTIONS blocks themselves so we never
+// double-parse). This is heuristic and may miss items or include noise — it
+// exists purely so a missing tag never means a totally empty answer panel.
+function parseFallbackNumberedQuestions(raw) {
+  let text = raw
+    .replace(/\[SESSION_DATA\][\s\S]*?\[\/SESSION_DATA\]/g, '')
+    .replace(/\[QUESTIONS\][\s\S]*?\[\/QUESTIONS\]/g, '')
+    .replace(/\[CHART\][\s\S]*?\[\/CHART\]/g, '')
+    .replace(/\[TREE[\s\S]*?\[\/TREE\]/g, '')
+    .replace(/\[PROCESS[\s\S]*?\[\/PROCESS\]/g, '');
+
+  const lines = text.split('\n');
+  const found = [];
+  let lastNum = 0;
+
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed) return;
+    if (/^[━─=#|]/.test(trimmed)) return;          // dividers, headers, table rows
+    if (/^STEP\s*\d/i.test(trimmed)) return;         // step labels like "STEP 3:"
+    if (/^\*\*/.test(trimmed)) return;                // bold-only markdown lines
+
+    const m = trimmed.match(/^(\d{1,2})\s*[.)]\s+(.{4,})$/);
+    if (!m) return;
+    const num = parseInt(m[1], 10);
+    const content = m[2].trim();
+    // Require roughly ascending numbering (allows restarting once, e.g. a new
+    // exercise set starting back at 1) to avoid picking up unrelated numbered
+    // text such as band-score tables or step references.
+    if (num === lastNum + 1 || num === 1) {
+      found.push(content);
+      lastNum = num;
+    }
+  });
+
+  return found;
+}
+
 // ── ANSWER PANEL RENDER ───────────────────────────────────────
 
-function renderAnswerPanel(questions) {
+function renderAnswerPanel(questions, source) {
   const wrap = document.getElementById('questionCardsWrap');
   const noMsg = document.getElementById('noQuestionsMsg');
   const dayKey = String(modalDay);
   if (!S.sessionAnswers) S.sessionAnswers = {};
   if (!S.sessionAnswers[dayKey]) S.sessionAnswers[dayKey] = {};
 
+  // Remove any previous fallback banner before re-rendering
+  const existingBanner = document.getElementById('fallbackQuestionsBanner');
+  if (existingBanner) existingBanner.remove();
+
   if (questions.length === 0) {
     noMsg.style.display = 'block';
-    // Remove any existing cards but keep the no-msg
     wrap.querySelectorAll('.q-card').forEach(el => el.remove());
     updatePanelProgress();
     updateCompiledQA();
@@ -3726,6 +3786,14 @@ function renderAnswerPanel(questions) {
   }
   noMsg.style.display = 'none';
   wrap.querySelectorAll('.q-card').forEach(el => el.remove());
+
+  if (source === 'fallback') {
+    const banner = document.createElement('div');
+    banner.id = 'fallbackQuestionsBanner';
+    banner.style.cssText = 'background:rgba(240,192,64,0.12);border:1px solid rgba(240,192,64,0.4);color:var(--gold);font-size:11px;line-height:1.6;padding:10px 12px;border-radius:8px;margin-bottom:4px;';
+    banner.innerHTML = '⚠ <strong>Auto-recovered, not Claude-tagged.</strong> Claude\'s response had no [QUESTIONS] block — these ' + questions.length + ' item(s) were guessed from numbered lines in the text. Check them against the session content; remove or fix any with ✕ / edit, or add missing ones with ＋ ADD Q.';
+    wrap.appendChild(banner);
+  }
 
   questions.forEach((q, i) => {
     const card = buildQuestionCard(i, q, S.sessionAnswers[dayKey][String(i)] || '');
@@ -4288,8 +4356,8 @@ function parseFromReadMode() {
     renderSessionReadMode(S.sessionContent[modalDay]);
     initReadProgressTracking();
     // Re-parse questions
-    const questions = parseQuestionsBlock(S.sessionContent[modalDay]);
-    renderAnswerPanel(questions);
+    const parsed2 = parseQuestionsBlock(S.sessionContent[modalDay]);
+    renderAnswerPanel(parsed2.questions, parsed2.source);
     // Extract writing task
     loadWritingTaskForDay(modalDay);
     resultEl.style.display = 'block';
@@ -4351,20 +4419,30 @@ function parseFromReadMode() {
   // Re-render read mode with combined content
   renderSessionReadMode(S.sessionContent[modalDay]);
   initReadProgressTracking();
-  const questions = parseQuestionsBlock(S.sessionContent[modalDay]);
-  renderAnswerPanel(questions);
+  const parsed3 = parseQuestionsBlock(S.sessionContent[modalDay]);
+  renderAnswerPanel(parsed3.questions, parsed3.source);
   loadWritingTaskForDay(modalDay);
 
   const hasAll = missing.length === 0;
+  const qWarning = parsed3.source === 'fallback'
+    ? ` ⚠ Note: Claude's response had no [QUESTIONS] block — ${parsed3.questions.length} exercise(s) were auto-recovered by scanning numbered lines, but this is best-effort and may be incomplete or include noise. Check the answer panel and use ＋ ADD Q to fix anything missing.`
+    : (parsed3.source === 'none'
+      ? ` ⚠ Note: No [QUESTIONS] block and no numbered exercises were found in Claude's response — the answer panel is empty. Ask Claude to resend the [QUESTIONS] block, or add items manually with ＋ ADD Q.`
+      : '');
   resultEl.style.display = 'block';
   resultEl.style.background = hasAll ? 'rgba(128,224,80,0.1)' : 'rgba(240,192,64,0.1)';
   resultEl.style.border = '1px solid ' + (hasAll ? 'rgba(128,224,80,0.4)' : 'rgba(240,192,64,0.4)');
   resultEl.style.color = hasAll ? 'var(--lime)' : 'var(--gold)';
-  resultEl.textContent = hasAll
+  resultEl.textContent = (hasAll
     ? `✓ Parsed! Day ${data.day} — Score: ${data.score}% — Band: ${data.band_estimate} — ${Object.keys(data).length} fields found. Content appended to session.`
-    : `⚠ Parsed with ${missing.length} missing fields: ${missing.join(', ')}. Score: ${data.score || '?'}% Content saved.`;
+    : `⚠ Parsed with ${missing.length} missing fields: ${missing.join(', ')}. Score: ${data.score || '?'}% Content saved.`) + qWarning;
+  if (qWarning) {
+    resultEl.style.background = 'rgba(240,192,64,0.1)';
+    resultEl.style.border = '1px solid rgba(240,192,64,0.4)';
+    resultEl.style.color = 'var(--gold)';
+  }
 
-  toast(hasAll ? 'Parsed & tracker updated!' : 'Parsed with warnings — check result.', hasAll ? 'ok' : 'warn');
+  toast(qWarning ? 'Parsed, but check the exercise panel — see warning.' : (hasAll ? 'Parsed & tracker updated!' : 'Parsed with warnings — check result.'), qWarning ? 'warn' : (hasAll ? 'ok' : 'warn'));
   closeReadModeParser();
 }
 
