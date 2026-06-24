@@ -359,8 +359,8 @@ body {
 .vocab-day { color:var(--t3); font-size:9px; }
 
 /* MODAL */
-.overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:500; align-items:center; justify-content:center; padding:20px; }
-.overlay.open { display:flex; }
+.overlay { display:flex; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:500; align-items:center; justify-content:center; padding:20px; pointer-events:none; opacity:0; transition:opacity 0.22s ease; }
+.overlay.open { pointer-events:auto; }
 .modal { background:var(--s1); border:1px solid var(--b2); border-radius:var(--r2); width:100%; max-width:680px; max-height:88vh; overflow-y:auto; box-shadow:0 24px 80px rgba(0,0,0,0.7); }
 .modal-head { padding:14px 18px; border-bottom:1px solid var(--b1); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:var(--s1); z-index:2; }
 .modal-title { font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; }
@@ -381,6 +381,43 @@ body {
 .sl { font-size:9px; color:var(--t3); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
 .si { background:var(--s2); border:1px solid var(--b1); color:var(--t1); font-family:'Space Mono',monospace; font-size:11px; padding:6px 10px; border-radius:var(--r); outline:none; }
 .si:focus { border-color:var(--gold); }
+
+/* PANEL SLIDE ANIMATION */
+#answerPanel {
+  transition: width 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease, transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  transform-origin: right center;
+}
+#answerPanel.panel-hiding {
+  width: 0 !important;
+  opacity: 0;
+  transform: translateX(20px);
+  overflow: hidden;
+  pointer-events: none;
+}
+#panelDragHandleV {
+  transition: opacity 0.3s ease;
+}
+/* Sidebar animations */
+.sidebar {
+  transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), opacity 0.28s ease;
+}
+/* Modal animation */
+.overlay .modal {
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), opacity 0.2s ease;
+  opacity: 0;
+}
+.overlay.open .modal { transform: translateY(0) scale(1); opacity: 1; }
+/* Read Mode overlay animation */
+#readModeOverlay {
+  transition: opacity 0.22s ease;
+}
+#readModeParserOverlay {
+  transition: opacity 0.2s ease;
+}
+/* Tab switch animation */
+.tab-panel { animation: tabFadeIn 0.18s ease both; }
+@keyframes tabFadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
 /* TOAST */
 .toast { position:fixed; bottom:20px; right:20px; background:var(--s2); border:1px solid var(--lime); color:var(--lime); padding:8px 14px; border-radius:var(--r); font-size:11px; font-weight:700; z-index:9999; transform:translateY(50px); opacity:0; transition:all 0.28s cubic-bezier(0.34,1.4,0.64,1); pointer-events:none; max-width:360px; }
@@ -1322,7 +1359,7 @@ session_note: Good understanding of articles but uncountable noun errors persist
       <div id="sessionReadWrap" style="display:none;"></div>
 
       <!-- READ MODE FULLSCREEN OVERLAY -->
-      <div id="readModeOverlay" style="display:none;position:fixed;inset:0;z-index:9000;background:#07080f;flex-direction:column;">
+      <div id="readModeOverlay" style="display:none;position:fixed;inset:0;z-index:9000;background:#07080f;flex-direction:column;opacity:0;transition:opacity 0.22s ease;">
 
         <!-- TOP BAR -->
         <div style="flex-shrink:0;position:relative;display:flex;align-items:center;gap:12px;padding:9px 20px;background:rgba(7,8,15,0.98);border-bottom:1px solid #1d1d28;backdrop-filter:blur(12px);min-height:48px;">
@@ -1411,29 +1448,25 @@ session_note: Good understanding of articles but uncountable noun errors persist
             <div id="rightTabWriting" style="flex:1;display:none;flex-direction:column;overflow:hidden;">
               <div class="writing-toolbar" style="flex-shrink:0;padding:10px 12px 8px;border-bottom:1px solid #1d1d28;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
                 <div class="writing-label-row" style="flex:1;">IELTS WRITING — AUTO-SAVED</div>
-                <button onclick="saveWritingTask()" style="background:rgba(128,224,80,0.1);border:1px solid var(--lime);color:var(--lime);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;">💾 SAVE</button>
-                <button onclick="copyWritingForSubmit()" style="background:rgba(240,192,64,0.1);border:1px solid var(--gold);color:var(--gold);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;">📋 COPY</button>
-                <button onclick="clearWritingTask()" style="background:var(--rose-dim);border:1px solid var(--rose);color:var(--rose);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;">🗑 CLEAR</button>
+                <button onclick="copyWritingAllForSubmit()" style="background:rgba(240,192,64,0.1);border:1px solid var(--gold);color:var(--gold);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;">📋 COPY ALL</button>
+                <button onclick="clearAllWritingTasks()" style="background:var(--rose-dim);border:1px solid var(--rose);color:var(--rose);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;">🗑 CLEAR</button>
               </div>
-              <div class="writing-task-wrap" style="flex-shrink:0;padding:10px 12px;">
-                <div id="writingTaskPrompt" class="writing-task-card"></div>
-                <div class="writing-task-note">📌 Task auto-extracted from session. Auto-saves as you type.</div>
-              </div>
-              <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;padding:12px;gap:8px;">
-                <textarea id="writingTaskTA" class="writing-ta" placeholder="Write your IELTS response here...&#10;&#10;Task 1: Describe the chart/graph/diagram in 150+ words.&#10;Task 2: Write an essay in 250+ words.&#10;&#10;Auto-saved as you type — your work will not be lost." oninput="updateWritingWordCount();autoSaveWritingTask()"></textarea>
-                <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div id="writingWordCount" class="writing-meta-row" style="font-weight:700;">0 words</div>
-                    <div id="writingWordTarget" class="writing-meta-row">Target: 150+ (Task 1) / 250+ (Task 2)</div>
-                  </div>
-                  <div class="writing-progress-track">
-                    <div id="writingProgressFill" class="writing-progress-fill"></div>
-                  </div>
+              <!-- Hidden legacy single-task TA for backward compatibility -->
+              <textarea id="writingTaskTA" style="display:none;"></textarea>
+              <div id="writingTaskPrompt" style="display:none;"></div>
+              <!-- Multi-task container: populated by loadWritingTaskForDay() -->
+              <div id="writingTasksContainer" style="flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:14px;">
+                <div style="color:var(--t3);font-size:12px;text-align:center;padding:30px 10px;line-height:1.8;">
+                  No writing task yet.<br>
+                  <span style="font-size:11px;">Parse Claude's session response to auto-extract tasks.</span>
                 </div>
               </div>
               <div style="flex-shrink:0;padding:10px 12px;border-top:1px solid rgba(37,37,53,0.6);">
-                <div class="writing-submit-label">Submit for Feedback</div>
-                <button onclick="copyWritingForMark()" style="width:100%;background:var(--gold);border:none;color:#09090e;padding:9px 12px;border-radius:6px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">📋 COPY TASK + MY RESPONSE → Paste to Claude</button>
+                <div id="writingWordCount" class="writing-meta-row" style="font-weight:700;margin-bottom:4px;">0 words total</div>
+                <div class="writing-progress-track" style="margin-bottom:8px;">
+                  <div id="writingProgressFill" class="writing-progress-fill"></div>
+                </div>
+                <button onclick="copyWritingForMark()" style="width:100%;background:var(--gold);border:none;color:#09090e;padding:9px 12px;border-radius:6px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">📋 COPY TASKS + RESPONSES → Paste to Claude</button>
               </div>
             </div>
 
@@ -1492,7 +1525,7 @@ session_note: Good understanding of articles but uncountable noun errors persist
 </div>
 
 <!-- Read Mode Parser Modal -->
-<div id="readModeParserOverlay" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.92);backdrop-filter:blur(14px);align-items:center;justify-content:center;padding:20px;">
+<div id="readModeParserOverlay" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.92);backdrop-filter:blur(14px);align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity 0.2s ease;">
   <div style="background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);width:100%;max-width:700px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.8);">
     <div style="padding:14px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--s1);z-index:2;">
       <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;">⚡ Paste &amp; Parse AI Response</div>
@@ -2340,12 +2373,22 @@ Use these three blocks only when a real graph, tree, or process actually helps t
 
 FOLLOW THIS SESSION STRUCTURE EXACTLY:
 ${errBlock ? `
-━━━ STEP 0: QUICK REVISION (5 min, KEEP IT SHORT) — DO THIS FIRST, BEFORE ANYTHING NEW ━━━
-This is a FAST refresher, not a second lesson. Do not re-teach in full, do not give worked examples, do not re-test me here — save all real teaching for STEP 1 onward. Keep this entire step short, ideally under 180 words total, no matter how many mistakes are listed:
-• Look at the "Topics Covered In The Last N Day(s)" list above. In 2–3 short sentences, briefly revise EACH day shown there — one short clause per day, in day order, naming that day's topic exactly as listed. Do not blend two days into one, do not guess, and do not swap which day taught what. Then in one closing sentence, connect today's topic ("${topic}") to the most recent of those days.
-• Go through EVERY item listed in "All Unresolved Mistakes So Far This Week" above — none skipped — but give each one a single short correction in this exact format: <code>"full mistaken sentence" ==> "corrected sentence" :: rule</code> — always quote the full original sentence, not just the wrong word. No explanations beyond one line, no back-and-forth checking.
-• If "Recurring Patterns From Past Weeks" is present, just flag it in one line as still unresolved — do not drill it here.
-Then move straight into STEP 1 — that's where the real, detailed teaching happens.
+━━━ STEP 0: QUICK REVISION (5 min) ━━━
+
+First, in 2–3 sentences, briefly recap each day from "Topics Covered" above — one clause per day in order — then connect today's topic ("${topic}") to the most recent day in one closing sentence.
+
+Then output ALL unresolved mistakes as a markdown table — every single item, none skipped:
+
+| ❌ Your Error (full sentence) | ✅ Corrected Version | 📌 Rule |
+|---|---|---|
+| student's exact mistaken sentence | corrected full sentence | one-line rule |
+
+Rules for the table:
+— Use the student's FULL mistaken sentence in column 1, not just the wrong word.
+— Keep each rule in column 3 to one line — no extended explanations.
+— No skipping any mistake from the list above.
+— Do NOT add a resubmission gate, do NOT ask the student to prove a band score before proceeding. Move straight to STEP 1 after the table.
+— If "Recurring Patterns From Past Weeks" is present, add one row at the bottom: | (recurring) | — | Still unresolved — priority in STEP 3 drills |
 ` : ''}
 ━━━ STEP 1: TEACH (30 min) ━━━
 Explain "${topic}" completely. Cover:
@@ -2367,8 +2410,10 @@ Example: "The data show a rapid increasing in sales." ==> "The data show a rapid
 Do not just write the wrong word alone — always the full sentence in quotes. Do not skip any mistake.
 
 ━━━ STEP 4: WRITING TASK (30 min) ━━━
-Give me 1 IELTS writing task (Task 1 OR Task 2) connected to today's topic.
-After I submit my response:
+IMPORTANT — do this FIRST before giving the task: If there are any writing mistakes in the STEP 0 error table, show a Band 8–9 model response for the same task type where I struggled. Label it clearly as: 📌 BAND 8–9 MODEL — [task type]. Annotate 3–5 specific phrases in the model that make it Band 8–9 (e.g. vocabulary, sentence structure, cohesion). This is for me to study BEFORE I write — not to copy. If there are no writing mistakes in STEP 0, skip the model and go straight to the task below.
+
+Then give me 1 IELTS writing task (Task 1 OR Task 2) connected to today's topic. If there were multiple writing tasks I struggled with in previous days, give one task for each type I failed (e.g. one Task 1 + one Task 2) — each as a separate, clearly numbered task with its own instructions.
+After I submit my response(s):
 • Score me on all 4 criteria (Task Achievement/Response, Coherence & Cohesion, Lexical Resource, Grammatical Range & Accuracy)
 • Give honest band scores for each criterion
 • List every error you find
@@ -3593,8 +3638,17 @@ function switchTab(name) {
 // ═══════════════════════════════════════════════════════════════
 // MODALS
 // ═══════════════════════════════════════════════════════════════
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id) {
+  const el = document.getElementById(id);
+  el.classList.add('open');
+  el.style.opacity = '0';
+  requestAnimationFrame(() => { el.style.transition = 'opacity 0.22s ease'; el.style.opacity = '1'; });
+}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  el.style.opacity = '0';
+  setTimeout(() => { el.classList.remove('open'); el.style.opacity = ''; el.style.transition = ''; }, 220);
+}
 document.addEventListener('click', e => {
   if (e.target.classList.contains('overlay')) e.target.classList.remove('open');
 });
@@ -3744,7 +3798,9 @@ function switchSessionView(mode) {
     // Load writing task for this day
     loadWritingTaskForDay(modalDay);
     // Show overlay
-    document.getElementById('readModeOverlay').style.display = 'flex';
+    const _rmo = document.getElementById('readModeOverlay');
+    _rmo.style.display = 'flex'; _rmo.style.opacity = '0';
+    requestAnimationFrame(() => { _rmo.style.opacity = '1'; });
     document.getElementById('banglaPopup').style.display = 'none';
     document.getElementById('sessionReadContent').scrollTop = 0;
     initReadProgressTracking();
@@ -3779,7 +3835,9 @@ function switchSessionView(mode) {
 }
 
 function closeReadMode() {
-  document.getElementById('readModeOverlay').style.display = 'none';
+  const _rmo2 = document.getElementById('readModeOverlay');
+  _rmo2.style.opacity = '0';
+  setTimeout(() => { _rmo2.style.display = 'none'; }, 220);
   const btnEdit = document.getElementById('btnEditView');
   const btnRead = document.getElementById('btnReadView');
   if (btnEdit) { btnEdit.style.borderColor = 'var(--teal)'; btnEdit.style.color = 'var(--teal)'; }
@@ -3820,31 +3878,44 @@ function toggleAnswerPanel() {
   _answerPanelVisible = !_answerPanelVisible;
   const isMobile = window.innerWidth <= 768;
   if (isMobile) {
+    // Mobile: animate height using max-height trick + transition
+    panel.style.transition = 'max-height 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease';
     if (_answerPanelVisible) {
-      panel.style.height = '45vh';
       panel.style.maxHeight = '80vh';
+      panel.style.opacity = '1';
       panel.style.overflow = 'hidden';
       panel.style.display = 'flex';
       panel.style.flexDirection = 'column';
-      if (handle) { handle.style.display = 'flex'; }
-      if (handleV) { handleV.style.display = 'none'; }
+      if (handle) handle.style.display = 'flex';
+      if (handleV) handleV.style.display = 'none';
       btn.textContent = '📝 EXERCISES';
     } else {
-      panel.style.height = '0px';
       panel.style.maxHeight = '0px';
-      panel.style.overflow = 'hidden';
-      if (handle) { handle.style.display = 'none'; }
-      if (handleV) { handleV.style.display = 'none'; }
+      panel.style.opacity = '0';
+      setTimeout(() => { if (!_answerPanelVisible) panel.style.overflow = 'hidden'; }, 350);
+      if (handle) handle.style.display = 'none';
+      if (handleV) handleV.style.display = 'none';
       btn.textContent = '📝 SHOW PANEL';
     }
   } else {
-    panel.style.display = _answerPanelVisible ? 'flex' : 'none';
-    panel.style.flexDirection = _answerPanelVisible ? 'column' : '';
-    panel.style.height = '';
-    panel.style.maxHeight = '';
-    panel.style.overflow = '';
-    if (handle) handle.style.display = 'none';
-    if (handleV) handleV.style.display = _answerPanelVisible ? 'flex' : 'none';
+    // Desktop: animate width + opacity slide
+    if (_answerPanelVisible) {
+      panel.classList.remove('panel-hiding');
+      panel.style.display = 'flex';
+      panel.style.flexDirection = 'column';
+      panel.style.width = '';
+      if (handle) handle.style.display = 'none';
+      if (handleV) { handleV.style.display = 'flex'; handleV.style.opacity = '1'; }
+    } else {
+      panel.classList.add('panel-hiding');
+      if (handleV) handleV.style.opacity = '0';
+      setTimeout(() => {
+        if (!_answerPanelVisible) {
+          panel.style.display = 'none';
+          if (handleV) handleV.style.display = 'none';
+        }
+      }, 320);
+    }
   }
   btn.style.background = _answerPanelVisible ? 'rgba(176,144,248,0.2)' : 'rgba(176,144,248,0.05)';
   btn.style.color = _answerPanelVisible ? 'var(--violet)' : 'var(--t3)';
@@ -4222,32 +4293,38 @@ function extractWordTargetsFromText(text) {
 let _writingWordTargets = [];
 
 function updateWritingWordCount() {
-  const ta = document.getElementById('writingTaskTA');
   const countEl = document.getElementById('writingWordCount');
-  const targetEl = document.getElementById('writingWordTarget');
   const fillEl = document.getElementById('writingProgressFill');
-  if (!ta || !countEl) return;
-  const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
-  countEl.textContent = words + ' words';
-  let target;
-  const nums = _writingWordTargets;
-  if (nums.length === 1) {
-    // Only one word-count requirement detected in the task — use it directly.
-    target = nums[0];
-  } else if (nums.length >= 2) {
-    // Two targets detected (e.g. Task 1 + Task 2) — pick the relevant one
-    // based on what the student has written so far.
-    const isTask2 = words >= Math.round(nums[0] * 1.3) || (ta.value.toLowerCase().includes('essay') || ta.value.toLowerCase().includes('opinion'));
-    target = isTask2 ? nums[nums.length - 1] : nums[0];
+  if (!countEl) return;
+  // Aggregate words across all task textareas (multi-task system)
+  let totalWords = 0;
+  let totalTarget = 0;
+  const container = document.getElementById('writingTasksContainer');
+  if (container) {
+    const textareas = container.querySelectorAll('textarea');
+    if (textareas.length > 0) {
+      const nums = _writingWordTargets || [];
+      textareas.forEach((ta, i) => {
+        const wds = (ta.value.match(/\w+/g) || []).length;
+        totalWords += wds;
+        const tgt = nums[i] || (ta.placeholder && ta.placeholder.toLowerCase().includes('task 1') ? 150 : 250);
+        totalTarget += tgt;
+      });
+    } else {
+      // Fallback: legacy single textarea
+      const ta = document.getElementById('writingTaskTA');
+      if (ta) totalWords = (ta.value.match(/\w+/g) || []).length;
+      totalTarget = 250;
+    }
   } else {
-    // No explicit requirement found in the task text — fall back to standard IELTS defaults.
-    const isTask2 = words >= 200 || (ta.value.toLowerCase().includes('essay') || ta.value.toLowerCase().includes('opinion'));
-    target = isTask2 ? 250 : 150;
+    const ta = document.getElementById('writingTaskTA');
+    if (ta) totalWords = (ta.value.match(/\w+/g) || []).length;
+    totalTarget = 250;
   }
-  const pct = Math.min(100, Math.round((words / target) * 100));
-  const barColor = words >= target ? 'var(--lime)' : words >= target * 0.8 ? 'var(--gold)' : 'var(--rose)';
-  countEl.style.color = barColor;
-  if (targetEl) targetEl.textContent = `${pct}% of ${target} word target`;
+  const pct = totalTarget > 0 ? Math.min(100, Math.round((totalWords / totalTarget) * 100)) : 0;
+  const barColor = pct >= 100 ? 'var(--lime)' : pct >= 70 ? 'var(--gold)' : 'var(--rose)';
+  countEl.textContent = totalWords + ' words total';
+  countEl.style.color = totalWords > 0 ? barColor : 'var(--t3)';
   if (fillEl) {
     fillEl.style.width = pct + '%';
     fillEl.style.background = barColor;
@@ -4310,30 +4387,70 @@ function copyWritingForSubmit() {
 }
 
 function copyWritingForMark() {
-  const ta = document.getElementById('writingTaskTA');
-  const promptEl = document.getElementById('writingTaskPrompt');
-  const taskPrompt = promptEl ? (promptEl.innerText || promptEl.textContent || '').trim() : '';
-  const myResponse = ta ? ta.value.trim() : '';
-  if (!myResponse) { toast('Write your response first!', 'warn'); return; }
-  const sessionText = (S.sessionContent && S.sessionContent[modalDay]) ? S.sessionContent[modalDay].slice(0, 2000) : '';
+  const container = document.getElementById('writingTasksContainer');
   const gcdPrefix = S.gcd ? S.gcd.slice(0, 3000) + '\n\n[...GCD truncated for writing feedback...]\n\n' : '';
   let text = gcdPrefix;
   text += `IELTS COMMANDER — Day ${modalDay} Writing Feedback Request\n`;
   text += `Student: ${S.name} | Current Band: ${S.currentBand} | Target: ${S.targetBand}\n`;
   text += '═'.repeat(60) + '\n\n';
-  if (taskPrompt) {
-    text += 'WRITING TASK:\n' + taskPrompt + '\n\n';
+  let hasResponse = false;
+  if (container) {
+    const cards = container.querySelectorAll('[id^="writing_ta_"]');
+    if (cards.length > 0) {
+      cards.forEach((ta, i) => {
+        const promptDivs = container.querySelectorAll('div[style*="overflow-y:auto"]');
+        const promptText = promptDivs[i] ? (promptDivs[i].innerText || '').trim() : '';
+        const myResponse = ta.value.trim();
+        if (myResponse) hasResponse = true;
+        text += `WRITING TASK ${i + 1}:\n`;
+        if (promptText) text += promptText + '\n\n';
+        text += 'MY RESPONSE:\n' + '─'.repeat(40) + '\n';
+        text += (myResponse || '(no response written yet)') + '\n';
+        text += '─'.repeat(40) + '\n\n';
+      });
+    } else {
+      // Legacy fallback
+      const ta = document.getElementById('writingTaskTA');
+      const myResponse = ta ? ta.value.trim() : '';
+      if (myResponse) { hasResponse = true; text += 'MY RESPONSE:\n' + myResponse + '\n\n'; }
+    }
   }
-  text += 'MY RESPONSE:\n';
-  text += '─'.repeat(40) + '\n';
-  text += myResponse + '\n';
-  text += '─'.repeat(40) + '\n\n';
-  text += 'Please mark this response on all 4 IELTS criteria:\n';
+  if (!hasResponse) { toast('Write your response first!', 'warn'); return; }
+  text += 'Please mark each writing task on all 4 IELTS criteria:\n';
   text += '• Task Achievement / Task Response\n• Coherence & Cohesion\n• Lexical Resource\n• Grammatical Range & Accuracy\n\n';
   text += 'Give a band score for each criterion, an overall band, list every error with correction, and show a Band 8 rewrite of my response.\n\n';
   text += 'Then end with the mandatory [SESSION_DATA] block as per my GCD instructions.';
   copyText(text);
   toast('Writing + marking request copied! Paste to Claude.');
+}
+
+function copyWritingAllForSubmit() {
+  const container = document.getElementById('writingTasksContainer');
+  let combined = '';
+  if (container) {
+    const textareas = container.querySelectorAll('textarea');
+    textareas.forEach((ta, i) => {
+      if (ta.value.trim()) combined += (textareas.length > 1 ? `--- TASK ${i+1} ---\n` : '') + ta.value.trim() + '\n\n';
+    });
+  }
+  if (!combined.trim()) { toast('Nothing to copy — write your response first.', 'warn'); return; }
+  copyText(combined.trim());
+  toast('All writing responses copied!');
+}
+
+function clearAllWritingTasks() {
+  if (!confirm('Clear all writing responses for Day ' + modalDay + '?')) return;
+  const container = document.getElementById('writingTasksContainer');
+  if (container) {
+    container.querySelectorAll('textarea').forEach(ta => { ta.value = ''; ta.dispatchEvent(new Event('input')); });
+  }
+  const dayKey = String(modalDay);
+  if (S.sessionAnswers && S.sessionAnswers[dayKey]) {
+    Object.keys(S.sessionAnswers[dayKey]).filter(k => k.startsWith('__writing')).forEach(k => delete S.sessionAnswers[dayKey][k]);
+  }
+  saveStore();
+  updateWritingWordCount();
+  toast('All writing tasks cleared.');
 }
 
 function extractWritingTaskFromSession(sessionText) {
@@ -4432,42 +4549,121 @@ function extractWritingTaskFromSession(sessionText) {
 
 function loadWritingTaskForDay(day) {
   const dayKey = String(day);
-  const ta = document.getElementById('writingTaskTA');
-  const promptEl = document.getElementById('writingTaskPrompt');
-  if (!ta) return;
-  // Load saved answer — NEVER overwrite if already has content
-  const savedWriting = S.sessionAnswers && S.sessionAnswers[dayKey] && S.sessionAnswers[dayKey]['__writing__'];
-  if (savedWriting !== undefined) {
-    ta.value = savedWriting;
-  }
+  const container = document.getElementById('writingTasksContainer');
+  if (!container) return;
+
   // Extract task prompt(s) from session content
   const sessionText = S.sessionContent && S.sessionContent[day] ? S.sessionContent[day] : '';
   const tasks = extractWritingTaskFromSession(sessionText);
-  // Work out the real word-count target(s) from the extracted task text
-  // BEFORE updating the word counter, so it shows the correct figure (e.g.
-  // "280" instead of a guessed default) the moment the task loads.
+
+  // Work out the real word-count target(s)
   _writingWordTargets = extractWordTargetsFromText(tasks.map(t => t.text).join('\n'));
-  updateWritingWordCount();
-  if (promptEl) {
-    if (tasks.length === 0) {
-      promptEl.innerHTML = '<span style="color:var(--t2);font-size:13px;line-height:1.7">No writing task detected yet. Paste session content and re-open, or type the task prompt here.</span>';
-      promptEl.contentEditable = 'true';
-    } else if (tasks.length === 1) {
-      promptEl.innerHTML = `<div class="writing-task-chip">${escHtml(tasks[0].label)}</div><div class="writing-task-body">${mdLiteToHtml(tasks[0].text)}</div>`;
-      promptEl.contentEditable = 'false';
-    } else {
-      // Multiple distinct tasks/sections found — render each in its own card.
-      let html = '';
-      tasks.forEach((t, i) => {
-        html += `<div style="margin-bottom:${i < tasks.length-1 ? '10px' : '0'};padding:10px 12px;background:rgba(255,255,255,0.0075);border:1px solid rgba(37,37,53,0.55);border-radius:6px;">`;
-        html += `<div class="writing-task-chip">${escHtml(t.label)}</div>`;
-        html += `<div class="writing-task-body">${mdLiteToHtml(t.text)}</div>`;
-        html += '</div>';
+
+  // Build multi-task UI: each task gets its own prompt card + dedicated textarea
+  container.innerHTML = '';
+
+  if (tasks.length === 0) {
+    container.innerHTML = `<div style="color:var(--t3);font-size:12px;text-align:center;padding:30px 10px;line-height:1.8;">
+      No writing task detected yet.<br>
+      <span style="font-size:11px;">Parse Claude's session response to auto-extract tasks.</span>
+    </div>`;
+  } else {
+    tasks.forEach((task, i) => {
+      const taskKey = '__writing_' + i + '__';
+      const savedAnswer = S.sessionAnswers && S.sessionAnswers[dayKey] && S.sessionAnswers[dayKey][taskKey] !== undefined
+        ? S.sessionAnswers[dayKey][taskKey]
+        : (i === 0 && S.sessionAnswers && S.sessionAnswers[dayKey] && S.sessionAnswers[dayKey]['__writing__'] !== undefined
+          ? S.sessionAnswers[dayKey]['__writing__'] : '');
+
+      const card = document.createElement('div');
+      card.style.cssText = 'background:#10101a;border:1.5px solid #1d1d28;border-radius:10px;overflow:hidden;transition:border-color 0.2s;';
+
+      // Task header
+      const header = document.createElement('div');
+      header.style.cssText = 'padding:9px 12px 8px;border-bottom:1px solid #1d1d28;background:#0d0d16;display:flex;align-items:center;gap:8px;';
+      header.innerHTML = `
+        <div style="background:rgba(240,192,64,0.15);border:1px solid rgba(240,192,64,0.4);border-radius:4px;padding:1px 8px;font-size:9px;font-weight:700;color:var(--gold);font-family:'Space Mono',monospace;letter-spacing:0.5px;text-transform:uppercase;">${escHtml(task.label)}</div>
+        ${tasks.length > 1 ? `<div style="font-size:9px;color:var(--t3);font-family:'Space Mono',monospace;">Task ${i+1} of ${tasks.length}</div>` : ''}
+      `;
+      card.appendChild(header);
+
+      // Task prompt display
+      const promptDiv = document.createElement('div');
+      promptDiv.style.cssText = 'padding:10px 12px;max-height:160px;overflow-y:auto;font-size:13.5px;line-height:1.85;color:var(--t1);font-family:"Space Grotesk",sans-serif;border-bottom:1px solid #1d1d28;background:rgba(255,255,255,0.012);';
+      promptDiv.innerHTML = mdLiteToHtml(task.text);
+      card.appendChild(promptDiv);
+
+      // Word count / target label
+      const metaRow = document.createElement('div');
+      metaRow.style.cssText = 'padding:5px 12px 3px;display:flex;justify-content:space-between;font-size:10px;font-family:"Space Mono",monospace;color:var(--t3);';
+      const wordCountSpan = document.createElement('span');
+      wordCountSpan.id = 'wc_task_' + i;
+      wordCountSpan.textContent = '0 words';
+      wordCountSpan.style.cssText = 'color:var(--lime);font-weight:700;';
+      const targetSpan = document.createElement('span');
+      const targets = _writingWordTargets || [];
+      targetSpan.textContent = 'Target: ' + (targets[i] ? targets[i] + '+ words' : (task.label.toLowerCase().includes('task 1') ? '150+ words' : '250+ words'));
+      metaRow.appendChild(wordCountSpan);
+      metaRow.appendChild(targetSpan);
+      card.appendChild(metaRow);
+
+      // Progress bar
+      const prog = document.createElement('div');
+      prog.className = 'writing-progress-track';
+      prog.style.cssText = 'margin:0 12px 6px;';
+      const progFill = document.createElement('div');
+      progFill.className = 'writing-progress-fill';
+      progFill.id = 'wc_fill_' + i;
+      prog.appendChild(progFill);
+      card.appendChild(prog);
+
+      // Textarea for the student's response
+      const ta = document.createElement('textarea');
+      ta.className = 'writing-ta';
+      ta.id = 'writing_ta_' + i;
+      ta.style.cssText = 'margin:0 10px 10px;width:calc(100% - 20px);min-height:140px;border-radius:7px;font-size:14px;';
+      ta.placeholder = `Write your response for ${task.label} here...\n\nAuto-saved as you type.`;
+      ta.value = savedAnswer;
+      ta.addEventListener('focus', () => { card.style.borderColor = 'rgba(128,224,80,0.5)'; });
+      ta.addEventListener('blur', () => { card.style.borderColor = '#1d1d28'; });
+      ta.addEventListener('input', () => {
+        // Save per-task answer
+        if (!S.sessionAnswers) S.sessionAnswers = {};
+        if (!S.sessionAnswers[dayKey]) S.sessionAnswers[dayKey] = {};
+        S.sessionAnswers[dayKey][taskKey] = ta.value;
+        // Also keep __writing__ as first task for backward compat
+        if (i === 0) S.sessionAnswers[dayKey]['__writing__'] = ta.value;
+        saveStore();
+        // Update per-task word count
+        const wds = (ta.value.match(/\w+/g) || []).length;
+        const wcEl = document.getElementById('wc_task_' + i);
+        if (wcEl) { wcEl.textContent = wds + ' words'; wcEl.style.color = wds > 0 ? 'var(--lime)' : 'var(--t3)'; }
+        const fillEl = document.getElementById('wc_fill_' + i);
+        if (fillEl) {
+          const tgt = targets[i] || (task.label.toLowerCase().includes('task 1') ? 150 : 250);
+          const pct = Math.min(100, (wds / tgt) * 100);
+          fillEl.style.width = pct + '%';
+          fillEl.style.background = pct >= 100 ? 'var(--lime)' : pct >= 70 ? 'var(--gold)' : 'var(--rose)';
+        }
+        updateWritingWordCount();
       });
-      promptEl.innerHTML = html;
-      promptEl.contentEditable = 'false';
-    }
+      card.appendChild(ta);
+
+      // Seed word count display
+      if (savedAnswer) {
+        const wds = (savedAnswer.match(/\w+/g) || []).length;
+        wordCountSpan.textContent = wds + ' words';
+        const tgt = targets[i] || (task.label.toLowerCase().includes('task 1') ? 150 : 250);
+        const pct = Math.min(100, (wds / tgt) * 100);
+        progFill.style.width = pct + '%';
+        progFill.style.background = pct >= 100 ? 'var(--lime)' : pct >= 70 ? 'var(--gold)' : 'var(--rose)';
+      }
+
+      container.appendChild(card);
+    });
   }
+
+  updateWritingWordCount();
 }
 
 // ── READ MODE PARSER ─────────────────────────────────────────
@@ -4476,13 +4672,17 @@ function openReadModeParser() {
   const overlay = document.getElementById('readModeParserOverlay');
   if (!overlay) return;
   overlay.style.display = 'flex';
+  overlay.style.opacity = '0';
+  requestAnimationFrame(() => { overlay.style.transition = 'opacity 0.2s ease'; overlay.style.opacity = '1'; });
   document.getElementById('readModeParserTA').value = '';
   document.getElementById('readModeParserResult').style.display = 'none';
 }
 
 function closeReadModeParser() {
   const overlay = document.getElementById('readModeParserOverlay');
-  if (overlay) overlay.style.display = 'none';
+  if (!overlay) return;
+  overlay.style.opacity = '0';
+  setTimeout(() => { overlay.style.display = 'none'; overlay.style.opacity = ''; }, 200);
 }
 
 function parseFromReadMode() {
@@ -5330,23 +5530,32 @@ function switchRightTab(tab) {
   const btnWriting = document.getElementById('tabBtnWriting');
   const btnAI = document.getElementById('tabBtnAI');
 
-  // Hide all
-  [exView, writingView, aiView].forEach(el => { if (el) { el.style.display = 'none'; } });
+  // Fade out all, then fade in target
+  function fadeInEl(el) {
+    if (!el) return;
+    el.style.display = 'flex';
+    el.style.flexDirection = 'column';
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 0.18s ease';
+    requestAnimationFrame(() => { el.style.opacity = '1'; });
+  }
+
+  [exView, writingView, aiView].forEach(el => { if (el) { el.style.display = 'none'; el.style.opacity = ''; } });
   [btnEx, btnWriting, btnAI].forEach(btn => {
     if (btn) { btn.style.background = 'transparent'; btn.style.borderBottomColor = 'transparent'; btn.style.color = 'var(--t3)'; }
   });
 
   if (tab === 'ai') {
-    if (aiView) { aiView.style.display = 'flex'; aiView.style.flexDirection = 'column'; }
+    fadeInEl(aiView);
     if (btnAI) { btnAI.style.background = 'rgba(240,192,64,0.15)'; btnAI.style.borderBottomColor = 'var(--gold)'; btnAI.style.color = 'var(--gold)'; }
     updateAIContext();
     setTimeout(() => { const inp = document.getElementById('aiInput'); if (inp) inp.focus(); }, 80);
   } else if (tab === 'writing') {
-    if (writingView) { writingView.style.display = 'flex'; writingView.style.flexDirection = 'column'; }
+    fadeInEl(writingView);
     if (btnWriting) { btnWriting.style.background = 'rgba(128,224,80,0.15)'; btnWriting.style.borderBottomColor = 'var(--lime)'; btnWriting.style.color = 'var(--lime)'; }
     loadWritingTaskForDay(modalDay);
   } else {
-    if (exView) { exView.style.display = 'flex'; exView.style.flexDirection = 'column'; }
+    fadeInEl(exView);
     if (btnEx) { btnEx.style.background = 'rgba(176,144,248,0.15)'; btnEx.style.borderBottomColor = 'var(--violet)'; btnEx.style.color = 'var(--violet)'; }
   }
 }
