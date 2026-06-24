@@ -825,9 +825,9 @@ Click 'Copy GCD Generator Prompt' in the sidebar to start."></textarea>
           <div class="field-row"><span class="schema-key">score</span><span class="schema-req">REQUIRED</span><span class="schema-type">integer 0–100</span><span class="schema-ex">Example: <code>score: 78</code></span></div>
           <div class="field-row"><span class="schema-key">band_estimate</span><span class="schema-req">REQUIRED</span><span class="schema-type">decimal x.0 or x.5</span><span class="schema-ex">Example: <code>band_estimate: 6.5</code></span></div>
           <div class="field-row"><span class="schema-key">topic_covered</span><span class="schema-req">REQUIRED</span><span class="schema-type">text, no pipe</span><span class="schema-ex">Example: <code>topic_covered: Articles and Determiners</code></span></div>
-          <div class="field-row"><span class="schema-key">errors_grammar</span><span class="schema-req">REQUIRED</span><span class="schema-type">pipe-separated or none</span><span class="schema-ex">Example: <code>errors_grammar: missing article before uncountable noun | wrong preposition "discuss about"</code></span></div>
-          <div class="field-row"><span class="schema-key">errors_vocab</span><span class="schema-req">REQUIRED</span><span class="schema-type">pipe-separated or none</span><span class="schema-ex">Example: <code>errors_vocab: used "big" instead of "significant" | confused affect/effect</code></span></div>
-          <div class="field-row"><span class="schema-key">errors_writing</span><span class="schema-req">REQUIRED</span><span class="schema-type">pipe-separated or none</span><span class="schema-ex">Example: <code>errors_writing: no clear overview paragraph | ideas not linked with discourse markers</code></span></div>
+          <div class="field-row"><span class="schema-key">errors_grammar</span><span class="schema-req">REQUIRED</span><span class="schema-type">pipe-separated or none</span><span class="schema-ex">Format: <code>WRONG ==> CORRECT :: REASON</code> — Example: <code>errors_grammar: "a university" ==> "a university" (correct, u sounds like 'y') :: 'a' before consonant sound, not consonant letter | "discuss about" ==> "discuss" :: 'discuss' is transitive, no preposition needed</code></span></div>
+          <div class="field-row"><span class="schema-key">errors_vocab</span><span class="schema-req">REQUIRED</span><span class="schema-type">pipe-separated or none</span><span class="schema-ex">Format: <code>WRONG ==> CORRECT :: REASON</code> — Example: <code>errors_vocab: "big impact" ==> "significant impact" :: avoid informal adjectives in academic writing | "affect" ==> "effect" :: affect=verb, effect=noun</code></span></div>
+          <div class="field-row"><span class="schema-key">errors_writing</span><span class="schema-req">REQUIRED</span><span class="schema-type">pipe-separated or none</span><span class="schema-ex">Format: <code>WRONG ==> CORRECT :: REASON</code> — Example: <code>errors_writing: "no overview paragraph" ==> "add overview after intro" :: IELTS Task 1 requires overview summarising main trend | "repeated 'increase' 4 times" ==> "use: rise, surge, climb" :: lexical variety improves band score</code></span></div>
           <div class="field-row"><span class="schema-key">vocab_learned</span><span class="schema-req">REQUIRED</span><span class="schema-type">pipe-separated or none</span><span class="schema-ex">Example: <code>vocab_learned: prevalent | substantial | consequently | albeit | mitigate</code></span></div>
           <div class="field-row"><span class="schema-key">writing_task_done</span><span class="schema-req">REQUIRED</span><span class="schema-type">yes | no</span><span class="schema-ex">Example: <code>writing_task_done: yes</code></span></div>
           <div class="field-row"><span class="schema-key">writing_band</span><span class="schema-req">REQUIRED</span><span class="schema-type">decimal or na</span><span class="schema-ex">Example: <code>writing_band: 6.5</code></span></div>
@@ -852,9 +852,9 @@ week: 2<br>
 score: 78<br>
 band_estimate: 6.5<br>
 topic_covered: Articles — a, an, the, zero article (deep dive)<br>
-errors_grammar: missing the before River Thames | used a with uncountable noun "a research" | wrong article: "a university" correct but "a hour" wrong<br>
+errors_grammar: "missing the before River Thames" ==> "the River Thames" :: proper nouns with river/mountain take 'the' | "a research" ==> "research" :: research is uncountable, no article | "a hour" ==> "an hour" :: 'h' is silent so vowel sound follows<br>
 errors_vocab: none<br>
-errors_writing: did not include overview paragraph | repeated word "increase" 4 times in Task 1<br>
+errors_writing: "no overview paragraph" ==> "add overview after intro summarising main trend" :: IELTS Task 1 requires overview for Band 7+ | "increase (x4)" ==> "rise, surge, climb, grow" :: lexical variety boosts band score<br>
 vocab_learned: prevalent | substantial | consequently | albeit | mitigate | proliferation<br>
 writing_task_done: yes<br>
 writing_band: 6.0<br>
@@ -907,9 +907,9 @@ week: 2
 score: 78
 band_estimate: 6.5
 topic_covered: Articles — a, an, the, zero article
-errors_grammar: missing the before River Thames | used a with uncountable noun
+errors_grammar: "missing the" ==> "the River Thames" :: proper nouns with river take 'the' | "used a with uncountable" ==> "remove article" :: research/information are uncountable
 errors_vocab: none
-errors_writing: no overview paragraph | repeated vocabulary
+errors_writing: "no overview paragraph" ==> "add overview after intro" :: IELTS Task 1 requires overview | "repeated vocabulary" ==> "use synonyms: rise, surge, climb" :: lexical variety
 vocab_learned: prevalent | substantial | consequently | albeit
 writing_task_done: yes
 writing_band: 6.0
@@ -2238,9 +2238,9 @@ week: ${getWeek(d)}
 score: [integer 0-100 based on student performance today]
 band_estimate: [decimal like 6.0 or 6.5 based on today's work]
 topic_covered: ${topic}
-errors_grammar: [pipe-separated list of grammar mistakes made today | or: none]
-errors_vocab: [pipe-separated list of vocabulary mistakes made today | or: none]
-errors_writing: [pipe-separated list of writing mistakes made today | or: none]
+errors_grammar: [pipe-separated list of grammar mistakes, each in format: WRONG ==> CORRECT :: REASON | or: none]
+errors_vocab: [pipe-separated list of vocabulary mistakes, each in format: WRONG ==> CORRECT :: REASON | or: none]
+errors_writing: [pipe-separated list of writing mistakes, each in format: WRONG ==> CORRECT :: REASON | or: none]
 vocab_learned: [pipe-separated list of new words learned today | or: none]
 writing_task_done: [yes or no]
 writing_band: [band score if done, e.g. 6.5 | or: na]
@@ -2342,7 +2342,7 @@ ${errBlock ? `
 ━━━ STEP 0: QUICK REVISION (5 min, KEEP IT SHORT) — DO THIS FIRST, BEFORE ANYTHING NEW ━━━
 This is a FAST refresher, not a second lesson. Do not re-teach in full, do not give worked examples, do not re-test me here — save all real teaching for STEP 1 onward. Keep this entire step short, ideally under 180 words total, no matter how many mistakes are listed:
 • Look at the "Topics Covered In The Last N Day(s)" list above. In 2–3 short sentences, briefly revise EACH day shown there — one short clause per day, in day order, naming that day's topic exactly as listed. Do not blend two days into one, do not guess, and do not swap which day taught what. Then in one closing sentence, connect today's topic ("${topic}") to the most recent of those days.
-• Go through EVERY item listed in "All Unresolved Mistakes So Far This Week" above — none skipped — but give each one only a single short line stating the correct rule/form plainly (e.g. "Remember: 'an EU country', not 'the EU country' — countries take a/an on first mention."). No explanations beyond one line, no new example sentences, no back-and-forth checking.
+• Go through EVERY item listed in "All Unresolved Mistakes So Far This Week" above — none skipped — but give each one only a single short line in this exact format: <code>your mistaken line ==> corrected line</code> then <code>reason: one-line rule</code>. No explanations beyond one line, no new example sentences, no back-and-forth checking.
 • If "Recurring Patterns From Past Weeks" is present, just flag it in one line as still unresolved — do not drill it here.
 Then move straight into STEP 1 — that's where the real, detailed teaching happens.
 ` : ''}
@@ -2360,8 +2360,10 @@ Annotate exactly WHY the Band 8 version is better. Be precise.
 
 ━━━ STEP 3: PRACTICE (40 min) ━━━
 Give me 20 exercises to complete. I will reply with my answers. 
-Correct EVERY mistake. Explain WHY each is wrong. Give the correct form.
-Do not let any mistake pass without explanation.
+Correct EVERY mistake. For each mistake, use this exact format:
+my mistaken line ==> corrected line
+reason: one-line rule explanation
+Do not let any mistake pass without this format.
 
 ━━━ STEP 4: WRITING TASK (30 min) ━━━
 Give me 1 IELTS writing task (Task 1 OR Task 2) connected to today's topic.
@@ -3445,7 +3447,17 @@ function updateUI() {
   const ml = document.getElementById('miniLog');
   const recent = [...S.errors.grammar].reverse().slice(0,5);
   ml.innerHTML = recent.length
-    ? recent.map(e => `<div class="mini-err"><span class="etag">ERR</span>${e}</div>`).join('')
+    ? recent.map(e => {
+        const arrowParts = e.split(/\s*==>\s*/);
+        if (arrowParts.length === 2) {
+          const wrong = arrowParts[0].replace(/^Day \d+:\s*/,'').trim();
+          const rest = arrowParts[1];
+          const colonParts = rest.split(/\s*::\s*/);
+          const correct = colonParts[0].trim();
+          return `<div class="mini-err"><span class="etag">ERR</span><span style="color:var(--rose);text-decoration:line-through;font-size:9px">${escHtml(wrong)}</span><span style="color:var(--t3);font-size:9px;margin:0 3px">=⟹</span><span style="color:var(--lime);font-size:9px;font-weight:700">${escHtml(correct)}</span></div>`;
+        }
+        return `<div class="mini-err"><span class="etag">ERR</span>${e}</div>`;
+      }).join('')
     : '<div style="color:var(--t3);font-size:9px;padding:4px 0">No errors yet.</div>';
 
   // Media
@@ -3472,9 +3484,34 @@ function updateDataExplorer() {
   document.getElementById('vocabCount').textContent = S.vocabulary.length + ' words';
 
   const renderList = (el, items, emptyMsg) => {
-    el.innerHTML = items.length
-      ? items.map(i => `<div class="data-item">${i}</div>`).join('')
-      : `<div class="data-item" style="color:var(--t3)">${emptyMsg}</div>`;
+    if (!items.length) {
+      el.innerHTML = `<div class="data-item" style="color:var(--t3)">${emptyMsg}</div>`;
+      return;
+    }
+    el.innerHTML = items.map(i => {
+      // Try to parse "Day N: WRONG ==> CORRECT :: REASON" format
+      const dayMatch = i.match(/^(Day \d+):\s*([\s\S]+)$/);
+      const dayTag = dayMatch ? `<span style="color:var(--t3);font-size:9px;white-space:nowrap">${dayMatch[1]}</span> ` : '';
+      const body = dayMatch ? dayMatch[2] : i;
+      const arrowParts = body.split(/\s*==>\s*/);
+      if (arrowParts.length === 2) {
+        const wrong = arrowParts[0].trim();
+        const rest = arrowParts[1];
+        const colonParts = rest.split(/\s*::\s*/);
+        const correct = colonParts[0].trim();
+        const reason = colonParts[1] ? colonParts[1].trim() : '';
+        return `<div class="data-item" style="padding:7px 0;border-bottom:1px solid var(--b1);">
+          ${dayTag}
+          <div style="display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;margin-top:2px;">
+            <span style="color:var(--rose);font-family:'Space Mono',monospace;font-size:10px;text-decoration:line-through;flex-shrink:0">${escHtml(wrong)}</span>
+            <span style="color:var(--t3);font-size:10px;flex-shrink:0">=⟹</span>
+            <span style="color:var(--lime);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;flex-shrink:0">${escHtml(correct)}</span>
+          </div>
+          ${reason ? `<div style="font-size:9px;color:var(--t2);margin-top:3px;padding-left:2px;line-height:1.5;font-style:italic">${escHtml(reason)}</div>` : ''}
+        </div>`;
+      }
+      return `<div class="data-item">${dayTag}${escHtml(body)}</div>`;
+    }).join('');
   };
 
   renderList(document.getElementById('gramErrList'), ge, 'No grammar errors yet');
@@ -4116,7 +4153,7 @@ function copyFullDayForAssessment() {
   text += `Please treat everything above as my complete Day ${modalDay} submission and:\n\n`;
   text += '1. Give an honest overall performance score (0-100) and a band estimate for today.\n';
   text += '2. Mark the writing task on all 4 IELTS criteria (Task Response, Coherence & Cohesion, Lexical Resource, Grammatical Range & Accuracy) with a band for each plus an overall band, if a response was submitted.\n';
-  text += '3. List every grammar, vocabulary, and writing mistake found across my exercise answers AND my essay, with the correction next to each.\n';
+  text += '3. List every grammar, vocabulary, and writing mistake found across my exercise answers AND my essay. For EACH mistake, use this exact format on two lines:\n   my mistaken line ==> corrected line\n   reason: one-line explanation of the rule I got wrong\n   Separate each mistake with a blank line. This exact format is required so it can be stored in my tracker.\n';
   text += '4. Briefly re-teach each mistake — a short 1-2 line explanation of the rule I got wrong and how to apply it correctly next time. Keep this concise and practical, not a full re-lecture, just enough to close the gap.\n';
   text += `5. Tell me clearly whether I'm ready to move on to Day ${modalDay + 1}, or whether today's topic needs another round first.\n\n`;
   text += 'Then end your response with the mandatory [SESSION_DATA] block exactly as defined in your instructions, so I can parse it here and move forward.';
@@ -5544,13 +5581,37 @@ function updateAIMessageEl(el, text) {
 }
 
 function renderAIMessageContent(el, text) {
-  // Simple markdown: **bold**, *italic*, `code`, newlines
-  let html = escHtml(text)
-    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#f0f0ff">$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em style="color:#b0b0d0">$1</em>')
-    .replace(/`(.+?)`/g, '<code style="background:#1a1a28;color:var(--teal);padding:1px 5px;border-radius:3px;font-family:\'Space Mono\',monospace;font-size:11px">$1</code>')
-    .replace(/\n/g, '<br>');
-  el.innerHTML = html;
+  // Build vocab map for word highlighting (same as read mode)
+  const vocabMap = {};
+  (S.vocabulary || []).forEach(v => { if (v.word) vocabMap[v.word.toLowerCase()] = v; });
+
+  // Process markdown then wordify each text segment so clicking words shows Bangla popup
+  const processSegment = (str) => {
+    if (!str) return '';
+    const segs = [];
+    const inlineRe = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
+    let lastIdx = 0;
+    let match;
+    while ((match = inlineRe.exec(str)) !== null) {
+      if (match.index > lastIdx) segs.push({ type: 'text', val: str.slice(lastIdx, match.index) });
+      if (match[0].startsWith('**')) segs.push({ type: 'bold', val: match[2] || '' });
+      else if (match[0].startsWith('*')) segs.push({ type: 'italic', val: match[3] || '' });
+      else if (match[0].startsWith('`')) segs.push({ type: 'code', val: match[4] || '' });
+      lastIdx = match.index + match[0].length;
+    }
+    if (lastIdx < str.length) segs.push({ type: 'text', val: str.slice(lastIdx) });
+    return segs.map(seg => {
+      if (seg.type === 'bold') return `<strong style="color:#f0f0ff;font-weight:700">${wordify(seg.val, vocabMap)}</strong>`;
+      if (seg.type === 'italic') return `<em style="color:#b0b0d0">${wordify(seg.val, vocabMap)}</em>`;
+      if (seg.type === 'code') return `<code style="background:#1a1a28;color:var(--teal);padding:2px 7px;border-radius:4px;font-family:'Space Mono',monospace;font-size:11px">${escHtml(seg.val)}</code>`;
+      return wordify(seg.val, vocabMap);
+    }).join('');
+  };
+
+  // Split by newlines, process each line
+  const lines = text.split('\n');
+  const htmlLines = lines.map(line => processSegment(line));
+  el.innerHTML = htmlLines.join('<br>');
 }
 
 function setAISendBtn(enabled) {
