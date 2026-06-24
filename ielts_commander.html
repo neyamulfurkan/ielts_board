@@ -653,6 +653,7 @@ body {
   </div>
   <div class="topbar-btns">
     <button class="btn btn-sm" onclick="openSettings()">⚙ Settings</button>
+    <button class="btn btn-sm" id="btnContinueReading" onclick="continueReading()" style="border-color:var(--teal);color:var(--teal);display:none">📖 Continue Reading</button>
     <button class="btn btn-sm primary" onclick="copyTodayPrompt()">⚡ Copy Today's Prompt</button>
   </div>
 </div>
@@ -932,17 +933,17 @@ session_note: Good understanding of articles but uncountable noun errors persist
     <div class="tab-panel" id="tab-data">
       <div class="sec-title">My Progress Data</div>
       <div class="data-grid">
-        <div class="data-card">
+        <div class="data-card" style="grid-column:1/-1">
           <div class="data-head">Grammar Errors <span id="gramErrCount" style="color:var(--rose)">0</span></div>
-          <div class="data-body" id="gramErrList"><div class="data-item" style="color:var(--t3)">No errors yet</div></div>
+          <div class="data-body" id="gramErrList" style="max-height:260px;overflow-y:auto;overflow-x:auto;padding:0"><div class="data-item" style="color:var(--t3);padding:10px">No errors yet</div></div>
         </div>
-        <div class="data-card">
+        <div class="data-card" style="grid-column:1/-1">
           <div class="data-head">Vocabulary Errors <span id="vocabErrCount" style="color:var(--rose)">0</span></div>
-          <div class="data-body" id="vocabErrList"><div class="data-item" style="color:var(--t3)">No errors yet</div></div>
+          <div class="data-body" id="vocabErrList" style="max-height:260px;overflow-y:auto;overflow-x:auto;padding:0"><div class="data-item" style="color:var(--t3);padding:10px">No errors yet</div></div>
         </div>
-        <div class="data-card">
+        <div class="data-card" style="grid-column:1/-1">
           <div class="data-head">Writing Errors <span id="writErrCount" style="color:var(--rose)">0</span></div>
-          <div class="data-body" id="writErrList"><div class="data-item" style="color:var(--t3)">No errors yet</div></div>
+          <div class="data-body" id="writErrList" style="max-height:260px;overflow-y:auto;overflow-x:auto;padding:0"><div class="data-item" style="color:var(--t3);padding:10px">No errors yet</div></div>
         </div>
         <div class="data-card">
           <div class="data-head">Vocabulary Bank <span id="vocabCount" style="color:var(--teal)">0 words</span></div>
@@ -2441,6 +2442,28 @@ function saveDayScore() {
 // ═══════════════════════════════════════════════════════════════
 // COPY TODAY'S PROMPT
 // ═══════════════════════════════════════════════════════════════
+function continueReading() {
+  // Find the last day that has session content saved
+  if (!S.sessionContent) { toast('No session content saved yet.', 'warn'); return; }
+  const days = Object.keys(S.sessionContent)
+    .map(Number)
+    .filter(d => S.sessionContent[d] && S.sessionContent[d].trim())
+    .sort((a,b) => b - a);
+  if (!days.length) { toast('No session content saved yet.', 'warn'); return; }
+  const lastDay = days[0];
+  modalDay = lastDay;
+  const topic = TOPICS[lastDay] || 'Study Session';
+  document.getElementById('dayMTitle').textContent = `Day ${lastDay} — ${topic}`;
+  document.getElementById('dayMPrompt').textContent = buildPrompt(lastDay, topic, getPhase(lastDay), isReview(lastDay));
+  document.getElementById('dayScoreInp').value = S.dayScores[lastDay] !== undefined ? S.dayScores[lastDay] : '';
+  document.getElementById('daySessionTA').value = S.sessionContent[lastDay];
+  updateSessionCharCount();
+  _aiChatHistory = [];
+  openModal('dayM');
+  // Go straight to Read Mode
+  setTimeout(() => switchSessionView('read'), 60);
+}
+
 function copyTodayPrompt() {
   const d = S.currentDay;
   const gcdPrefix = S.gcd ? S.gcd + '\n\n' + '═'.repeat(60) + '\n\n' : '';
@@ -3469,6 +3492,13 @@ function updateUI() {
   // Voice script modal
   document.getElementById('voiceScript').textContent = S.voiceScript || 'No voice script yet. Parse Day 1 to generate.';
 
+  // Continue Reading button — show if any day has session content saved
+  const crBtn = document.getElementById('btnContinueReading');
+  if (crBtn) {
+    const hasContent = S.sessionContent && Object.values(S.sessionContent).some(v => v && v.trim());
+    crBtn.style.display = hasContent ? 'inline-flex' : 'none';
+  }
+
   // Data explorer
   updateDataExplorer();
 }
@@ -3485,13 +3515,13 @@ function updateDataExplorer() {
 
   const renderList = (el, items, emptyMsg) => {
     if (!items.length) {
-      el.innerHTML = `<div class="data-item" style="color:var(--t3)">${emptyMsg}</div>`;
+      el.innerHTML = `<div class="data-item" style="color:var(--t3);padding:10px 0">${emptyMsg}</div>`;
       return;
     }
-    el.innerHTML = items.map(i => {
-      // Try to parse "Day N: WRONG ==> CORRECT :: REASON" format
+    // Build a table: DAY | ~~WRONG~~ → CORRECT | reason
+    const rows = items.map(i => {
       const dayMatch = i.match(/^(Day \d+):\s*([\s\S]+)$/);
-      const dayTag = dayMatch ? `<span style="color:var(--t3);font-size:9px;white-space:nowrap">${dayMatch[1]}</span> ` : '';
+      const dayLabel = dayMatch ? dayMatch[1] : '';
       const body = dayMatch ? dayMatch[2] : i;
       const arrowParts = body.split(/\s*==>\s*/);
       if (arrowParts.length === 2) {
@@ -3499,19 +3529,29 @@ function updateDataExplorer() {
         const rest = arrowParts[1];
         const colonParts = rest.split(/\s*::\s*/);
         const correct = colonParts[0].trim();
-        const reason = colonParts[1] ? colonParts[1].trim() : '';
-        return `<div class="data-item" style="padding:7px 0;border-bottom:1px solid var(--b1);">
-          ${dayTag}
-          <div style="display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;margin-top:2px;">
-            <span style="color:var(--rose);font-family:'Space Mono',monospace;font-size:10px;text-decoration:line-through;flex-shrink:0">${escHtml(wrong)}</span>
-            <span style="color:var(--t3);font-size:10px;flex-shrink:0">=⟹</span>
-            <span style="color:var(--lime);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;flex-shrink:0">${escHtml(correct)}</span>
-          </div>
-          ${reason ? `<div style="font-size:9px;color:var(--t2);margin-top:3px;padding-left:2px;line-height:1.5;font-style:italic">${escHtml(reason)}</div>` : ''}
-        </div>`;
+        const reason = colonParts[1] ? colonParts[1].trim() : '—';
+        return `<tr style="border-bottom:1px solid var(--b1);">
+          <td style="padding:7px 8px;white-space:nowrap;vertical-align:top;font-size:9px;color:var(--t3);font-family:'Space Mono',monospace">${escHtml(dayLabel)}</td>
+          <td style="padding:7px 8px;vertical-align:top;">
+            <span style="color:var(--rose);font-family:'Space Mono',monospace;font-size:10px;text-decoration:line-through;">${escHtml(wrong)}</span>
+            <span style="color:var(--t3);margin:0 5px;font-size:11px;">→</span>
+            <span style="color:var(--lime);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;">${escHtml(correct)}</span>
+          </td>
+          <td style="padding:7px 8px;vertical-align:top;font-size:10px;color:var(--t2);font-style:italic;line-height:1.5">${escHtml(reason)}</td>
+        </tr>`;
       }
-      return `<div class="data-item">${dayTag}${escHtml(body)}</div>`;
+      return `<tr style="border-bottom:1px solid var(--b1);"><td colspan="3" style="padding:6px 8px;font-size:10px;color:var(--t2)">${escHtml(dayLabel ? dayLabel + ': ' + body : body)}</td></tr>`;
     }).join('');
+    el.innerHTML = `<table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="background:var(--s3);border-bottom:1px solid var(--b2);">
+          <th style="padding:5px 8px;text-align:left;font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;white-space:nowrap;font-family:'Space Grotesk',sans-serif;font-weight:700">Day</th>
+          <th style="padding:5px 8px;text-align:left;font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;font-family:'Space Grotesk',sans-serif;font-weight:700">Wrong → Correct</th>
+          <th style="padding:5px 8px;text-align:left;font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;font-family:'Space Grotesk',sans-serif;font-weight:700">Rule / Reason</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
   };
 
   renderList(document.getElementById('gramErrList'), ge, 'No grammar errors yet');
