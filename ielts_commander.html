@@ -451,41 +451,34 @@ body {
 .cbt-cue-card { background:#0c1220; border:2px solid #2a3550; border-radius:12px; padding:24px 28px; max-width:480px; width:100%; }
 
 /* ===== ERROR TABLE ===== */
-.err-table-wrap { margin:14px 0; border-radius:10px; overflow:hidden; border:1px solid rgba(240,96,128,0.25); background:rgba(240,96,128,0.04); }
-.err-table-head { display:flex; align-items:center; gap:8px; padding:10px 16px; background:rgba(240,96,128,0.12); border-bottom:1px solid rgba(240,96,128,0.2); }
-.err-table-title { font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:700; color:var(--rose); text-transform:uppercase; letter-spacing:1px; }
-.err-table-count { font-size:9px; padding:2px 7px; border-radius:10px; background:rgba(240,96,128,0.2); color:var(--rose); font-weight:700; }
+.err-table-wrap { margin:14px 0; border-radius:10px; overflow:hidden; border:1px solid rgba(200,80,100,0.15); background:rgba(200,80,100,0.03); }
+.err-table-head { display:flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(200,80,100,0.07); border-bottom:1px solid rgba(200,80,100,0.12); }
+.err-table-title { font-family:'Space Grotesk',sans-serif; font-size:10px; font-weight:700; color:rgba(220,100,120,0.85); text-transform:uppercase; letter-spacing:1px; }
+.err-table-count { font-size:8px; padding:1px 6px; border-radius:10px; background:rgba(200,80,100,0.12); color:rgba(220,100,120,0.8); font-weight:700; }
 table.err-tbl { width:100%; border-collapse:collapse; }
-table.err-tbl th { padding:8px 14px; font-size:9px; font-family:'Space Mono',monospace; text-transform:uppercase; letter-spacing:1px; color:var(--t3); text-align:left; background:rgba(0,0,0,0.15); border-bottom:1px solid rgba(255,255,255,0.04); }
-table.err-tbl td { padding:9px 14px; font-size:12.5px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; line-height:1.6; }
+table.err-tbl th { padding:6px 14px; font-size:8px; font-family:'Space Mono',monospace; text-transform:uppercase; letter-spacing:1px; color:rgba(150,150,170,0.6); text-align:left; background:rgba(0,0,0,0.08); border-bottom:1px solid rgba(255,255,255,0.03); }
+table.err-tbl td { padding:8px 14px; font-size:12px; border-bottom:1px solid rgba(255,255,255,0.03); vertical-align:middle; line-height:1.6; }
 table.err-tbl tr:last-child td { border-bottom:none; }
-table.err-tbl tr:hover td { background:rgba(255,255,255,0.025); }
-.err-wrong { color:#f06080; font-family:'Space Mono',monospace; font-size:11.5px; text-decoration:line-through; text-decoration-color:rgba(240,96,128,0.5); }
-.err-right { color:#80e050; font-family:'Space Mono',monospace; font-size:11.5px; font-weight:600; }
-.err-reason { color:var(--t2); font-size:11px; font-style:italic; }
-.err-arrow { color:var(--t3); font-size:14px; }
+table.err-tbl tr:hover td { background:rgba(255,255,255,0.015); }
+.err-wrong { color:rgba(210,90,110,0.8); font-family:'Space Mono',monospace; font-size:11px; text-decoration:line-through; text-decoration-color:rgba(210,90,110,0.4); }
+.err-right { color:rgba(100,200,80,0.85); font-family:'Space Mono',monospace; font-size:11px; font-weight:600; }
+.err-reason { color:rgba(150,150,180,0.7); font-size:11px; font-style:italic; }
+.err-arrow { color:rgba(100,100,130,0.5); font-size:13px; }
 
-/* ===== HIGHLIGHT TOOLBAR ===== */
-.hl-toolbar { display:flex; align-items:center; gap:6px; padding:6px 14px; background:rgba(9,9,14,0.95); border-bottom:1px solid #1d1d28; flex-shrink:0; flex-wrap:wrap; }
-.hl-label { font-size:9px; color:var(--t3); text-transform:uppercase; letter-spacing:1px; font-family:'Space Mono',monospace; }
-.hl-swatch { width:20px; height:20px; border-radius:4px; cursor:pointer; border:2px solid transparent; transition:all 0.12s; flex-shrink:0; }
-.hl-swatch:hover { transform:scale(1.2); }
-.hl-swatch.active { border-color:#fff; box-shadow:0 0 6px rgba(255,255,255,0.5); }
-.hl-btn { background:rgba(255,255,255,0.06); border:1px solid #252535; color:var(--t2); padding:3px 9px; border-radius:4px; font-size:9px; font-family:'Space Mono',monospace; cursor:pointer; transition:all 0.12s; white-space:nowrap; }
+/* ===== HIGHLIGHT & TIMER inline controls (in top bar) ===== */
+.hl-btn { background:rgba(255,255,255,0.06); border:1px solid #252535; color:var(--t2); padding:2px 7px; border-radius:4px; font-size:9px; font-family:'Space Mono',monospace; cursor:pointer; transition:all 0.12s; white-space:nowrap; }
 .hl-btn:hover { border-color:var(--gold); color:var(--gold); }
 .hl-btn.active { background:rgba(240,192,64,0.15); border-color:var(--gold); color:var(--gold); }
-.hl-divider { width:1px; height:16px; background:#252535; flex-shrink:0; }
 /* Highlight spans in content */
 .user-hl { border-radius:2px; cursor:pointer; }
-.user-hl:hover::after { content:' ✕'; font-size:9px; opacity:0.6; }
 
 /* ===== SESSION TIMER ===== */
-.session-timer { display:flex; align-items:center; gap:6px; font-family:'Space Mono',monospace; }
-.timer-display { font-size:13px; font-weight:700; color:var(--gold); min-width:52px; text-align:center; letter-spacing:1px; }
-.timer-btn { background:none; border:1px solid #252535; color:var(--t3); width:22px; height:22px; border-radius:4px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center; transition:all 0.12s; }
+.session-timer { display:flex; align-items:center; gap:4px; font-family:'Space Mono',monospace; }
+.timer-display { font-size:12px; font-weight:700; color:var(--gold); min-width:44px; text-align:center; letter-spacing:1px; }
+.timer-btn { background:none; border:1px solid #252535; color:var(--t3); width:20px; height:20px; border-radius:3px; cursor:pointer; font-size:9px; display:flex; align-items:center; justify-content:center; transition:all 0.12s; }
 .timer-btn:hover { border-color:var(--gold); color:var(--gold); }
 .timer-paused .timer-display { color:var(--orange); animation:timerBlink 1s infinite; }
-@keyframes timerBlink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+@keyframes timerBlink { 0%,100%{opacity:1} 50%{opacity:0.45} }
 
 /* ===== READING POSITION INDICATOR (left gutter) ===== */
 .pos-indicator { position:absolute; left:0; top:0; width:5px; bottom:0; z-index:10; cursor:pointer; }
@@ -1369,39 +1362,53 @@ session_note: Good understanding of articles but uncountable noun errors persist
       <div id="readModeOverlay" style="display:none;position:fixed;inset:0;z-index:9000;background:#07080f;flex-direction:column;">
 
         <!-- TOP BAR -->
-        <div style="flex-shrink:0;position:relative;display:flex;align-items:center;gap:12px;padding:9px 20px;background:rgba(7,8,15,0.98);border-bottom:1px solid #1d1d28;backdrop-filter:blur(12px);min-height:48px;">
-          <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40vw" id="readModeTitle">Study Session</div>
-          <div style="flex:1"></div>
-          <div id="readModeProgress" style="font-size:10px;color:var(--t3);font-family:'Space Mono',monospace;white-space:nowrap"></div>
-          <div id="readModeAnswerProgress" style="font-size:10px;color:var(--lime);font-family:'Space Mono',monospace;white-space:nowrap;margin-left:8px"></div>
-          <button onclick="toggleAnswerPanel()" id="btnTogglePanel" style="background:rgba(176,144,248,0.1);border:1px solid var(--violet);color:var(--violet);padding:5px 12px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">📝 EXERCISES</button>
-          <button onclick="copyFullDayForAssessment()" title="Copies today's session reading + all your exercise answers + your writing task together, with one assessment prompt asking Claude to grade you, briefly re-teach your mistakes, and give the [SESSION_DATA] block for the next day." style="background:var(--gold);border:1px solid var(--gold);color:#09090e;padding:5px 12px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">🎯 FINISH DAY</button>
-          <button onclick="openReadModeParser()" style="background:rgba(64,208,192,0.1);border:1px solid var(--teal);color:var(--teal);padding:5px 12px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">⚡ PARSE</button>
-          <button onclick="closeReadMode()" style="background:var(--rose-dim);border:1px solid var(--rose);color:var(--rose);padding:5px 12px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px">✕ CLOSE</button>
-          <div style="position:absolute;left:0;right:0;bottom:-1px;height:2px;background:rgba(255,255,255,0.04);overflow:hidden;">
+        <div style="flex-shrink:0;position:relative;display:flex;align-items:center;gap:8px;padding:0 16px;background:rgba(7,8,15,0.98);border-bottom:1px solid #1d1d28;backdrop-filter:blur(12px);height:46px;overflow:hidden;">
+          <div style="font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:28vw;flex-shrink:1" id="readModeTitle">Study Session</div>
+
+          <!-- divider -->
+          <div style="width:1px;height:18px;background:#252535;flex-shrink:0"></div>
+
+          <!-- Highlight controls -->
+          <span style="font-size:9px;color:var(--t3);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1px;flex-shrink:0">✏</span>
+          <div style="display:flex;align-items:center;gap:3px;flex-shrink:0">
+            <div onclick="setHlColorFromPicker('#f0c040')" title="Gold" style="width:13px;height:13px;border-radius:3px;background:#f0c040;cursor:pointer;border:1.5px solid transparent;transition:all 0.1s;flex-shrink:0" onmouseover="this.style.borderColor='#fff'" onmouseout="this.style.borderColor='transparent'"></div>
+            <div onclick="setHlColorFromPicker('#40d0c0')" title="Teal" style="width:13px;height:13px;border-radius:3px;background:#40d0c0;cursor:pointer;border:1.5px solid transparent;transition:all 0.1s;flex-shrink:0" onmouseover="this.style.borderColor='#fff'" onmouseout="this.style.borderColor='transparent'"></div>
+            <div onclick="setHlColorFromPicker('#f06080')" title="Rose" style="width:13px;height:13px;border-radius:3px;background:#f06080;cursor:pointer;border:1.5px solid transparent;transition:all 0.1s;flex-shrink:0" onmouseover="this.style.borderColor='#fff'" onmouseout="this.style.borderColor='transparent'"></div>
+            <div onclick="setHlColorFromPicker('#80e050')" title="Lime" style="width:13px;height:13px;border-radius:3px;background:#80e050;cursor:pointer;border:1.5px solid transparent;transition:all 0.1s;flex-shrink:0" onmouseover="this.style.borderColor='#fff'" onmouseout="this.style.borderColor='transparent'"></div>
+            <div onclick="setHlColorFromPicker('#b090f8')" title="Violet" style="width:13px;height:13px;border-radius:3px;background:#b090f8;cursor:pointer;border:1.5px solid transparent;transition:all 0.1s;flex-shrink:0" onmouseover="this.style.borderColor='#fff'" onmouseout="this.style.borderColor='transparent'"></div>
+            <input type="color" id="hlColorPicker" value="#f0c040" title="Custom color"
+              style="width:16px;height:16px;border:1.5px solid #252535;border-radius:3px;padding:0;background:transparent;cursor:pointer;flex-shrink:0;appearance:none;-webkit-appearance:none"
+              onchange="setHlColorFromPicker(this.value)">
+          </div>
+          <button class="hl-btn active" id="hlModeBtn" onclick="toggleHlMode()" style="padding:3px 8px;font-size:9px">ON</button>
+          <button class="hl-btn" onclick="clearAllHighlights()" style="padding:3px 7px;font-size:9px" title="Clear highlights">🗑</button>
+
+          <!-- divider -->
+          <div style="width:1px;height:18px;background:#252535;flex-shrink:0"></div>
+
+          <!-- Timer -->
+          <div class="session-timer" id="sessionTimerWrap" style="gap:4px">
+            <div class="timer-display" id="sessionTimerDisplay" style="font-size:12px;min-width:44px">00:00</div>
+            <button class="timer-btn" id="timerPlayBtn" onclick="toggleSessionTimer()" title="Play/Pause" style="width:20px;height:20px;font-size:9px">▶</button>
+            <button class="timer-btn" onclick="resetSessionTimer()" title="Reset" style="width:20px;height:20px;font-size:9px">↺</button>
+          </div>
+
+          <!-- divider -->
+          <div style="width:1px;height:18px;background:#252535;flex-shrink:0"></div>
+
+          <div id="readModeProgress" style="font-size:10px;color:var(--t3);font-family:'Space Mono',monospace;white-space:nowrap;flex-shrink:1;overflow:hidden;text-overflow:ellipsis;min-width:0"></div>
+          <div id="readModeAnswerProgress" style="font-size:10px;color:var(--lime);font-family:'Space Mono',monospace;white-space:nowrap;flex-shrink:0"></div>
+          <div style="flex:1;min-width:4px"></div>
+          <button onclick="toggleAnswerPanel()" id="btnTogglePanel" style="background:rgba(176,144,248,0.1);border:1px solid var(--violet);color:var(--violet);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap;flex-shrink:0">📝 EXERCISES</button>
+          <button onclick="copyFullDayForAssessment()" title="Finish day" style="background:var(--gold);border:1px solid var(--gold);color:#09090e;padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap;flex-shrink:0">🎯 FINISH DAY</button>
+          <button onclick="openReadModeParser()" style="background:rgba(64,208,192,0.1);border:1px solid var(--teal);color:var(--teal);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap;flex-shrink:0">⚡ PARSE</button>
+          <button onclick="closeReadMode()" style="background:var(--rose-dim);border:1px solid var(--rose);color:var(--rose);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;flex-shrink:0">✕</button>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,0.04);overflow:hidden;">
             <div id="readProgressFill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width 0.12s linear;"></div>
           </div>
         </div>
 
-        <!-- HIGHLIGHT TOOLBAR + TIMER -->
-        <div class="hl-toolbar" id="hlToolbar">
-          <span class="hl-label">Highlight</span>
-          <div class="hl-swatch active" id="hlSwGold" style="background:#f0c040" onclick="setHlColor('#f0c040','hlSwGold')" title="Gold"></div>
-          <div class="hl-swatch" id="hlSwTeal" style="background:#40d0c0" onclick="setHlColor('#40d0c0','hlSwTeal')" title="Teal"></div>
-          <div class="hl-swatch" id="hlSwRose" style="background:#f06080" onclick="setHlColor('#f06080','hlSwRose')" title="Rose"></div>
-          <div class="hl-swatch" id="hlSwLime" style="background:#80e050" onclick="setHlColor('#80e050','hlSwLime')" title="Lime"></div>
-          <div class="hl-swatch" id="hlSwViolet" style="background:#b090f8" onclick="setHlColor('#b090f8','hlSwViolet')" title="Violet"></div>
-          <div class="hl-swatch" id="hlSwSky" style="background:#60b8f8" onclick="setHlColor('#60b8f8','hlSwSky')" title="Sky"></div>
-          <button class="hl-btn active" id="hlModeBtn" onclick="toggleHlMode()">✏ ON</button>
-          <button class="hl-btn" onclick="clearAllHighlights()" title="Clear all highlights">🗑 Clear</button>
-          <div class="hl-divider"></div>
-          <span class="hl-label">Timer</span>
-          <div class="session-timer" id="sessionTimerWrap">
-            <div class="timer-display" id="sessionTimerDisplay">00:00</div>
-            <button class="timer-btn" id="timerPlayBtn" onclick="toggleSessionTimer()" title="Play/Pause">▶</button>
-            <button class="timer-btn" onclick="resetSessionTimer()" title="Reset">↺</button>
-          </div>
-        </div>
+        <!-- HIGHLIGHT TOOLBAR + TIMER (removed — merged into top bar) -->
 
         <!-- BANGLA POPUP BAR -->
         <div id="banglaPopup" style="display:none;flex-shrink:0;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 12px;background:linear-gradient(90deg,rgba(240,192,64,0.13),rgba(64,208,192,0.07));border-bottom:1px solid rgba(240,192,64,0.4);font-family:'Space Grotesk',sans-serif;row-gap:6px;">
@@ -5398,6 +5405,14 @@ function setHlColor(color, swatchId) {
   document.querySelectorAll('.hl-swatch').forEach(s => s.classList.remove('active'));
   const sw = document.getElementById(swatchId);
   if (sw) sw.classList.add('active');
+  const picker = document.getElementById('hlColorPicker');
+  if (picker) picker.value = color;
+}
+
+function setHlColorFromPicker(color) {
+  _hlColor = color;
+  const picker = document.getElementById('hlColorPicker');
+  if (picker) picker.value = color;
 }
 
 function toggleHlMode() {
