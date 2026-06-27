@@ -2359,6 +2359,13 @@ REVIEW SESSION STRUCTURE:
 ${schemaBlock}`;
   }
 
+  // Alternate Task 1 / Task 2 by day number so both appear across the course.
+  // Odd days  → Task 1 (graph / chart / map / process / table)
+  // Even days → Task 2 (essay)
+  const writingTaskSpec = (d % 2 === 1)
+    ? `Task 1 — give me an Academic Writing Task 1 question with a real stimulus (bar chart, line graph, pie chart, table, process diagram, or map) connected to today's topic (${topic}). Include the appropriate [CHART], [TABLE], [PROCESS], or [MAP] visual block immediately after the question so I can see the actual figure. Word target: 150–180 words. Set the [MODEL_ANSWER] task attribute to "1".`
+    : `Task 2 — give me an Academic Writing Task 2 essay question connected to today's topic (${topic}). Word target: 250–280 words. Set the [MODEL_ANSWER] task attribute to "2".`;
+
   return `════════════════════════════════════════════════════════
 IELTS COMMANDER — DAY ${d} SESSION PROMPT
 Student: ${S.name} | ${S.major} | ${S.studyYear}
@@ -2477,7 +2484,7 @@ Example: "The data show a rapid increasing in sales." ==> "The data show a rapid
 Do not just write the wrong word alone — always the full sentence in quotes. Do not skip any mistake.
 
 ━━━ STEP 4: WRITING TASK (30 min) ━━━
-Give me 1 IELTS writing task (Task 1 OR Task 2) connected to today's topic.
+Give me 1 IELTS writing ${writingTaskSpec}
 After I submit my response:
 • Score me on all 4 criteria (Task Achievement/Response, Coherence & Cohesion, Lexical Resource, Grammatical Range & Accuracy)
 • Give honest band scores for each criterion
@@ -5003,9 +5010,14 @@ function renderSessionReadMode(raw) {
     if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
 
     // Detect correction lines: "wrong" ==> "correct" :: reason (Quick Revision format)
-    // Claude sometimes wraps these in backticks: `"wrong" ==> "correct" :: rule`
-    // Strip outer backtick wrapper before matching so both forms render as the error table.
-    const errRaw = line.replace(/^`(.+)`$/, '$1').trim();
+    // Claude sometimes wraps these in backticks in two ways:
+    //   1. Whole line: `"wrong" ==> "correct" :: rule`  → strip outer pair
+    //   2. Each part:  `"wrong"` ==> `"correct"` :: rule → strip adjacent backtick+quote pairs
+    // Both forms must produce a plain  "wrong" ==> "correct" :: rule  string for the table.
+    const errRaw = line.replace(/^`(.+)`$/, '$1')  // strip whole-line backtick wrapper
+                       .replace(/`"/g, '"')         // strip opening  `"  → "
+                       .replace(/"`/g, '"')         // strip closing  "`  → "
+                       .trim();
     const errMatch = errRaw.match(/^"(.+?)"\s*==>\s*"(.+?)"\s*::\s*(.+)$/);
     if (errMatch) {
       if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
