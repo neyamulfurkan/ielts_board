@@ -4973,7 +4973,7 @@ function renderSessionReadMode(raw) {
     if (inSessionData) { continue; }
 
     if (!line.trim()) {
-      if (tableBuffer.length > 0) { html += flushTable(tableBuffer); tableBuffer = []; }
+      if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
       // Don't flush errBuffer on blank lines — errors separated by blank lines still belong to the same block
       // Don't emit spacers while collecting error lines (they create ugly gaps above the table)
       if (errBuffer.length === 0) html += '<div style="height:12px"></div>';
@@ -4987,7 +4987,10 @@ function renderSessionReadMode(raw) {
       continue;
     }
 
-    if (/^\s*\|.*\|\s*$/.test(line)) { tableBuffer.push(line); continue; }
+    // Match pipe table rows: must start with | (after optional whitespace), must contain at least one more |
+    // Trim to handle invisible Unicode spaces; also accept lines ending without trailing pipe (some AI outputs)
+    const trimmedForPipe = line.trim();
+    if (trimmedForPipe.startsWith('|') && trimmedForPipe.includes('|', 1)) { tableBuffer.push(line); continue; }
     if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
 
     // Detect correction lines: "wrong" ==> "correct" :: reason (Quick Revision format)
@@ -5587,6 +5590,7 @@ function renderIELTSTableBlock(body, attrsStr) {
 }
 
 function flushTable(rows, vocabMap) {
+  try {
   vocabMap = vocabMap || {};
   if (!rows.length) return '';
   // Parse rows into cells
@@ -5596,18 +5600,21 @@ function flushTable(rows, vocabMap) {
     const cells = trimmed.replace(/^\||\|$/g, '').split('|').map(c => c.trim());
     return cells;
   });
-  // Detect separator row: cells that are only dashes/colons
-  const isSep = row => row.every(c => /^[-:]+$/.test(c));
+  // Detect separator row: cells that are only dashes/colons (ignore empty cells from leading/trailing pipes)
+  const isSep = row => row.length > 0 && row.filter(c => c.length > 0).every(c => /^[-:]+$/.test(c));
   let headerRow = null;
   let bodyRows = [];
-  let sepFound = false;
-  for (let i = 0; i < parsed.length; i++) {
-    if (!sepFound && isSep(parsed[i])) { sepFound = true; if (i > 0) headerRow = parsed[i - 1]; continue; }
-    if (!sepFound && i === 0) continue; // first row before sep — will be set as header when sep found
-    if (sepFound) bodyRows.push(parsed[i]);
+  let sepIdx = parsed.findIndex(row => isSep(row));
+  if (sepIdx > 0) {
+    headerRow = parsed[sepIdx - 1];
+    bodyRows = parsed.slice(sepIdx + 1);
+  } else if (sepIdx === 0) {
+    // Separator is the very first row — treat remaining as body
+    bodyRows = parsed.slice(1);
+  } else {
+    // No separator — treat all rows as body rows (first row may be header-like but we can't tell)
+    bodyRows = parsed;
   }
-  // If no separator found, treat all as body rows
-  if (!sepFound) { bodyRows = parsed; }
   // If separator found but headerRow not set (sep was first line), treat remaining as body
   let tableHtml = '<div style="overflow-x:auto;margin:20px 0;">';
   tableHtml += '<table style="width:100%;border-collapse:collapse;font-family:\'Space Grotesk\',sans-serif;font-size:13px;">';
@@ -5636,6 +5643,11 @@ function flushTable(rows, vocabMap) {
   }
   tableHtml += '</table></div>';
   return tableHtml;
+  } catch(e) {
+    console.error('flushTable error:', e);
+    // Fallback: render as preformatted text
+    return '<pre style="font-family:Space Mono,monospace;font-size:11px;color:var(--sky);padding:10px;overflow-x:auto">' + rows.map(r => r.replace(/</g,'&lt;')).join('\n') + '</pre>';
+  }
 }
 
 function tokenizeLine(text, vocabMap) {
