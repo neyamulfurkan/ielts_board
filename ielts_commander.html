@@ -451,19 +451,21 @@ body {
 .cbt-cue-card { background:#0c1220; border:2px solid #2a3550; border-radius:12px; padding:24px 28px; max-width:480px; width:100%; }
 
 /* ===== ERROR TABLE ===== */
-.err-table-wrap { margin:14px 0; border-radius:10px; overflow:hidden; border:1px solid rgba(200,80,100,0.15); background:rgba(200,80,100,0.03); }
-.err-table-head { display:flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(200,80,100,0.07); border-bottom:1px solid rgba(200,80,100,0.12); }
+.err-table-wrap { margin:14px 0; border-radius:10px; overflow:hidden; border:1px solid rgba(200,80,100,0.18); background:rgba(200,80,100,0.03); }
+.err-table-head { display:flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(200,80,100,0.07); border-bottom:1px solid rgba(200,80,100,0.15); }
 .err-table-title { font-family:'Space Grotesk',sans-serif; font-size:10px; font-weight:700; color:rgba(220,100,120,0.85); text-transform:uppercase; letter-spacing:1px; }
-.err-table-count { font-size:8px; padding:1px 6px; border-radius:10px; background:rgba(200,80,100,0.12); color:rgba(220,100,120,0.8); font-weight:700; }
+.err-table-count { font-size:8px; padding:1px 6px; border-radius:10px; background:rgba(200,80,100,0.15); color:rgba(220,100,120,0.8); font-weight:700; }
 table.err-tbl { width:100%; border-collapse:collapse; }
-table.err-tbl th { padding:6px 14px; font-size:8px; font-family:'Space Mono',monospace; text-transform:uppercase; letter-spacing:1px; color:rgba(150,150,170,0.6); text-align:left; background:rgba(0,0,0,0.08); border-bottom:1px solid rgba(255,255,255,0.03); }
-table.err-tbl td { padding:8px 14px; font-size:12px; border-bottom:1px solid rgba(255,255,255,0.03); vertical-align:middle; line-height:1.6; }
+table.err-tbl th { padding:6px 14px; font-size:8px; font-family:'Space Mono',monospace; text-transform:uppercase; letter-spacing:1px; color:rgba(150,150,170,0.55); text-align:left; background:rgba(0,0,0,0.1); border-bottom:1px solid rgba(200,80,100,0.12); border-right:1px solid rgba(255,255,255,0.04); }
+table.err-tbl th:last-child { border-right:none; }
+table.err-tbl td { padding:8px 14px; font-size:12px; border-bottom:1px solid rgba(255,255,255,0.04); border-right:1px solid rgba(255,255,255,0.04); vertical-align:middle; line-height:1.6; }
+table.err-tbl td:last-child { border-right:none; }
 table.err-tbl tr:last-child td { border-bottom:none; }
-table.err-tbl tr:hover td { background:rgba(255,255,255,0.015); }
+table.err-tbl tr:hover td { background:rgba(255,255,255,0.02); }
 .err-wrong { color:rgba(210,90,110,0.8); font-family:'Space Mono',monospace; font-size:11px; text-decoration:line-through; text-decoration-color:rgba(210,90,110,0.4); }
 .err-right { color:rgba(100,200,80,0.85); font-family:'Space Mono',monospace; font-size:11px; font-weight:600; }
 .err-reason { color:rgba(150,150,180,0.7); font-size:11px; font-style:italic; }
-.err-arrow { color:rgba(100,100,130,0.5); font-size:13px; }
+.err-arrow { color:rgba(100,100,130,0.45); font-size:13px; width:24px; text-align:center; }
 
 /* ===== HIGHLIGHT & TIMER inline controls (in top bar) ===== */
 .hl-btn { background:rgba(255,255,255,0.06); border:1px solid #252535; color:var(--t2); padding:2px 7px; border-radius:4px; font-size:9px; font-family:'Space Mono',monospace; cursor:pointer; transition:all 0.12s; white-space:nowrap; }
@@ -4860,12 +4862,13 @@ function renderSessionReadMode(raw) {
 
     if (!line.trim()) {
       if (tableBuffer.length > 0) { html += flushTable(tableBuffer); tableBuffer = []; }
-      if (errBuffer.length > 0) { html += flushErrBuffer(); }
+      // Don't flush errBuffer on blank lines — errors separated by blank lines still belong to the same block
       html += '<div style="height:12px"></div>'; continue;
     }
 
     if (/^[-─━═]{3,}\s*$/.test(line.trim())) {
       if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
+      if (errBuffer.length > 0) { html += flushErrBuffer(); }
       html += '<hr style="border:none;border-top:1px solid #1a1a28;margin:18px 0;">';
       continue;
     }
