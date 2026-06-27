@@ -450,6 +450,50 @@ body {
 @keyframes micPulse { 0%,100%{box-shadow:0 0 0 0 rgba(240,96,128,0.4)} 50%{box-shadow:0 0 0 16px rgba(240,96,128,0)} }
 .cbt-cue-card { background:#0c1220; border:2px solid #2a3550; border-radius:12px; padding:24px 28px; max-width:480px; width:100%; }
 
+/* ===== ERROR TABLE ===== */
+.err-table-wrap { margin:14px 0; border-radius:10px; overflow:hidden; border:1px solid rgba(240,96,128,0.25); background:rgba(240,96,128,0.04); }
+.err-table-head { display:flex; align-items:center; gap:8px; padding:10px 16px; background:rgba(240,96,128,0.12); border-bottom:1px solid rgba(240,96,128,0.2); }
+.err-table-title { font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:700; color:var(--rose); text-transform:uppercase; letter-spacing:1px; }
+.err-table-count { font-size:9px; padding:2px 7px; border-radius:10px; background:rgba(240,96,128,0.2); color:var(--rose); font-weight:700; }
+table.err-tbl { width:100%; border-collapse:collapse; }
+table.err-tbl th { padding:8px 14px; font-size:9px; font-family:'Space Mono',monospace; text-transform:uppercase; letter-spacing:1px; color:var(--t3); text-align:left; background:rgba(0,0,0,0.15); border-bottom:1px solid rgba(255,255,255,0.04); }
+table.err-tbl td { padding:9px 14px; font-size:12.5px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; line-height:1.6; }
+table.err-tbl tr:last-child td { border-bottom:none; }
+table.err-tbl tr:hover td { background:rgba(255,255,255,0.025); }
+.err-wrong { color:#f06080; font-family:'Space Mono',monospace; font-size:11.5px; text-decoration:line-through; text-decoration-color:rgba(240,96,128,0.5); }
+.err-right { color:#80e050; font-family:'Space Mono',monospace; font-size:11.5px; font-weight:600; }
+.err-reason { color:var(--t2); font-size:11px; font-style:italic; }
+.err-arrow { color:var(--t3); font-size:14px; }
+
+/* ===== HIGHLIGHT TOOLBAR ===== */
+.hl-toolbar { display:flex; align-items:center; gap:6px; padding:6px 14px; background:rgba(9,9,14,0.95); border-bottom:1px solid #1d1d28; flex-shrink:0; flex-wrap:wrap; }
+.hl-label { font-size:9px; color:var(--t3); text-transform:uppercase; letter-spacing:1px; font-family:'Space Mono',monospace; }
+.hl-swatch { width:20px; height:20px; border-radius:4px; cursor:pointer; border:2px solid transparent; transition:all 0.12s; flex-shrink:0; }
+.hl-swatch:hover { transform:scale(1.2); }
+.hl-swatch.active { border-color:#fff; box-shadow:0 0 6px rgba(255,255,255,0.5); }
+.hl-btn { background:rgba(255,255,255,0.06); border:1px solid #252535; color:var(--t2); padding:3px 9px; border-radius:4px; font-size:9px; font-family:'Space Mono',monospace; cursor:pointer; transition:all 0.12s; white-space:nowrap; }
+.hl-btn:hover { border-color:var(--gold); color:var(--gold); }
+.hl-btn.active { background:rgba(240,192,64,0.15); border-color:var(--gold); color:var(--gold); }
+.hl-divider { width:1px; height:16px; background:#252535; flex-shrink:0; }
+/* Highlight spans in content */
+.user-hl { border-radius:2px; cursor:pointer; }
+.user-hl:hover::after { content:' ✕'; font-size:9px; opacity:0.6; }
+
+/* ===== SESSION TIMER ===== */
+.session-timer { display:flex; align-items:center; gap:6px; font-family:'Space Mono',monospace; }
+.timer-display { font-size:13px; font-weight:700; color:var(--gold); min-width:52px; text-align:center; letter-spacing:1px; }
+.timer-btn { background:none; border:1px solid #252535; color:var(--t3); width:22px; height:22px; border-radius:4px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center; transition:all 0.12s; }
+.timer-btn:hover { border-color:var(--gold); color:var(--gold); }
+.timer-paused .timer-display { color:var(--orange); animation:timerBlink 1s infinite; }
+@keyframes timerBlink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ===== READING POSITION INDICATOR (left gutter) ===== */
+.pos-indicator { position:absolute; left:0; top:0; width:5px; bottom:0; z-index:10; cursor:pointer; }
+.pos-marker { position:absolute; left:0; width:5px; height:24px; background:linear-gradient(180deg,var(--gold),var(--teal)); border-radius:0 3px 3px 0; transform:translateY(-50%); transition:top 0.08s linear; box-shadow:2px 0 8px rgba(240,192,64,0.4); }
+.pos-track { position:absolute; left:0; top:0; bottom:0; width:3px; background:rgba(255,255,255,0.04); }
+.pos-tooltip { position:absolute; left:8px; background:#09090e; border:1px solid var(--gold); color:var(--gold); font-size:9px; font-family:'Space Mono',monospace; padding:2px 7px; border-radius:4px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.15s; }
+.pos-indicator:hover .pos-tooltip { opacity:1; }
+
 /* ===== READ MODE — visual redesign for long study sessions ===== */
 .read-inner { max-width:none; margin:0; }
 #sessionReadContent {
@@ -1339,6 +1383,26 @@ session_note: Good understanding of articles but uncountable noun errors persist
           </div>
         </div>
 
+        <!-- HIGHLIGHT TOOLBAR + TIMER -->
+        <div class="hl-toolbar" id="hlToolbar">
+          <span class="hl-label">Highlight</span>
+          <div class="hl-swatch active" id="hlSwGold" style="background:#f0c040" onclick="setHlColor('#f0c040','hlSwGold')" title="Gold"></div>
+          <div class="hl-swatch" id="hlSwTeal" style="background:#40d0c0" onclick="setHlColor('#40d0c0','hlSwTeal')" title="Teal"></div>
+          <div class="hl-swatch" id="hlSwRose" style="background:#f06080" onclick="setHlColor('#f06080','hlSwRose')" title="Rose"></div>
+          <div class="hl-swatch" id="hlSwLime" style="background:#80e050" onclick="setHlColor('#80e050','hlSwLime')" title="Lime"></div>
+          <div class="hl-swatch" id="hlSwViolet" style="background:#b090f8" onclick="setHlColor('#b090f8','hlSwViolet')" title="Violet"></div>
+          <div class="hl-swatch" id="hlSwSky" style="background:#60b8f8" onclick="setHlColor('#60b8f8','hlSwSky')" title="Sky"></div>
+          <button class="hl-btn active" id="hlModeBtn" onclick="toggleHlMode()">✏ ON</button>
+          <button class="hl-btn" onclick="clearAllHighlights()" title="Clear all highlights">🗑 Clear</button>
+          <div class="hl-divider"></div>
+          <span class="hl-label">Timer</span>
+          <div class="session-timer" id="sessionTimerWrap">
+            <div class="timer-display" id="sessionTimerDisplay">00:00</div>
+            <button class="timer-btn" id="timerPlayBtn" onclick="toggleSessionTimer()" title="Play/Pause">▶</button>
+            <button class="timer-btn" onclick="resetSessionTimer()" title="Reset">↺</button>
+          </div>
+        </div>
+
         <!-- BANGLA POPUP BAR -->
         <div id="banglaPopup" style="display:none;flex-shrink:0;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 12px;background:linear-gradient(90deg,rgba(240,192,64,0.13),rgba(64,208,192,0.07));border-bottom:1px solid rgba(240,192,64,0.4);font-family:'Space Grotesk',sans-serif;row-gap:6px;">
           <span style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;flex-shrink:0">WORD</span>
@@ -1357,7 +1421,13 @@ session_note: Good understanding of articles but uncountable noun errors persist
 
           <!-- LEFT: STUDY CONTENT -->
           <div id="sessionReadAmbient" style="flex:1;position:relative;overflow:hidden;background:radial-gradient(ellipse 70% 45% at 50% 0%, rgba(240,192,64,0.05), transparent 60%), #07080f;">
-            <div id="sessionReadContent" style="height:100%;overflow-y:auto;padding:40px 60px 120px;font-family:'Space Grotesk',sans-serif;font-size:17px;line-height:2.2;color:#c8c8e0;scroll-behavior:smooth;text-align:justify;"></div>
+            <!-- READING POSITION INDICATOR -->
+            <div class="pos-indicator" id="posIndicator" onclick="posIndicatorClick(event)" title="Click to jump • Shows your reading position">
+              <div class="pos-track"></div>
+              <div class="pos-marker" id="posMarker"></div>
+              <div class="pos-tooltip" id="posTooltip">Click to set bookmark</div>
+            </div>
+            <div id="sessionReadContent" style="height:100%;overflow-y:auto;padding:40px 60px 120px 24px;font-family:'Space Grotesk',sans-serif;font-size:17px;line-height:2.2;color:#c8c8e0;scroll-behavior:smooth;text-align:justify;"></div>
             <button id="btnBackToTop" onclick="scrollReadToTop()" title="Back to top" style="position:absolute;right:24px;bottom:24px;width:42px;height:42px;border-radius:50%;background:rgba(15,15,22,0.92);border:1px solid var(--gold);color:var(--gold);font-size:16px;cursor:pointer;backdrop-filter:blur(8px);box-shadow:0 6px 20px rgba(0,0,0,0.4);transition:opacity 0.2s,transform 0.15s;z-index:5;">↑</button>
           </div>
 
@@ -3784,6 +3854,15 @@ function closeReadMode() {
   const btnRead = document.getElementById('btnReadView');
   if (btnEdit) { btnEdit.style.borderColor = 'var(--teal)'; btnEdit.style.color = 'var(--teal)'; }
   if (btnRead) { btnRead.style.borderColor = 'var(--b1)'; btnRead.style.color = 'var(--t2)'; }
+  // Pause timer when leaving read mode
+  if (_timerRunning) {
+    _timerRunning = false;
+    clearInterval(_timerInterval);
+    const btn = document.getElementById('timerPlayBtn');
+    const wrap = document.getElementById('sessionTimerWrap');
+    if (btn) btn.textContent = '▶';
+    if (wrap) wrap.classList.add('timer-paused');
+  }
 }
 
 // Drives the thin gold/teal progress line under the Read Mode top bar and the
@@ -3800,7 +3879,7 @@ function updateReadProgress() {
 }
 
 // Attaches the scroll listener once per Read Mode open and resets the bar/button to a clean state.
-function initReadProgressTracking() {
+function _initReadProgressTrackingLegacy() {
   const el = document.getElementById('sessionReadContent');
   if (!el) return;
   el.onscroll = updateReadProgress;
@@ -4683,6 +4762,26 @@ function renderSessionReadMode(raw) {
   let wordCount = 0;
   let inSessionData = false;
   let tableBuffer = [];
+  let errBuffer = []; // buffer for consecutive ==> correction lines
+
+  function flushErrBuffer() {
+    if (!errBuffer.length) return '';
+    let th = `<div class="err-table-wrap">
+      <div class="err-table-head"><span class="err-table-title">⚠ Unresolved Corrections</span><span class="err-table-count">${errBuffer.length}</span></div>
+      <table class="err-tbl"><thead><tr><th>#</th><th>Wrong</th><th></th><th>Correct</th><th>Rule / Reason</th></tr></thead><tbody>`;
+    errBuffer.forEach((e, i) => {
+      th += `<tr>
+        <td style="color:var(--t3);font-size:10px;font-family:'Space Mono',monospace;width:28px">${i+1}</td>
+        <td><span class="err-wrong">${escHtml(e.wrong)}</span></td>
+        <td class="err-arrow">→</td>
+        <td><span class="err-right">${escHtml(e.right)}</span></td>
+        <td class="err-reason">${escHtml(e.reason)}</td>
+      </tr>`;
+    });
+    th += `</tbody></table></div>`;
+    errBuffer = [];
+    return th;
+  }
 
   // A section's background tint is chosen by Claude itself via an explicit [BG:colorname] tag in
   // its response (see buildPrompt) — not auto-cycled by the renderer. The tag is parsed out and
@@ -4754,6 +4853,7 @@ function renderSessionReadMode(raw) {
 
     if (!line.trim()) {
       if (tableBuffer.length > 0) { html += flushTable(tableBuffer); tableBuffer = []; }
+      if (errBuffer.length > 0) { html += flushErrBuffer(); }
       html += '<div style="height:12px"></div>'; continue;
     }
 
@@ -4765,6 +4865,16 @@ function renderSessionReadMode(raw) {
 
     if (/^\s*\|.*\|\s*$/.test(line)) { tableBuffer.push(line); continue; }
     if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
+
+    // Detect correction lines: "wrong" ==> "correct" :: reason (Quick Revision format)
+    const errMatch = line.match(/^"(.+?)"\s*==>\s*"(.+?)"\s*::\s*(.+)$/);
+    if (errMatch) {
+      if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
+      errBuffer.push({ wrong: errMatch[1], right: errMatch[2], reason: errMatch[3] });
+      continue;
+    }
+    // Non-correction line flushes any accumulated error buffer
+    if (errBuffer.length > 0 && !errMatch) { html += flushErrBuffer(); }
 
     const stepHead = line.match(/^(?:#{1,4}\s*)?[-=~━═]{2,}\s*(STEP\s*\d+[^━═\-=~\n]*?)\s*[-=~━═]{2,}/i)
                   || line.match(/^(?:#{1,4}\s*)?(STEP\s*\d+\s*[:\-—][^\n]{0,80})$/i);
@@ -4843,6 +4953,7 @@ function renderSessionReadMode(raw) {
 
   // Flush any table still buffered at end of content
   if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
+  if (errBuffer.length > 0) { html += flushErrBuffer(); }
   if (sectionOpen) { html += '</div>'; sectionOpen = false; }
   if (stepSectionOpen) { html += '</div>'; stepSectionOpen = false; }
   const readMins = Math.max(1, Math.round(wordCount / 200));
@@ -5274,6 +5385,157 @@ function addWordFromPopup() {
   S.vocabulary.push({ word: word, bangla: bangla, description: description, example: example, day: modalDay, manual: true });
   saveStore();
   toast('Added "' + word + '"' + (bangla ? ' → ' + bangla : '') + ' to vocab bank!');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HIGHLIGHT SYSTEM
+// ═══════════════════════════════════════════════════════════════
+let _hlColor = '#f0c040';
+let _hlMode = true;
+
+function setHlColor(color, swatchId) {
+  _hlColor = color;
+  document.querySelectorAll('.hl-swatch').forEach(s => s.classList.remove('active'));
+  const sw = document.getElementById(swatchId);
+  if (sw) sw.classList.add('active');
+}
+
+function toggleHlMode() {
+  _hlMode = !_hlMode;
+  const btn = document.getElementById('hlModeBtn');
+  if (btn) { btn.textContent = _hlMode ? '✏ ON' : '✏ OFF'; btn.classList.toggle('active', _hlMode); }
+}
+
+function applyHighlight() {
+  if (!_hlMode) return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed || !sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  const content = document.getElementById('sessionReadContent');
+  if (!content || !content.contains(range.commonAncestorContainer)) return;
+  try {
+    const span = document.createElement('span');
+    span.className = 'user-hl';
+    const r = parseInt(_hlColor.slice(1,3),16), g = parseInt(_hlColor.slice(3,5),16), b = parseInt(_hlColor.slice(5,7),16);
+    span.style.background = `rgba(${r},${g},${b},0.32)`;
+    span.style.borderRadius = '3px';
+    span.style.padding = '0 1px';
+    span.setAttribute('data-hl-color', _hlColor);
+    span.title = 'Click to remove highlight';
+    span.onclick = function(e) { e.stopPropagation(); removeHighlight(this); };
+    range.surroundContents(span);
+    sel.removeAllRanges();
+  } catch(e) { sel.removeAllRanges(); }
+}
+
+function removeHighlight(el) {
+  const parent = el.parentNode;
+  while (el.firstChild) parent.insertBefore(el.firstChild, el);
+  parent.removeChild(el);
+}
+
+function clearAllHighlights() {
+  if (!confirm('Remove all highlights from this session?')) return;
+  document.querySelectorAll('#sessionReadContent .user-hl').forEach(el => removeHighlight(el));
+  toast('All highlights cleared.');
+}
+
+document.addEventListener('mouseup', function() {
+  const overlay = document.getElementById('readModeOverlay');
+  if (!overlay || overlay.style.display === 'none') return;
+  setTimeout(applyHighlight, 10);
+});
+
+// ═══════════════════════════════════════════════════════════════
+// SESSION TIMER
+// ═══════════════════════════════════════════════════════════════
+let _timerSeconds = 0;
+let _timerRunning = false;
+let _timerInterval = null;
+
+function toggleSessionTimer() {
+  _timerRunning = !_timerRunning;
+  const btn = document.getElementById('timerPlayBtn');
+  const wrap = document.getElementById('sessionTimerWrap');
+  if (_timerRunning) {
+    if (btn) btn.textContent = '⏸';
+    if (wrap) wrap.classList.remove('timer-paused');
+    _timerInterval = setInterval(() => { _timerSeconds++; updateTimerDisplay(); }, 1000);
+  } else {
+    if (btn) btn.textContent = '▶';
+    if (wrap) wrap.classList.add('timer-paused');
+    clearInterval(_timerInterval);
+  }
+}
+
+function resetSessionTimer() {
+  _timerRunning = false;
+  clearInterval(_timerInterval);
+  _timerSeconds = 0;
+  const btn = document.getElementById('timerPlayBtn');
+  const wrap = document.getElementById('sessionTimerWrap');
+  if (btn) btn.textContent = '▶';
+  if (wrap) wrap.classList.remove('timer-paused');
+  updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('sessionTimerDisplay');
+  if (!el) return;
+  const h = Math.floor(_timerSeconds / 3600);
+  const m = Math.floor((_timerSeconds % 3600) / 60);
+  const s = _timerSeconds % 60;
+  el.textContent = h > 0
+    ? `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// READING POSITION INDICATOR
+// ═══════════════════════════════════════════════════════════════
+let _savedReadPos = {};
+(function() { try { const raw = localStorage.getItem('ielts_readpos'); if (raw) _savedReadPos = JSON.parse(raw); } catch(e) {} })();
+
+function initReadProgressTracking() {
+  const content = document.getElementById('sessionReadContent');
+  const marker = document.getElementById('posMarker');
+  const indicator = document.getElementById('posIndicator');
+  const tooltip = document.getElementById('posTooltip');
+  if (!content) return;
+
+  // Original read progress bar update
+  content.onscroll = function() {
+    updateReadProgress();
+    // Position indicator
+    if (!marker || !indicator) return;
+    const scrollRatio = content.scrollHeight > content.clientHeight
+      ? content.scrollTop / (content.scrollHeight - content.clientHeight) : 0;
+    marker.style.top = Math.round(scrollRatio * indicator.offsetHeight) + 'px';
+    const dayKey = String(modalDay || 0);
+    _savedReadPos[dayKey] = scrollRatio;
+    try { localStorage.setItem('ielts_readpos', JSON.stringify(_savedReadPos)); } catch(e) {}
+    const pct = Math.round(scrollRatio * 100);
+    if (tooltip) tooltip.textContent = pct + '% — click to jump';
+  };
+  updateReadProgress();
+
+  // Restore saved scroll position
+  const dayKey = String(modalDay || 0);
+  const saved = _savedReadPos[dayKey];
+  if (saved !== undefined && saved > 0) {
+    setTimeout(() => {
+      content.scrollTop = Math.round(saved * (content.scrollHeight - content.clientHeight));
+    }, 120);
+  }
+}
+
+function posIndicatorClick(e) {
+  const indicator = document.getElementById('posIndicator');
+  const content = document.getElementById('sessionReadContent');
+  if (!indicator || !content) return;
+  const rect = indicator.getBoundingClientRect();
+  const ratio = (e.clientY - rect.top) / rect.height;
+  content.scrollTop = Math.round(ratio * (content.scrollHeight - content.clientHeight));
 }
 
 function saveSessionContent() {
