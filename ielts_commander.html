@@ -4448,6 +4448,8 @@ function extractWritingTaskFromSession(sessionText) {
     /━+\s*STEP\s*4[^━]*WRITING[^━]*━+\s*([\s\S]{60,1200}?)(?=━+\s*STEP\s*[5-9]|━+\s*STEP\s*10|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
     /##\s*(?:━+\s*)?STEP\s*4[^\n]*\n([\s\S]{60,1200}?)(?=##\s*━|##\s*STEP\s*[5-9]|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
     /STEP\s*4[^\n]*WRITING[^\n]*\n([\s\S]{60,1000}?)(?=STEP\s*[5-9]|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
+    // Broader: any STEP 4 block regardless of label
+    /━+\s*STEP\s*4\s*[^━\n]*━+\s*([\s\S]{60,1200}?)(?=━+\s*STEP\s*[5-9]|━+\s*STEP\s*10|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
   ];
   for (const re of step4Patterns) {
     const m = sessionText.match(re);
@@ -4458,9 +4460,14 @@ function extractWritingTaskFromSession(sessionText) {
       if (qMatch) {
         const txt = qMatch[1].trim().slice(0, 900);
         if (!isDuplicate(txt)) found.push({ label: 'Essay Question', text: txt });
-      } else if (!isDuplicate(block)) {
-        found.push({ label: 'Writing Task (Step 4)', text: block.slice(0, 900) });
+      } else {
+        // No question sub-header — use the whole block, stripping "After you submit" tails
+        const cleaned = block.replace(/\n*After you submit[\s\S]*/i, '').replace(/\n*\*\*Requirements[\s\S]*/i, '').trim();
+        if (cleaned.length > 40 && !isDuplicate(cleaned)) {
+          found.push({ label: 'Writing Task', text: cleaned.slice(0, 900) });
+        }
       }
+      break; // first matching pattern wins
     }
   }
 
@@ -4515,6 +4522,15 @@ function extractWritingTaskFromSession(sessionText) {
   if (found.length === 0) {
     const t1 = sessionText.match(/(?:The (?:graph|chart|table|diagram|map|bar chart|line graph|pie chart)[^.]*shows?[^.]*\.[\s\S]{30,400}?)(?:\n\n|$)/i);
     if (t1) found.push({ label: 'Task 1 Prompt', text: t1[0].trim().slice(0, 600) });
+  }
+
+  // Final fallback: look for any block with IELTS essay trigger phrases
+  if (found.length === 0) {
+    const essayTrigger = sessionText.match(/((?:Some people|Many people|It is argued|To what extent|Do you agree|Discuss both|In many countries|Governments|The diagram|The graph|The table|The chart)[^.]{20,}\.[^]*?(?:\n\n|$)){1,4}/i);
+    if (essayTrigger) {
+      const txt = essayTrigger[0].trim().slice(0, 800);
+      if (txt.length > 40) found.push({ label: 'Writing Task', text: txt });
+    }
   }
 
   return found;
@@ -4945,6 +4961,15 @@ function renderSessionReadMode(raw) {
       const indent = bullet[1].length > 0 ? 'padding-left:28px' : '';
       html += `<div style="display:flex;gap:12px;padding:5px 0;${indent}"><span style="color:var(--lime);flex-shrink:0;margin-top:5px;font-size:11px">▸</span><span style="flex:1;font-size:15px;line-height:2.0;text-align:justify">${tokenizeLine(bullet[2], vocabMap)}</span></div>`;
       wordCount += (bullet[2].match(/\w+/g) || []).length;
+      continue;
+    }
+
+    // Blockquote lines starting with ">"
+    const bq = line.match(/^>\s*(.*)/);
+    if (bq) {
+      const inner = tokenizeLine(bq[1], vocabMap);
+      html += `<div style="margin:4px 0;padding:8px 16px;border-left:3px solid var(--b2);background:rgba(255,255,255,0.025);border-radius:0 6px 6px 0;font-style:italic;color:var(--t2);font-size:15px;line-height:2.0">${inner}</div>`;
+      wordCount += (bq[1].match(/\w+/g) || []).length;
       continue;
     }
 
