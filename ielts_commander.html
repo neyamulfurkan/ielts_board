@@ -4802,6 +4802,8 @@ function renderSessionReadMode(raw) {
   let inSessionData = false;
   let tableBuffer = [];
   let errBuffer = []; // buffer for consecutive ==> correction lines
+  let inCodeBlock = false; // triple-backtick fenced code block state
+  let codeBlockLines = [];
 
   function flushErrBuffer() {
     if (!errBuffer.length) return '';
@@ -4873,6 +4875,24 @@ function renderSessionReadMode(raw) {
       continue;
     }
 
+    // ── Fenced code blocks (``` ... ```) ─────────────────────────
+    if (/^```/.test(line.trim())) {
+      if (!inCodeBlock) {
+        // Opening fence — flush any pending buffers
+        if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
+        if (errBuffer.length > 0) { html += flushErrBuffer(); }
+        inCodeBlock = true; codeBlockLines = [];
+      } else {
+        // Closing fence — render accumulated lines as a styled code block
+        inCodeBlock = false;
+        const codeHtml = codeBlockLines.map(l => escHtml(l)).join('\n');
+        html += `<div style="margin:14px 0;background:#0a0a14;border:1px solid #1d1d28;border-radius:8px;padding:14px 16px;font-family:'Space Mono',monospace;font-size:12px;color:var(--sky);line-height:1.9;overflow-x:auto;white-space:pre-wrap;word-break:break-word">${codeHtml}</div>`;
+        codeBlockLines = [];
+      }
+      continue;
+    }
+    if (inCodeBlock) { codeBlockLines.push(line); continue; }
+
     // [BG:colorname] marks the start of a new tinted section — invisible in the rendered output.
     const bgMatch = line.trim().match(/^\[BG:\s*([a-zA-Z]+)\s*\]$/i);
     if (bgMatch) {
@@ -4909,14 +4929,17 @@ function renderSessionReadMode(raw) {
     if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
 
     // Detect correction lines: "wrong" ==> "correct" :: reason (Quick Revision format)
-    const errMatch = line.match(/^"(.+?)"\s*==>\s*"(.+?)"\s*::\s*(.+)$/);
+    // Claude sometimes wraps these in backticks: `"wrong" ==> "correct" :: rule`
+    // Strip outer backtick wrapper before matching so both forms render as the error table.
+    const errRaw = line.replace(/^`(.+)`$/, '$1').trim();
+    const errMatch = errRaw.match(/^"(.+?)"\s*==>\s*"(.+?)"\s*::\s*(.+)$/);
     if (errMatch) {
       if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
       errBuffer.push({ wrong: errMatch[1], right: errMatch[2], reason: errMatch[3] });
       continue;
     }
     // Non-correction line flushes any accumulated error buffer
-    if (errBuffer.length > 0 && !errMatch) { html += flushErrBuffer(); }
+    if (errBuffer.length > 0) { html += flushErrBuffer(); }
 
     const stepHead = line.match(/^(?:#{1,4}\s*)?[-=~━═]{2,}\s*(STEP\s*\d+[^━═\-=~\n]*?)\s*[-=~━═]{2,}/i)
                   || line.match(/^(?:#{1,4}\s*)?(STEP\s*\d+\s*[:\-—][^\n]{0,80})$/i);
