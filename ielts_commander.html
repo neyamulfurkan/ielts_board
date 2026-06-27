@@ -4843,25 +4843,34 @@ function renderSessionReadMode(raw) {
 
   function flushErrBuffer() {
     if (!errBuffer.length) return '';
-    let th = `<div style="margin:14px 0;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+    let th = `<div style="margin:14px 0;overflow-x:auto;">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-bottom:none;border-radius:10px 10px 0 0;">
         <span style="font-size:12px">⚠</span>
         <span style="font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;color:rgba(160,160,190,0.75);text-transform:uppercase;letter-spacing:1px;">Unresolved Corrections</span>
-        <span style="font-size:8px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,0.07);color:rgba(160,160,190,0.8);font-weight:700;">${errBuffer.length}</span>
+        <span style="font-size:8px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,0.08);color:rgba(160,160,190,0.8);font-weight:700;">${errBuffer.length}</span>
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px;">`;
+      <table style="width:100%;border-collapse:collapse;border:1px solid rgba(255,255,255,0.07);border-radius:0 0 10px 10px;overflow:hidden;">
+        <thead>
+          <tr style="background:rgba(0,0,0,0.15);">
+            <th style="padding:6px 10px;font-size:8px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:rgba(130,130,160,0.5);text-align:left;width:22px;border-bottom:1px solid rgba(255,255,255,0.05);">#</th>
+            <th style="padding:6px 14px;font-size:8px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:rgba(130,130,160,0.5);text-align:left;border-bottom:1px solid rgba(255,255,255,0.05);">Wrong</th>
+            <th style="padding:6px 8px;font-size:8px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:rgba(130,130,160,0.5);text-align:left;border-bottom:1px solid rgba(255,255,255,0.05);width:20px;"></th>
+            <th style="padding:6px 14px;font-size:8px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:rgba(130,130,160,0.5);text-align:left;border-bottom:1px solid rgba(255,255,255,0.05);">Correct</th>
+            <th style="padding:6px 14px;font-size:8px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:rgba(130,130,160,0.5);text-align:left;border-bottom:1px solid rgba(255,255,255,0.05);">Rule / Reason</th>
+          </tr>
+        </thead>
+        <tbody>`;
     errBuffer.forEach((e, i) => {
-      th += `<div style="background:rgba(255,255,255,0.018);border:1px solid rgba(255,255,255,0.07);border-left:3px solid rgba(240,96,128,0.4);border-radius:8px;padding:11px 14px;">
-        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:5px;flex-wrap:wrap;">
-          <span style="color:var(--t3);font-size:9px;font-family:'Space Mono',monospace;flex-shrink:0;">${i+1}.</span>
-          <span style="color:rgba(200,130,130,0.85);font-family:'Space Mono',monospace;font-size:11px;text-decoration:line-through;text-decoration-color:rgba(200,130,130,0.35);word-break:break-word;">"${escHtml(e.wrong)}"</span>
-          <span style="color:var(--t3);font-size:11px;flex-shrink:0;">⟹</span>
-          <span style="color:rgba(100,210,80,0.9);font-family:'Space Mono',monospace;font-size:11px;font-weight:600;word-break:break-word;">"${escHtml(e.right)}"</span>
-        </div>
-        <div style="font-size:11px;color:rgba(140,140,175,0.7);font-style:italic;padding-left:14px;line-height:1.5;">${escHtml(e.reason)}</div>
-      </div>`;
+      const rowBg = i % 2 === 0 ? 'rgba(255,255,255,0.018)' : 'transparent';
+      th += `<tr style="background:${rowBg};">
+        <td style="padding:9px 10px;font-size:10px;font-family:'Space Mono',monospace;color:var(--t3);border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top;white-space:nowrap;">${i+1}</td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top;"><span style="color:rgba(200,130,130,0.85);font-family:'Space Mono',monospace;font-size:11px;text-decoration:line-through;text-decoration-color:rgba(200,130,130,0.4);word-break:break-word;display:inline-block;">${escHtml(e.wrong)}</span></td>
+        <td style="padding:9px 8px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top;color:var(--t3);font-size:13px;white-space:nowrap;">⟹</td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top;"><span style="color:rgba(100,210,80,0.9);font-family:'Space Mono',monospace;font-size:11px;font-weight:600;word-break:break-word;display:inline-block;">${escHtml(e.right)}</span></td>
+        <td style="padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top;font-size:11px;color:rgba(140,140,175,0.7);font-style:italic;word-break:break-word;">${escHtml(e.reason)}</td>
+      </tr>`;
     });
-    th += `</div></div>`;
+    th += `</tbody></table></div>`;
     errBuffer = [];
     return th;
   }
