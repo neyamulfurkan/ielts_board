@@ -4430,9 +4430,6 @@ function extractWritingTaskFromSession(sessionText) {
   if (!sessionText) return [];
   const found = [];
 
-  // Robust dedup: treats two chunks as the same task if one contains the
-  // other (not just an exact prefix match), so near-identical matches from
-  // different strategies collapse into a single card.
   function isDuplicate(text) {
     const norm = s => String(s).replace(/\s+/g, ' ').trim().toLowerCase();
     const nt = norm(text);
@@ -4443,94 +4440,73 @@ function extractWritingTaskFromSession(sessionText) {
     });
   }
 
-  // Strategy 1: Find STEP 4 / WRITING TASK section headers, grab everything up to next STEP or end
+  // Strategy 1: Find STEP 4 / WRITING TASK section — grab the whole block up to next STEP.
+  // If this succeeds we return immediately — no fallback strategies run, preventing false
+  // positives from teaching examples or exercise sentences being picked up instead.
   const step4Patterns = [
-    /━+\s*STEP\s*4[^━]*WRITING[^━]*━+\s*([\s\S]{60,1200}?)(?=━+\s*STEP\s*[5-9]|━+\s*STEP\s*10|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
-    /##\s*(?:━+\s*)?STEP\s*4[^\n]*\n([\s\S]{60,1200}?)(?=##\s*━|##\s*STEP\s*[5-9]|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
-    /STEP\s*4[^\n]*WRITING[^\n]*\n([\s\S]{60,1000}?)(?=STEP\s*[5-9]|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
-    // Broader: any STEP 4 block regardless of label
-    /━+\s*STEP\s*4\s*[^━\n]*━+\s*([\s\S]{60,1200}?)(?=━+\s*STEP\s*[5-9]|━+\s*STEP\s*10|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
+    /━+\s*STEP\s*4[^━\n]*━+\s*([\s\S]{60,2000}?)(?=━+\s*STEP\s*[5-9]|━+\s*STEP\s*10|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
+    /##\s*(?:━+\s*)?STEP\s*4[^\n]*\n([\s\S]{60,2000}?)(?=##\s*━|##\s*STEP\s*[5-9]|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
+    /STEP\s*4[^\n]*\n([\s\S]{60,2000}?)(?=STEP\s*[5-9]|\[QUESTIONS\]|\[SESSION_DATA\]|$)/i,
   ];
   for (const re of step4Patterns) {
     const m = sessionText.match(re);
     if (m && m[1] && m[1].trim().length > 40) {
-      const block = m[1].trim().slice(0, 1200);
-      // Extract the question part — look for the IELTS task question
-      const qMatch = block.match(/(?:Question|QUESTION|Task)[^\n]*:\n?([\s\S]{30,800}?)(?:\n\n\*\*Requirements|\n\nRequirements|\nAfter you submit|$)/i);
-      if (qMatch) {
-        const txt = qMatch[1].trim().slice(0, 900);
-        if (!isDuplicate(txt)) found.push({ label: 'Essay Question', text: txt });
-      } else {
-        // No question sub-header — use the whole block, stripping "After you submit" tails
-        const cleaned = block.replace(/\n*After you submit[\s\S]*/i, '').replace(/\n*\*\*Requirements[\s\S]*/i, '').trim();
-        if (cleaned.length > 40 && !isDuplicate(cleaned)) {
-          found.push({ label: 'Writing Task', text: cleaned.slice(0, 900) });
-        }
+      const raw = m[1].trim();
+
+      // Split into: instruction line(s) + actual task question + requirements
+      // "Write a full..." lines are instructions — separate from the task itself
+      const instrMatch = raw.match(/^(Write\b[^\n]{10,}\n(?:[^\n]*\n){0,2})([\s\S]+)/i);
+      const taskBody = instrMatch ? instrMatch[2].trim() : raw;
+
+      // Strip trailing assessment / requirements / "After you submit" sections
+      const cleaned = taskBody
+        .replace(/\n*(?:\*\*)?Requirements I will assess[\s\S]*/i, '')
+        .replace(/\n*(?:\*\*)?After you submit[\s\S]*/i, '')
+        .replace(/\n*(?:\*\*)?Requirements:[\s\S]*/i, '')
+        .trim()
+        .slice(0, 1200);
+
+      // Separate instruction preamble and task question as two cards if both are substantial
+      if (instrMatch && instrMatch[1].trim().length > 20 && cleaned.length > 20) {
+        const instrText = instrMatch[1].trim();
+        found.push({ label: 'Task Instructions', text: instrText });
+        found.push({ label: 'Writing Task', text: cleaned });
+      } else if (cleaned.length > 40) {
+        found.push({ label: 'Writing Task', text: cleaned });
       }
-      break; // first matching pattern wins
+      return found; // ← early return: never run strategies 2–5 when STEP 4 found
     }
   }
 
-  // Strategy 2: IELTS Writing Task 2 — essay question patterns
+  // Strategy 2: explicit "Question:" block followed by Requirements
+  const reqMatch = sessionText.match(/(?:Question|QUESTION):\n?([\s\S]{30,600}?)(?:\n\n\*\*Requirements:?\*?\*?\n([\s\S]{20,400}?)(?:\n\n|\n━|\*\*After|After you submit|$))/i);
+  if (reqMatch) {
+    const question = reqMatch[1].replace(/^>\s*/gm, '').trim();
+    const reqs = reqMatch[2] ? reqMatch[2].trim() : '';
+    if (question && !isDuplicate(question)) found.push({ label: 'Essay Question', text: question.slice(0, 700) });
+    if (reqs && !isDuplicate(reqs)) found.push({ label: 'Requirements', text: reqs.slice(0, 600) });
+    if (found.length) return found;
+  }
+
+  // Strategy 3: IELTS Task 2 essay question intro patterns (Task 2 only — never teaching examples)
   const essayPatterns = [
-    /(?:IELTS Writing Task [12][^\n]*\n(?:[^\n]*\n){0,3})(>?\s*[\*_]?[^.\n]{20,}\.\s*(?:Discuss both|To what extent|Do you agree|Give your opinion|Some people|Many people|It is argued|In many countries|Governments)[^.]+\.[\s\S]{20,400}?)(?:\n\n|\*\*Requirements|Requirements:)/i,
-    /(?:Question:?\n)([\s\S]{40,600}?)(?:\n\n\*\*Requirements|\nAfter you submit|\nRequirements)/i,
+    /(?:IELTS Writing Task 2[^\n]*\n(?:[^\n]*\n){0,3})([\s\S]{40,600}?)(?:\n\n\*\*Requirements|Requirements:|After you submit)/i,
   ];
   for (const re of essayPatterns) {
     const m = sessionText.match(re);
     if (m) {
-      const txt = (m[1] || m[0]).trim().slice(0, 800);
+      const txt = (m[1] || m[0]).replace(/^>\s*/gm, '').trim().slice(0, 800);
       if (txt.length > 40 && !isDuplicate(txt)) {
         found.push({ label: 'IELTS Essay Task', text: txt });
+        return found;
       }
     }
   }
 
-  // Strategy 3: Blockquote essay question (lines starting with ">")
-  const bqMatch = sessionText.match(/(?:^|\n)(>\s*.{30,}(?:\n>.+)*)/m);
-  if (bqMatch) {
-    const txt = bqMatch[1].replace(/^>\s*/gm, '').trim();
-    if (txt.length > 40 && !isDuplicate(txt)) {
-      found.push({ label: 'Essay Question', text: txt.slice(0, 700) });
-    }
-  }
-
-  // Strategy 4: Italic essay questions (*Some people believe...*)
-  const italicMatch = sessionText.match(/\*{1,2}((?:Some people|Many people|It is argued|Governments|In many countries)[^*]{30,500})\*{1,2}/i);
-  if (italicMatch) {
-    const txt = italicMatch[1].trim();
-    if (txt.length > 40 && !isDuplicate(txt)) {
-      found.push({ label: 'Essay Question', text: txt.slice(0, 700) });
-    }
-  }
-
-  // Strategy 5: Requirements block — kept as TWO separate cards (question vs.
-  // requirements) so they render as distinct boxes instead of one wall of text.
-  const reqMatch = sessionText.match(/(?:Question|QUESTION):\n>([\s\S]{30,600}?)(?:\n\n\*\*Requirements:?\*?\*?\n([\s\S]{20,400}?)(?:\n\n|\n━|\*\*After|After you submit|$))/i);
-  if (reqMatch) {
-    const question = reqMatch[1].trim();
-    const reqs = reqMatch[2] ? reqMatch[2].trim() : '';
-    if (question && !isDuplicate(question)) {
-      found.push({ label: 'Essay Question', text: question.slice(0, 700) });
-    }
-    if (reqs && !isDuplicate(reqs)) {
-      found.push({ label: 'Requirements', text: reqs.slice(0, 600) });
-    }
-  }
-
-  // If nothing found, fall back to looking for Task 1 data descriptions
+  // Strategy 4: Task 1 data descriptions — only as last resort
   if (found.length === 0) {
-    const t1 = sessionText.match(/(?:The (?:graph|chart|table|diagram|map|bar chart|line graph|pie chart)[^.]*shows?[^.]*\.[\s\S]{30,400}?)(?:\n\n|$)/i);
-    if (t1) found.push({ label: 'Task 1 Prompt', text: t1[0].trim().slice(0, 600) });
-  }
-
-  // Final fallback: look for any block with IELTS essay trigger phrases
-  if (found.length === 0) {
-    const essayTrigger = sessionText.match(/((?:Some people|Many people|It is argued|To what extent|Do you agree|Discuss both|In many countries|Governments|The diagram|The graph|The table|The chart)[^.]{20,}\.[^]*?(?:\n\n|$)){1,4}/i);
-    if (essayTrigger) {
-      const txt = essayTrigger[0].trim().slice(0, 800);
-      if (txt.length > 40) found.push({ label: 'Writing Task', text: txt });
-    }
+    const t1 = sessionText.match(/(?:The (?:graph|chart|table|diagram|map|bar chart|line graph|pie chart)[^.]*(?:shows?|illustrates?)[^.]*\.[\s\S]{30,400}?)(?:\n\n|$)/i);
+    if (t1) { found.push({ label: 'Task 1 Prompt', text: t1[0].trim().slice(0, 600) }); return found; }
   }
 
   return found;
@@ -4752,12 +4728,19 @@ function escHtml(str) {
 }
 
 // Lightweight markdown renderer for writing-task display: strips ">" quote
-// markers, converts **bold**, and turns "- " lines into clean bullets so raw
+// markers, converts **bold**, *italic*, and turns "- " lines into clean bullets so raw
 // markdown symbols never show up unrendered in the UI.
+// Also pre-renders [PROCESS]/[CHART]/[TREE] blocks that appear inside the task.
 function mdLiteToHtml(raw) {
-  let t = escHtml(String(raw || '').trim());
+  let t = String(raw || '').trim();
+  // Render visual blocks before escaping
+  t = t.replace(/\[PROCESS([^\]]*)\]([\s\S]*?)\[\/PROCESS\]/gi, (m, attrs, body) => renderProcessBlock(body, attrs));
+  t = t.replace(/\[CHART([^\]]*)\]([\s\S]*?)\[\/CHART\]/gi, (m, attrs, body) => renderChartBlock(body, attrs));
+  t = t.replace(/\[TREE([^\]]*)\]([\s\S]*?)\[\/TREE\]/gi, (m, attrs, body) => renderTreeBlock(body, attrs));
+  t = escHtml(t);
   t = t.replace(/^&gt;\s?/gm, '');
   t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  t = t.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
   t = t.replace(/^- (.+)$/gm, '<span class="md-bullet">• $1</span>');
   t = t.split(/\n{2,}/).map(p => p.replace(/\n/g, '<br>')).join('<div style="height:10px"></div>');
   return t;
@@ -7292,7 +7275,7 @@ function finishMockTest() {
   document.getElementById('mockActionBtns').innerHTML = `<button onclick="document.getElementById('mockOverlay').style.display='none';switchTab('analytics');buildAnalytics()" style="background:var(--gold);border:none;color:#09090e;padding:10px 24px;border-radius:6px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer">📊 View Results</button><button onclick="document.getElementById('mockOverlay').style.display='none'" style="background:#0c1220;border:1px solid #2a3550;color:#8090c0;padding:10px 24px;border-radius:6px;font-family:'Space Mono',monospace;font-size:12px;cursor:pointer">Close</button>`;
   toast('Mock test complete! Check Analytics tab.');
 }
-//moon
+
 // ═══════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════
