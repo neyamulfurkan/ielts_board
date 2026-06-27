@@ -4738,16 +4738,20 @@ function escHtml(str) {
 // Also pre-renders [PROCESS]/[CHART]/[TREE] blocks that appear inside the task.
 function mdLiteToHtml(raw) {
   let t = String(raw || '').trim();
-  // Render visual blocks before escaping
-  t = t.replace(/\[PROCESS([^\]]*)\]([\s\S]*?)\[\/PROCESS\]/gi, (m, attrs, body) => renderProcessBlock(body, attrs));
-  t = t.replace(/\[CHART([^\]]*)\]([\s\S]*?)\[\/CHART\]/gi, (m, attrs, body) => renderChartBlock(body, attrs));
-  t = t.replace(/\[TREE([^\]]*)\]([\s\S]*?)\[\/TREE\]/gi, (m, attrs, body) => renderTreeBlock(body, attrs));
+  // Stash visual blocks with placeholders BEFORE escaping, inject rendered HTML after
+  const stash = [];
+  const stashBlock = (html) => { const k = `\x01MDVB${stash.length}\x01`; stash.push(html); return k; };
+  t = t.replace(/\[PROCESS([^\]]*)\]([\s\S]*?)\[\/PROCESS\]/gi, (m, a, b) => stashBlock(renderProcessBlock(b, a)));
+  t = t.replace(/\[CHART([^\]]*)\]([\s\S]*?)\[\/CHART\]/gi, (m, a, b) => stashBlock(renderChartBlock(b, a)));
+  t = t.replace(/\[TREE([^\]]*)\]([\s\S]*?)\[\/TREE\]/gi, (m, a, b) => stashBlock(renderTreeBlock(b, a)));
   t = escHtml(t);
   t = t.replace(/^&gt;\s?/gm, '');
   t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   t = t.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
   t = t.replace(/^- (.+)$/gm, '<span class="md-bullet">• $1</span>');
   t = t.split(/\n{2,}/).map(p => p.replace(/\n/g, '<br>')).join('<div style="height:10px"></div>');
+  // Restore visual blocks (they contain raw HTML, must not be escaped)
+  stash.forEach((html, i) => { t = t.replace(`\x01MDVB${i}\x01`, html); });
   return t;
 }
 
