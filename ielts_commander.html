@@ -2435,6 +2435,32 @@ Japan   | 5%   | 9%   | 13%
 
 Use these blocks only when a real visual actually helps — not for every list. For IELTS Task 1 writing tasks that involve a chart, graph, map, or table, ALWAYS include the matching visual block so the student can see the actual figure. Everything else still uses normal text, headers, bullets, and tables as described above.
 
+• MODEL ANSWER — for EVERY task you give the student (writing, reading, listening, or speaking), ALWAYS include a model answer block immediately after the task prompt. This renders as a "See Model Answer" button the student can click to reveal the answer ONLY when they want to — it is hidden by default so they can attempt the task first.
+
+Format:
+[MODEL_ANSWER type="writing" task="1" label="Task 1 — Line Graph"]
+[Write the full Band 8+ model answer here. Then add a [TEACHING] divider followed by your teaching notes.]
+
+[TEACHING]
+## Why This is Band 8+
+- **Task Achievement:** [explain how the answer fully addresses the task]
+- **Coherence & Cohesion:** [explain the linking and paragraph structure]
+- **Lexical Resource:** [highlight 3–5 specific vocabulary choices and why they are Band 8]
+- **Grammatical Range & Accuracy:** [highlight 3–5 specific grammatical structures used]
+[/MODEL_ANSWER]
+
+Rules for [MODEL_ANSWER]:
+— type must be one of: writing | reading | listening | speaking
+— task is "1" or "2" for writing; for reading/listening/speaking use a brief label like "Passage 1" or "Part 2"
+— label is the text shown on the button (e.g. "Task 1 — Line Graph", "Task 2 — Opinion Essay", "Reading Passage")
+— Place the [MODEL_ANSWER] block IMMEDIATELY after the task prompt in STEP 3/4/5 — not at the end of the response
+— For writing tasks, the model answer must be a complete Band 8+ response (Task 1: 180–220 words; Task 2: 270–320 words)
+— The [TEACHING] divider separates the model text (above) from annotation notes (below)
+— Teaching notes must explain WHY the answer is Band 8+, not just what it says — cite specific words/phrases from the model answer
+— For reading/listening: include the correct answers with full explanations of where in the passage/audio the evidence is
+— For speaking: include a sample Part 2 or Part 3 answer at Band 8 level with commentary on specific lexical/grammatical choices
+— You MUST include [MODEL_ANSWER] blocks for EVERY task — do not skip them. A task without a model answer block is incomplete.
+
 FOLLOW THIS SESSION STRUCTURE EXACTLY:
 ${errBlock ? `
 ━━━ STEP 0: QUICK REVISION (5 min, KEEP IT SHORT) — DO THIS FIRST, BEFORE ANYTHING NEW ━━━
@@ -4005,7 +4031,8 @@ function parseFallbackNumberedQuestions(raw) {
     .replace(/\[TREE[\s\S]*?\[\/TREE\]/g, '')
     .replace(/\[PROCESS[\s\S]*?\[\/PROCESS\]/g, '')
     .replace(/\[MAP[\s\S]*?\[\/MAP\]/g, '')
-    .replace(/\[TABLE[\s\S]*?\[\/TABLE\]/g, '');
+    .replace(/\[TABLE[\s\S]*?\[\/TABLE\]/g, '')
+    .replace(/\[MODEL_ANSWER[\s\S]*?\[\/MODEL_ANSWER\]/g, '');
 
   const lines = text.split('\n');
   const found = [];
@@ -4782,8 +4809,30 @@ function renderSessionReadMode(raw) {
   const vocabMap = {};
   (S.vocabulary || []).forEach(v => { if (v.word) vocabMap[v.word.toLowerCase()] = v; });
 
-  // Strip [QUESTIONS] block from display — shown in panel instead
-  let displayRaw = raw.replace(/\[QUESTIONS\][\s\S]*?\[\/QUESTIONS\]/g, '').trim();
+  // Strip blocks that aren't meant for visual display
+  let displayRaw = raw
+    .replace(/\[QUESTIONS\][\s\S]*?\[\/QUESTIONS\]/g, '')   // shown in answer panel instead
+    .replace(/\[SESSION_DATA\][\s\S]*?\[\/SESSION_DATA\]/g, '') // internal data block, not for reading
+    .trim();
+
+  // Extract [MODEL_ANSWER] blocks — stash them keyed by index so the inline
+  // "See Model Answer" button can open the right one in the modal.
+  const _modelAnswers = [];
+  displayRaw = displayRaw.replace(/\[MODEL_ANSWER([^\]]*)\]([\s\S]*?)\[\/MODEL_ANSWER\]/gi, (m, attrs, body) => {
+    const typeM = attrs.match(/type\s*=\s*"([^"]*)"/i);
+    const taskM = attrs.match(/task\s*=\s*"([^"]*)"/i);
+    const labelM = attrs.match(/label\s*=\s*"([^"]*)"/i);
+    _modelAnswers.push({
+      type: typeM ? typeM[1] : 'writing',
+      task: taskM ? taskM[1] : '',
+      label: labelM ? labelM[1] : '',
+      body: body.trim()
+    });
+    return `\n\u0001MANSWER${_modelAnswers.length - 1}\u0001\n`;
+  });
+
+  // Make model answers available globally so the modal function can read them
+  window._sessionModelAnswers = _modelAnswers;
 
   // Extract visual blocks (charts/graphs, trees, process diagrams) and pre-render them to HTML/SVG,
   // swapping each block for a placeholder line so the normal text loop below can drop the rendered
@@ -4872,6 +4921,26 @@ function renderSessionReadMode(raw) {
     if (vMatch) {
       if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
       html += visualBlocks[parseInt(vMatch[1], 10)];
+      continue;
+    }
+
+    // A [MODEL_ANSWER] placeholder — render as a "See Model Answer" button
+    const maMatch = line.trim().match(/^\u0001MANSWER(\d+)\u0001$/);
+    if (maMatch) {
+      if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
+      if (errBuffer.length > 0) { html += flushErrBuffer(); }
+      const idx = parseInt(maMatch[1], 10);
+      const ma = (window._sessionModelAnswers || [])[idx];
+      if (ma) {
+        const typeIcon = { writing:'✍', reading:'📖', listening:'🎧', speaking:'🎙' }[ma.type] || '💡';
+        const typeLabel = ma.label || (ma.task ? `Task ${ma.task}` : ma.type.charAt(0).toUpperCase() + ma.type.slice(1));
+        const typeColor = { writing:'var(--sky)', reading:'var(--teal)', listening:'var(--violet)', speaking:'var(--lime)' }[ma.type] || 'var(--gold)';
+        const typeBg = { writing:'rgba(96,184,248,0.08)', reading:'rgba(64,208,192,0.08)', listening:'rgba(176,144,248,0.08)', speaking:'rgba(128,224,80,0.08)' }[ma.type] || 'rgba(240,192,64,0.08)';
+        html += `<div style="margin:14px 0 6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <button onclick="openModelAnswerModal(${idx})" data-bg-base="${typeBg}" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;background:${typeBg};border:1px solid ${typeColor};border-radius:6px;color:${typeColor};font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;" onmouseover="this.style.opacity='0.75'" onmouseout="this.style.opacity='1'">${typeIcon} SEE MODEL ANSWER — ${escHtml(typeLabel.toUpperCase())}</button>
+          <span style="font-size:10px;color:var(--t3);font-family:'Space Mono',monospace">Click to see a Band 8+ example + teaching notes</span>
+        </div>`;
+      }
       continue;
     }
 
@@ -7485,6 +7554,160 @@ function showResultModal(title, bodyHtml) {
 function closeResultModal() {
   const modal = document.getElementById('cbtResultModal');
   if (modal) modal.style.display = 'none';
+}
+
+// ── MODEL ANSWER MODAL ────────────────────────────────────────
+// Opens a full-screen modal showing a Band 8+ model answer for the task
+// at the given index in window._sessionModelAnswers.
+
+function openModelAnswerModal(idx) {
+  const answers = window._sessionModelAnswers || [];
+  const ma = answers[idx];
+  if (!ma) return;
+
+  const typeIcon = { writing:'✍', reading:'📖', listening:'🎧', speaking:'🎙' }[ma.type] || '💡';
+  const typeLabel = ma.label || (ma.task ? `Task ${ma.task}` : ma.type.charAt(0).toUpperCase() + ma.type.slice(1));
+  const accentColor = { writing:'#60b8f8', reading:'#40d0c0', listening:'#b090f8', speaking:'#80e050' }[ma.type] || '#f0c040';
+  const accentBg = { writing:'rgba(96,184,248,0.08)', reading:'rgba(64,208,192,0.08)', listening:'rgba(176,144,248,0.08)', speaking:'rgba(128,224,80,0.08)' }[ma.type] || 'rgba(240,192,64,0.08)';
+
+  // Render the body: split on a [TEACHING] divider if present — first part = model answer, second = teaching notes
+  let answerHtml = '', teachingHtml = '';
+  const dividerMatch = ma.body.match(/^([\s\S]*?)(?:\[TEACHING\]|##\s*Teaching|##\s*Why this is Band 8|##\s*Annotation)([\s\S]*)$/i);
+  if (dividerMatch) {
+    answerHtml = renderModelAnswerBody(dividerMatch[1].trim(), accentColor);
+    teachingHtml = renderModelAnswerBody(dividerMatch[2].trim(), accentColor);
+  } else {
+    answerHtml = renderModelAnswerBody(ma.body, accentColor);
+  }
+
+  let modal = document.getElementById('modelAnswerModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modelAnswerModal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9600;background:rgba(0,0,0,0.93);backdrop-filter:blur(16px);display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;';
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModelAnswerModal(); });
+    document.body.appendChild(modal);
+  }
+  // Escape key closes the modal; listener is removed on close
+  const _maEscHandler = (e) => { if (e.key === 'Escape') { closeModelAnswerModal(); document.removeEventListener('keydown', _maEscHandler); } };
+  document.removeEventListener('keydown', window._maEscHandler);
+  window._maEscHandler = _maEscHandler;
+  document.addEventListener('keydown', _maEscHandler);
+
+  modal.innerHTML = `
+    <div style="background:#0d0d18;border:1px solid ${accentColor};border-radius:14px;width:100%;max-width:740px;margin:auto;box-shadow:0 28px 80px rgba(0,0,0,0.85);overflow:hidden;">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid rgba(255,255,255,0.06);background:${accentBg};position:sticky;top:0;z-index:2;backdrop-filter:blur(12px);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:18px">${typeIcon}</span>
+          <div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:${accentColor}">Band 8+ Model Answer</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);font-family:'Space Mono',monospace;margin-top:1px;text-transform:uppercase;letter-spacing:0.5px">${escHtml(typeLabel)}</div>
+          </div>
+        </div>
+        <button onclick="closeModelAnswerModal()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseover="this.style.borderColor='${accentColor}';this.style.color='${accentColor}'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.5)'">✕</button>
+      </div>
+
+      <!-- Disclaimer banner -->
+      <div style="padding:10px 22px;background:rgba(240,192,64,0.06);border-bottom:1px solid rgba(240,192,64,0.15);display:flex;align-items:flex-start;gap:8px;">
+        <span style="flex-shrink:0;font-size:13px;margin-top:1px">⚠️</span>
+        <div style="font-size:11px;color:rgba(200,200,180,0.75);line-height:1.7;font-family:'Space Grotesk',sans-serif;">
+          <strong style="color:rgba(240,192,64,0.85)">Study this — don't copy it.</strong> Read the model answer first. Then close this modal, attempt your own version, and only come back to check the teaching notes after you've written something. Seeing the answer first trains recognition, not production. Real IELTS improvement comes from attempting first.
+        </div>
+      </div>
+
+      <!-- Model Answer section -->
+      <div style="padding:22px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+          <div style="width:3px;height:18px;background:${accentColor};border-radius:2px;flex-shrink:0"></div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:${accentColor};text-transform:uppercase;letter-spacing:0.8px">Model Answer</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:18px 20px;font-family:'Space Grotesk',sans-serif;font-size:14.5px;line-height:2.0;color:#e0e0f0;">
+          ${answerHtml}
+        </div>
+
+        ${teachingHtml ? `
+        <!-- Teaching Notes section -->
+        <div style="display:flex;align-items:center;gap:8px;margin:24px 0 14px;">
+          <div style="width:3px;height:18px;background:var(--gold);border-radius:2px;flex-shrink:0"></div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.8px">Teaching Notes — Why This is Band 8+</div>
+        </div>
+        <div style="background:rgba(240,192,64,0.04);border:1px solid rgba(240,192,64,0.12);border-radius:10px;padding:18px 20px;font-family:'Space Grotesk',sans-serif;font-size:13.5px;line-height:1.95;color:#c8c8e0;">
+          ${teachingHtml}
+        </div>
+        ` : ''}
+
+        <!-- Footer actions -->
+        <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;">
+          <button onclick="closeModelAnswerModal()" style="flex:1;min-width:120px;background:${accentBg};border:1px solid ${accentColor};color:${accentColor};padding:10px 16px;border-radius:8px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">✕ CLOSE & ATTEMPT MY VERSION</button>
+        </div>
+      </div>
+    </div>`;
+
+  modal.style.display = 'flex';
+}
+
+function closeModelAnswerModal() {
+  const modal = document.getElementById('modelAnswerModal');
+  if (modal) modal.style.display = 'none';
+}
+
+// Renders the body text of a model answer — minimal markdown (bold, italic, numbered lists, bullets)
+function renderModelAnswerBody(text, accentColor) {
+  if (!text) return '';
+  const lines = text.split('\n');
+  let html = '';
+  let inPara = false;
+  lines.forEach(raw => {
+    const line = raw;
+    if (!line.trim()) { html += '<div style="height:10px"></div>'; return; }
+
+    // Markdown headings
+    const h3 = line.match(/^###\s+(.*)/);
+    const h4 = line.match(/^####\s+(.*)/);
+    if (h3) { html += `<div style="font-weight:700;font-size:13px;color:${accentColor};margin:14px 0 6px;font-family:'Space Grotesk',sans-serif">${mdInline(h3[1])}</div>`; return; }
+    if (h4) { html += `<div style="font-weight:700;font-size:12px;color:rgba(200,200,200,0.8);margin:12px 0 4px;font-family:'Space Grotesk',sans-serif">${mdInline(h4[1])}</div>`; return; }
+
+    // Markdown table rows
+    if (/^\s*\|.*\|\s*$/.test(line) && !/^[-|:\s]+$/.test(line.replace(/[|]/g,''))) {
+      html += `<div style="font-family:'Space Mono',monospace;font-size:11px;color:#9898b8;padding:2px 0">${escHtml(line)}</div>`;
+      return;
+    }
+    // Separator row
+    if (/^\s*\|[-|:\s]+\|\s*$/.test(line)) return;
+
+    // Bullet
+    const bullet = line.match(/^(\s*)[•\-\*]\s+(.*)/);
+    if (bullet) { html += `<div style="display:flex;gap:10px;padding:3px 0"><span style="color:${accentColor};flex-shrink:0;margin-top:5px;font-size:10px">▸</span><span style="flex:1">${mdInline(bullet[2])}</span></div>`; return; }
+
+    // Numbered list
+    const num = line.match(/^(\d+)\.\s+(.*)/);
+    if (num) { html += `<div style="display:flex;gap:10px;padding:3px 0;align-items:flex-start"><span style="color:${accentColor};font-weight:700;flex-shrink:0;min-width:22px;font-family:'Space Mono',monospace;font-size:11px">${escHtml(num[1])}.</span><span style="flex:1">${mdInline(num[2])}</span></div>`; return; }
+
+    // Blockquote (annotated/highlighted phrases)
+    const bq = line.match(/^>\s*(.*)/);
+    if (bq) { html += `<div style="margin:4px 0;padding:6px 14px;border-left:3px solid ${accentColor};background:rgba(255,255,255,0.04);border-radius:0 5px 5px 0;font-style:italic;color:#b0b0d0;font-size:13px">${mdInline(bq[1])}</div>`; return; }
+
+    // Plain paragraph line
+    html += `<div style="padding:2px 0">${mdInline(line)}</div>`;
+  });
+  return html;
+}
+
+// Inline markdown for model answer body (bold, italic, code, highlight ==text==)
+function mdInline(str) {
+  if (!str) return '';
+  str = escHtml(str);
+  // ==highlighted== → amber highlight (for key phrases)
+  str = str.replace(/==(.+?)==/g, '<mark style="background:rgba(240,192,64,0.22);color:#f0e8c0;border-radius:3px;padding:0 3px">$1</mark>');
+  // **bold**
+  str = str.replace(/\*\*(.+?)\*\*/g, '<strong style="color:#f0f0ff;font-weight:700">$1</strong>');
+  // *italic*
+  str = str.replace(/\*(.+?)\*/g, '<em style="color:#b0b0d0">$1</em>');
+  // `code`
+  str = str.replace(/`(.+?)`/g, '<code style="background:#1a1a28;color:#40d0c0;padding:1px 5px;border-radius:3px;font-family:\'Space Mono\',monospace;font-size:11px">$1</code>');
+  return str;
 }
 
 // ── CUSTOM PASSAGES ───────────────────────────────────────────
