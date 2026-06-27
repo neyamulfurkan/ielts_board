@@ -2347,7 +2347,7 @@ ${errBlock}
 TODAY IS REVIEW DAY covering Days ${d-6}–${d-1}.
 Use the FULL WEEK DATA above as your source of truth — base every re-test sentence, quiz question, and drill directly on the actual mistakes and topics listed there. Do not invent generic content if real data is present above. If a PERSISTENT WEAK PATTERNS section is present, those items have already survived at least one earlier review — treat them as the top priority, not just one more bullet in the list.
 
-Format your entire response in clean, well-structured markdown-style text (headers, • bullets, numbered lists, | tables) so it reads cleanly when rendered — no walls of unbroken text. This app can also render a real chart, tree diagram, or process diagram inline if you use these exact formats (never plain ASCII art — it will not render):
+Format your entire response in clean, well-structured markdown-style text (headers, • bullets, numbered lists, | tables) so it reads cleanly when rendered — no walls of unbroken text. This app can also render a real chart, tree diagram, process diagram, map/floor plan, or data table inline if you use these exact formats (never plain ASCII art — it will not render):
 [CHART]
 type: bar
 title: This Week's Daily Scores
@@ -2357,7 +2357,7 @@ unit: %
 Day ${d-6}: 70
 Day ${d-5}: 75
 [/CHART]
-(type can be bar, line, or pie — use the FULL WEEK DATA day scores above for a real score-trend chart in WEAK POINTS below. For trees use 2-space indent: [TREE title="..."]...[/TREE]. For step sequences: [PROCESS title="..."] with numbered lines.)
+(type can be bar, line, pie, stacked, mixed, or dual_pie — use the FULL WEEK DATA day scores above for a real score-trend chart in WEAK POINTS below. For trees use 2-space indent: [TREE title="..."]...[/TREE]. For step sequences: [PROCESS title="..."] with numbered lines. For map/floor plans: [MAP title="..." before="X" after="Y"] with before:/after: zone lines. For tables: [TABLE title="..."] with pipe-delimited rows.)
 
 REVIEW SESSION STRUCTURE:
 1. RE-TEST GRAMMAR: Take every grammar rule from this week. Write 10 new sentences for me to correct. Do not repeat examples I have already seen.
@@ -2399,7 +2399,7 @@ series: Series A, Series B
 Category 1: 10, 20
 Category 2: 15, 25
 [/CHART]
-(type is bar, line, or pie. For pie charts give exactly one value per category and omit the series line. Every field on its own line, exactly as shown.)
+(type options: bar = grouped bars | line = line graph | pie = single pie | stacked = stacked bar | mixed = bars + line overlay | dual_pie = two pie charts side by side. For pie/dual_pie omit the series line and give one or two values per category respectively. Every field on its own line, exactly as shown.)
 
 • TREE / HIERARCHY — for sentence-structure trees, grammar trees, mind maps, essay/idea outlines:
 [TREE title="Tree Title Here"]
@@ -2417,7 +2417,23 @@ Top Level Node
 3. Third step described in full
 [/PROCESS]
 
-Use these three blocks only when a real graph, tree, or process actually helps the explanation — not for every list. Everything else still uses normal text, headers, bullets, and tables as described above.
+• MAP / FLOOR PLAN — for IELTS Task 1 map questions (town plans, floor plans, before/after layouts):
+[MAP title="Town Centre — Before and After" before="1990" after="2020"]
+before: Library=5,5,35,30 | Park=42,5,53,30 | Road=0,37,100,8 | School=5,48,35,40
+after: Library=5,5,28,30 | Hotel=35,5,30,30 | Park=68,5,27,30 | Road=0,37,100,8 | Shopping Centre=5,48,88,40
+[/MAP]
+(Coordinates are percentages of canvas width/height: label=x,y,width,height. For a single layout with no before/after just list zones without before:/after: prefixes. Use this for ANY map-based Task 1 question — town plans, floor plans, building layouts.)
+
+• DATA TABLE — for IELTS Task 1 table data:
+[TABLE title="Table Title Here"]
+Country | 2000 | 2010 | 2020
+UK      | 12%  | 15%  | 18%
+Germany | 8%   | 11%  | 14%
+Japan   | 5%   | 9%   | 13%
+[/TABLE]
+(Pipe-delimited. First row = headers. Use this whenever the Task 1 stimulus is a table.)
+
+Use these blocks only when a real visual actually helps — not for every list. For IELTS Task 1 writing tasks that involve a chart, graph, map, or table, ALWAYS include the matching visual block so the student can see the actual figure. Everything else still uses normal text, headers, bullets, and tables as described above.
 
 FOLLOW THIS SESSION STRUCTURE EXACTLY:
 ${errBlock ? `
@@ -3987,7 +4003,9 @@ function parseFallbackNumberedQuestions(raw) {
     .replace(/\[QUESTIONS\][\s\S]*?\[\/QUESTIONS\]/g, '')
     .replace(/\[CHART\][\s\S]*?\[\/CHART\]/g, '')
     .replace(/\[TREE[\s\S]*?\[\/TREE\]/g, '')
-    .replace(/\[PROCESS[\s\S]*?\[\/PROCESS\]/g, '');
+    .replace(/\[PROCESS[\s\S]*?\[\/PROCESS\]/g, '')
+    .replace(/\[MAP[\s\S]*?\[\/MAP\]/g, '')
+    .replace(/\[TABLE[\s\S]*?\[\/TABLE\]/g, '');
 
   const lines = text.split('\n');
   const found = [];
@@ -4775,6 +4793,8 @@ function renderSessionReadMode(raw) {
   displayRaw = displayRaw.replace(/\[CHART([^\]]*)\]([\s\S]*?)\[\/CHART\]/gi, (m, attrs, body) => stashBlock(renderChartBlock(body, attrs)));
   displayRaw = displayRaw.replace(/\[TREE([^\]]*)\]([\s\S]*?)\[\/TREE\]/gi, (m, attrs, body) => stashBlock(renderTreeBlock(body, attrs)));
   displayRaw = displayRaw.replace(/\[PROCESS([^\]]*)\]([\s\S]*?)\[\/PROCESS\]/gi, (m, attrs, body) => stashBlock(renderProcessBlock(body, attrs)));
+  displayRaw = displayRaw.replace(/\[MAP([^\]]*)\]([\s\S]*?)\[\/MAP\]/gi, (m, attrs, body) => stashBlock(renderMapBlock(body, attrs)));
+  displayRaw = displayRaw.replace(/\[TABLE([^\]]*)\]([\s\S]*?)\[\/TABLE\]/gi, (m, attrs, body) => stashBlock(renderIELTSTableBlock(body, attrs)));
 
   const lines = displayRaw.split('\n');
   let html = '';
@@ -5040,18 +5060,76 @@ function parseChartBody(body) {
   return { meta, rows };
 }
 
-// Renders a [CHART] block as a real inline SVG bar / line / pie chart with legend.
+// ── Chart helpers ─────────────────────────────────────────────
+function _chartGridAndAxes(svgInner, padL, padR, padT, padB, W, H, plotH, maxVal, unit) {
+  for (let g = 0; g <= 4; g++) {
+    const y = padT + plotH - (g / 4) * plotH;
+    svgInner += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#1d1d28" stroke-width="1"/>`;
+    const labelVal = Math.round((g / 4) * maxVal);
+    svgInner += `<text x="${padL - 6}" y="${y + 4}" fill="#9898b8" font-size="9" text-anchor="end" font-family="'Space Mono',monospace">${labelVal}${unit ? unit.slice(0,2) : ''}</text>`;
+  }
+  svgInner += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}" stroke="#252535" stroke-width="1.5"/>`;
+  svgInner += `<line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="#252535" stroke-width="1.5"/>`;
+  return svgInner;
+}
+
+// Renders a [CHART] block as a real inline SVG.
+// Supported types: bar, line, pie, stacked, mixed (bar+line), dual_pie
 function renderChartBlock(body, attrsStr) {
   const { meta, rows } = parseChartBody(body);
   if (!rows.length) return '';
   const title = meta.title || vizAttr(attrsStr, 'title');
   const colors = VIZ_PALETTE;
   const W = 640, H = 320;
-  const padL = 56, padR = 20, padT = title ? 44 : 20, padB = 56;
+  const padL = 58, padR = 20, padT = title ? 44 : 20, padB = 60;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   let svgInner = '';
   let legend = '';
 
+  const titleSvg = title ? `<text x="${W / 2}" y="26" fill="#f0c040" font-size="13" font-weight="700" text-anchor="middle" font-family="'Space Grotesk',sans-serif">${escHtml(title)}</text>` : '';
+
+  // ── DUAL PIE (two pies side by side) ─────────────────────────
+  if (meta.type === 'dual_pie') {
+    // Expect rows grouped by series name: series line defines the two pies' labels
+    // Each data row has 2 values: one per pie
+    const pieLabels = meta.series.length >= 2 ? meta.series : ['Group A', 'Group B'];
+    for (let p = 0; p < 2; p++) {
+      const total = rows.reduce((s, r) => s + (r.values[p] || 0), 0) || 1;
+      const cx = padL + plotW * (p === 0 ? 0.27 : 0.73);
+      const cy = padT + plotH / 2;
+      const r = Math.min(plotW * 0.35, plotH / 2) - 6;
+      let angle = -Math.PI / 2;
+      rows.forEach((row, i) => {
+        const val = row.values[p] || 0;
+        const slice = (val / total) * Math.PI * 2;
+        const x1 = cx + r * Math.cos(angle), y1 = cy + r * Math.sin(angle);
+        const endAngle = angle + slice;
+        const x2 = cx + r * Math.cos(endAngle), y2 = cy + r * Math.sin(endAngle);
+        const largeArc = slice > Math.PI ? 1 : 0;
+        const color = colors[i % colors.length];
+        svgInner += `<path d="M${cx.toFixed(1)},${cy.toFixed(1)} L${x1.toFixed(1)},${y1.toFixed(1)} A${r.toFixed(1)},${r.toFixed(1)} 0 ${largeArc} 1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${color}" fill-opacity="0.85" stroke="#09090e" stroke-width="1.5"/>`;
+        const midAngle = angle + slice / 2;
+        const pct = Math.round((val / total) * 100);
+        if (pct >= 6) {
+          const lx = cx + r * 0.62 * Math.cos(midAngle), ly = cy + r * 0.62 * Math.sin(midAngle);
+          svgInner += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" fill="#09090e" font-size="10" font-weight="700" text-anchor="middle" font-family="'Space Grotesk',sans-serif">${pct}%</text>`;
+        }
+        angle = endAngle;
+      });
+      // Pie title below
+      svgInner += `<text x="${cx.toFixed(1)}" y="${(cy + r + 18).toFixed(1)}" fill="#9898b8" font-size="10" text-anchor="middle" font-family="'Space Grotesk',sans-serif">${escHtml(pieLabels[p])}</text>`;
+    }
+    rows.forEach((row, i) => {
+      const color = colors[i % colors.length];
+      legend += `<div style="display:flex;align-items:center;gap:6px;margin:3px 14px 3px 0"><span style="width:11px;height:11px;border-radius:3px;background:${color};display:inline-block;flex-shrink:0"></span><span style="font-size:12px;color:var(--t2)">${escHtml(row.label)}</span></div>`;
+    });
+    return `<div style="margin:24px 0;padding:16px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" preserveAspectRatio="xMidYMid meet">${titleSvg}${svgInner}</svg>
+      ${legend ? `<div style="display:flex;flex-wrap:wrap;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #1d1d28">${legend}</div>` : ''}
+    </div>`;
+  }
+
+  // ── SINGLE PIE ────────────────────────────────────────────────
   if (meta.type === 'pie') {
     const total = rows.reduce((s, r) => s + (r.values[0] || 0), 0) || 1;
     const cx = W / 2, cy = padT + plotH / 2, r = Math.min(plotW, plotH) / 2 - 8;
@@ -5074,20 +5152,24 @@ function renderChartBlock(body, attrsStr) {
       legend += `<div style="display:flex;align-items:center;gap:6px;margin:3px 14px 3px 0"><span style="width:11px;height:11px;border-radius:3px;background:${color};display:inline-block;flex-shrink:0"></span><span style="font-size:12px;color:var(--t2)">${escHtml(row.label)} — ${val}${meta.unit || ''}</span></div>`;
       angle = endAngle;
     });
-  } else if (meta.type === 'line') {
+    return `<div style="margin:24px 0;padding:16px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" preserveAspectRatio="xMidYMid meet">${titleSvg}${svgInner}</svg>
+      ${legend ? `<div style="display:flex;flex-wrap:wrap;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #1d1d28">${legend}</div>` : ''}
+    </div>`;
+  }
+
+  // ── LINE ──────────────────────────────────────────────────────
+  if (meta.type === 'line') {
     const seriesCount = Math.max(1, ...rows.map(r => r.values.length));
     let maxVal = 0;
     rows.forEach(r => r.values.forEach(v => { if (v > maxVal) maxVal = v; }));
     maxVal = (maxVal * 1.15) || 10;
-    const stepX = rows.length > 1 ? plotW / (rows.length - 1) : 0;
-    for (let g = 0; g <= 4; g++) {
-      const y = padT + plotH - (g / 4) * plotH;
-      svgInner += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#1d1d28" stroke-width="1"/>`;
-      svgInner += `<text x="${padL - 8}" y="${y + 4}" fill="#9898b8" font-size="10" text-anchor="end" font-family="'Space Mono',monospace">${Math.round((g / 4) * maxVal)}</text>`;
-    }
+    svgInner = _chartGridAndAxes(svgInner, padL, padR, padT, padB, W, H, plotH, maxVal, meta.unit);
+    const stepX = rows.length > 1 ? plotW / (rows.length - 1) : plotW / 2;
     rows.forEach((r, i) => {
       const x = padL + i * stepX;
-      svgInner += `<text x="${x}" y="${H - padB + 18}" fill="#9898b8" font-size="10" text-anchor="middle" font-family="'Space Mono',monospace">${escHtml(r.label)}</text>`;
+      const lbl = r.label.length > 7 ? r.label.slice(0, 6) + '…' : r.label;
+      svgInner += `<text x="${x}" y="${H - padB + 18}" fill="#9898b8" font-size="9" text-anchor="middle" font-family="'Space Mono',monospace">${escHtml(lbl)}</text>`;
     });
     for (let s = 0; s < seriesCount; s++) {
       const color = colors[s % colors.length];
@@ -5098,48 +5180,117 @@ function renderChartBlock(body, attrsStr) {
       svgInner += `<polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2.5"/>`;
       rows.forEach((r, i) => {
         const v = r.values[s] !== undefined ? r.values[s] : 0;
-        svgInner += `<circle cx="${(padL + i * stepX).toFixed(1)}" cy="${(padT + plotH - (v / maxVal) * plotH).toFixed(1)}" r="3.5" fill="${color}"/>`;
+        svgInner += `<circle cx="${(padL + i * stepX).toFixed(1)}" cy="${(padT + plotH - (v / maxVal) * plotH).toFixed(1)}" r="3.5" fill="${color}" stroke="#09090e" stroke-width="1"/>`;
       });
-      legend += `<div style="display:flex;align-items:center;gap:6px;margin:3px 14px 3px 0"><span style="width:14px;height:3px;border-radius:2px;background:${color};display:inline-block;flex-shrink:0"></span><span style="font-size:12px;color:var(--t2)">${escHtml(meta.series[s] || ('Series ' + (s + 1)))}</span></div>`;
+      legend += `<div style="display:flex;align-items:center;gap:6px;margin:3px 14px 3px 0"><span style="width:18px;height:3px;border-radius:2px;background:${color};display:inline-block;flex-shrink:0"></span><span style="font-size:12px;color:var(--t2)">${escHtml(meta.series[s] || ('Series ' + (s + 1)))}</span></div>`;
     }
-  } else {
-    // bar (grouped if multiple series)
+    return `<div style="margin:24px 0;padding:16px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" preserveAspectRatio="xMidYMid meet">${titleSvg}${svgInner}</svg>
+      ${legend ? `<div style="display:flex;flex-wrap:wrap;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #1d1d28">${legend}</div>` : ''}
+    </div>`;
+  }
+
+  // ── STACKED BAR ───────────────────────────────────────────────
+  if (meta.type === 'stacked') {
     const seriesCount = Math.max(1, ...rows.map(r => r.values.length));
+    let maxVal = 0;
+    rows.forEach(r => { const sum = r.values.reduce((a, b) => a + b, 0); if (sum > maxVal) maxVal = sum; });
+    maxVal = (maxVal * 1.15) || 10;
+    svgInner = _chartGridAndAxes(svgInner, padL, padR, padT, padB, W, H, plotH, maxVal, meta.unit);
+    const groupW = plotW / rows.length;
+    const barW = Math.max(8, groupW * 0.6);
+    rows.forEach((r, i) => {
+      const gx = padL + i * groupW + (groupW - barW) / 2;
+      let cumH = 0;
+      for (let s = seriesCount - 1; s >= 0; s--) {
+        const v = r.values[s] !== undefined ? r.values[s] : 0;
+        const bh = (v / maxVal) * plotH;
+        const by = padT + plotH - (cumH + bh);
+        svgInner += `<rect x="${gx.toFixed(1)}" y="${by.toFixed(1)}" width="${barW.toFixed(1)}" height="${bh.toFixed(1)}" fill="${colors[s % colors.length]}" fill-opacity="0.85" rx="${s === 0 ? 0 : 0}" ry="0"/>`;
+        cumH += bh;
+      }
+      // Round top corners on outermost bar
+      svgInner += `<rect x="${gx.toFixed(1)}" y="${(padT + plotH - cumH).toFixed(1)}" width="${barW.toFixed(1)}" height="0" fill="none"/>`;
+      const lbl = r.label.length > 8 ? r.label.slice(0, 7) + '…' : r.label;
+      svgInner += `<text x="${(padL + i * groupW + groupW / 2).toFixed(1)}" y="${H - padB + 18}" fill="#9898b8" font-size="9" text-anchor="middle" font-family="'Space Mono',monospace">${escHtml(lbl)}</text>`;
+    });
+    for (let s = 0; s < seriesCount; s++) {
+      legend += `<div style="display:flex;align-items:center;gap:6px;margin:3px 14px 3px 0"><span style="width:11px;height:11px;border-radius:3px;background:${colors[s % colors.length]};display:inline-block;flex-shrink:0"></span><span style="font-size:12px;color:var(--t2)">${escHtml(meta.series[s] || ('Series ' + (s + 1)))}</span></div>`;
+    }
+    return `<div style="margin:24px 0;padding:16px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" preserveAspectRatio="xMidYMid meet">${titleSvg}${svgInner}</svg>
+      ${legend ? `<div style="display:flex;flex-wrap:wrap;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #1d1d28">${legend}</div>` : ''}
+    </div>`;
+  }
+
+  // ── MIXED (bar series 0 + line series 1+) ────────────────────
+  if (meta.type === 'mixed') {
+    const seriesCount = Math.max(2, ...rows.map(r => r.values.length));
     let maxVal = 0;
     rows.forEach(r => r.values.forEach(v => { if (v > maxVal) maxVal = v; }));
     maxVal = (maxVal * 1.15) || 10;
-    for (let g = 0; g <= 4; g++) {
-      const y = padT + plotH - (g / 4) * plotH;
-      svgInner += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#1d1d28" stroke-width="1"/>`;
-      svgInner += `<text x="${padL - 8}" y="${y + 4}" fill="#9898b8" font-size="10" text-anchor="end" font-family="'Space Mono',monospace">${Math.round((g / 4) * maxVal)}</text>`;
-    }
+    svgInner = _chartGridAndAxes(svgInner, padL, padR, padT, padB, W, H, plotH, maxVal, meta.unit);
     const groupW = plotW / rows.length;
-    const barGap = 6;
-    const barW = Math.max(4, (groupW - barGap * 2) / seriesCount);
+    const barW = Math.max(6, groupW * 0.45);
+    // Draw bars (series 0)
     rows.forEach((r, i) => {
-      const groupX = padL + i * groupW;
-      for (let s = 0; s < seriesCount; s++) {
-        const v = r.values[s] !== undefined ? r.values[s] : 0;
-        const bh = (v / maxVal) * plotH;
-        const bx = groupX + barGap + s * barW;
-        const by = padT + plotH - bh;
-        svgInner += `<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${(barW - 3).toFixed(1)}" height="${bh.toFixed(1)}" fill="${colors[s % colors.length]}" fill-opacity="0.85" rx="2"/>`;
-      }
-      svgInner += `<text x="${(groupX + groupW / 2).toFixed(1)}" y="${H - padB + 18}" fill="#9898b8" font-size="10" text-anchor="middle" font-family="'Space Mono',monospace">${escHtml(r.label)}</text>`;
+      const v = r.values[0] !== undefined ? r.values[0] : 0;
+      const bh = (v / maxVal) * plotH;
+      const bx = padL + i * groupW + (groupW - barW) / 2;
+      const by = padT + plotH - bh;
+      svgInner += `<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${barW.toFixed(1)}" height="${bh.toFixed(1)}" fill="${colors[0]}" fill-opacity="0.75" rx="2"/>`;
+      const lbl = r.label.length > 8 ? r.label.slice(0, 7) + '…' : r.label;
+      svgInner += `<text x="${(padL + i * groupW + groupW / 2).toFixed(1)}" y="${H - padB + 18}" fill="#9898b8" font-size="9" text-anchor="middle" font-family="'Space Mono',monospace">${escHtml(lbl)}</text>`;
     });
-    if (seriesCount > 1) {
-      for (let s = 0; s < seriesCount; s++) {
-        legend += `<div style="display:flex;align-items:center;gap:6px;margin:3px 14px 3px 0"><span style="width:11px;height:11px;border-radius:3px;background:${colors[s % colors.length]};display:inline-block;flex-shrink:0"></span><span style="font-size:12px;color:var(--t2)">${escHtml(meta.series[s] || ('Series ' + (s + 1)))}</span></div>`;
-      }
+    // Draw lines (series 1+)
+    for (let s = 1; s < seriesCount; s++) {
+      const color = colors[s % colors.length];
+      const pts = rows.map((r, i) => {
+        const v = r.values[s] !== undefined ? r.values[s] : 0;
+        return `${(padL + i * groupW + groupW / 2).toFixed(1)},${(padT + plotH - (v / maxVal) * plotH).toFixed(1)}`;
+      });
+      svgInner += `<polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2.5"/>`;
+      rows.forEach((r, i) => {
+        const v = r.values[s] !== undefined ? r.values[s] : 0;
+        svgInner += `<circle cx="${(padL + i * groupW + groupW / 2).toFixed(1)}" cy="${(padT + plotH - (v / maxVal) * plotH).toFixed(1)}" r="4" fill="${color}" stroke="#09090e" stroke-width="1.5"/>`;
+      });
+    }
+    for (let s = 0; s < seriesCount; s++) {
+      const isLine = s > 0;
+      legend += `<div style="display:flex;align-items:center;gap:6px;margin:3px 14px 3px 0">${isLine ? `<span style="width:18px;height:3px;border-radius:2px;background:${colors[s % colors.length]};display:inline-block;flex-shrink:0"></span>` : `<span style="width:11px;height:11px;border-radius:3px;background:${colors[s % colors.length]};display:inline-block;flex-shrink:0"></span>`}<span style="font-size:12px;color:var(--t2)">${escHtml(meta.series[s] || (isLine ? 'Line ' + s : 'Bars'))}</span></div>`;
+    }
+    return `<div style="margin:24px 0;padding:16px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" preserveAspectRatio="xMidYMid meet">${titleSvg}${svgInner}</svg>
+      ${legend ? `<div style="display:flex;flex-wrap:wrap;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #1d1d28">${legend}</div>` : ''}
+    </div>`;
+  }
+
+  // ── GROUPED BAR (default) ─────────────────────────────────────
+  const seriesCount = Math.max(1, ...rows.map(r => r.values.length));
+  let maxVal = 0;
+  rows.forEach(r => r.values.forEach(v => { if (v > maxVal) maxVal = v; }));
+  maxVal = (maxVal * 1.15) || 10;
+  svgInner = _chartGridAndAxes(svgInner, padL, padR, padT, padB, W, H, plotH, maxVal, meta.unit);
+  const groupW = plotW / rows.length;
+  const barGap = 5;
+  const barW = Math.max(4, (groupW - barGap * 2) / seriesCount);
+  rows.forEach((r, i) => {
+    const groupX = padL + i * groupW;
+    for (let s = 0; s < seriesCount; s++) {
+      const v = r.values[s] !== undefined ? r.values[s] : 0;
+      const bh = (v / maxVal) * plotH;
+      const bx = groupX + barGap + s * barW;
+      const by = padT + plotH - bh;
+      svgInner += `<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${(barW - 2).toFixed(1)}" height="${bh.toFixed(1)}" fill="${colors[s % colors.length]}" fill-opacity="0.85" rx="2"/>`;
+    }
+    const lbl = r.label.length > 8 ? r.label.slice(0, 7) + '…' : r.label;
+    svgInner += `<text x="${(groupX + groupW / 2).toFixed(1)}" y="${H - padB + 18}" fill="#9898b8" font-size="9" text-anchor="middle" font-family="'Space Mono',monospace">${escHtml(lbl)}</text>`;
+  });
+  if (seriesCount > 1) {
+    for (let s = 0; s < seriesCount; s++) {
+      legend += `<div style="display:flex;align-items:center;gap:6px;margin:3px 14px 3px 0"><span style="width:11px;height:11px;border-radius:3px;background:${colors[s % colors.length]};display:inline-block;flex-shrink:0"></span><span style="font-size:12px;color:var(--t2)">${escHtml(meta.series[s] || ('Series ' + (s + 1)))}</span></div>`;
     }
   }
-
-  if (meta.type !== 'pie') {
-    svgInner += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}" stroke="#252535" stroke-width="1.5"/>`;
-    svgInner += `<line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="#252535" stroke-width="1.5"/>`;
-  }
-  const titleSvg = title ? `<text x="${W / 2}" y="24" fill="#f0c040" font-size="14" font-weight="700" text-anchor="middle" font-family="'Space Grotesk',sans-serif">${escHtml(title)}</text>` : '';
-
   return `<div style="margin:24px 0;padding:16px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
     <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" preserveAspectRatio="xMidYMid meet">${titleSvg}${svgInner}</svg>
     ${legend ? `<div style="display:flex;flex-wrap:wrap;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #1d1d28">${legend}</div>` : ''}
@@ -5197,6 +5348,156 @@ function renderProcessBlock(body, attrsStr) {
   return `<div style="margin:24px 0;padding:16px 18px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
     ${title ? `<div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:var(--gold);margin-bottom:14px">${escHtml(title)}</div>` : ''}
     ${inner}
+  </div>`;
+}
+
+// ── MAP BLOCK ─────────────────────────────────────────────────
+// Renders a [MAP] block for IELTS Task 1 map/floor plan diagrams.
+// Syntax: optional before: / after: header rows, then label=x,y,w,h lines for rooms/areas,
+// and arrow=x1,y1,x2,y2 lines for connections. Coordinates in 0-100 (percent of canvas).
+// Full syntax example:
+//   [MAP title="Town Centre — Before and After Redevelopment" before="1990" after="2020"]
+//   before: Library=5,5,30,28 | Park=40,5,55,28 | Road=0,35,100,8 | School=5,50,30,40
+//   after: Library=5,5,25,28 | Hotel=35,5,30,28 | Park=70,5,25,28 | Road=0,35,100,8 | Shopping Centre=5,50,85,40
+//   [/MAP]
+function renderMapBlock(body, attrsStr) {
+  const title = vizAttr(attrsStr, 'title');
+  const beforeLabel = vizAttr(attrsStr, 'before') || 'Before';
+  const afterLabel  = vizAttr(attrsStr, 'after')  || 'After';
+  const lines = (body || '').split('\n').map(l => l.trim()).filter(Boolean);
+
+  const colors = VIZ_PALETTE;
+  const colorMap = {};
+  let colorIdx = 0;
+  function getColor(name) {
+    const key = name.toLowerCase().replace(/\s+/g,'');
+    if (!colorMap[key]) { colorMap[key] = colors[colorIdx++ % colors.length]; }
+    return colorMap[key];
+  }
+
+  function parseZones(raw) {
+    // raw: "Library=5,5,30,28 | Park=40,5,55,28 | ..."
+    return raw.split('|').map(s => s.trim()).filter(Boolean).map(part => {
+      const eq = part.indexOf('=');
+      if (eq < 0) return null;
+      const name = part.slice(0, eq).trim();
+      const nums = part.slice(eq + 1).split(',').map(n => parseFloat(n.trim()));
+      if (nums.length < 4 || nums.some(isNaN)) return null;
+      return { name, x: nums[0], y: nums[1], w: nums[2], h: nums[3] };
+    }).filter(Boolean);
+  }
+
+  let beforeZones = [], afterZones = [], isSingle = true;
+  lines.forEach(line => {
+    if (/^before:/i.test(line)) { beforeZones = parseZones(line.slice(7)); isSingle = false; }
+    else if (/^after:/i.test(line))  { afterZones  = parseZones(line.slice(6)); isSingle = false; }
+    else if (!isSingle) return; // already split
+  });
+  // If no before:/after: headers, treat all as single-panel zone list
+  if (isSingle) {
+    beforeZones = lines.flatMap(l => parseZones(l));
+    afterZones = [];
+  }
+
+  // Pre-assign colors consistently for matching zones
+  [...beforeZones, ...afterZones].forEach(z => getColor(z.name));
+
+  function renderPanel(zones, W, H) {
+    let s = '';
+    zones.forEach(z => {
+      const x = (z.x / 100) * W, y = (z.y / 100) * H;
+      const w = (z.w / 100) * W, h = (z.h / 100) * H;
+      const col = getColor(z.name);
+      s += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${hexToRgba(col, 0.22)}" stroke="${col}" stroke-width="1.5" rx="3"/>`;
+      // Label — split long names
+      const words = z.name.split(' ');
+      const mid = Math.ceil(words.length / 2);
+      if (words.length <= 2 || w > 50) {
+        s += `<text x="${(x + w / 2).toFixed(1)}" y="${(y + h / 2 + 4).toFixed(1)}" fill="${col}" font-size="${Math.max(7, Math.min(11, w / 6)).toFixed(0)}" font-weight="700" text-anchor="middle" font-family="'Space Grotesk',sans-serif">${escHtml(z.name)}</text>`;
+      } else {
+        const line1 = words.slice(0, mid).join(' ');
+        const line2 = words.slice(mid).join(' ');
+        const fs = Math.max(7, Math.min(10, w / 6)).toFixed(0);
+        s += `<text x="${(x + w / 2).toFixed(1)}" y="${(y + h / 2 - 2).toFixed(1)}" fill="${col}" font-size="${fs}" font-weight="700" text-anchor="middle" font-family="'Space Grotesk',sans-serif">${escHtml(line1)}</text>`;
+        s += `<text x="${(x + w / 2).toFixed(1)}" y="${(y + h / 2 + parseInt(fs) + 2).toFixed(1)}" fill="${col}" font-size="${fs}" font-weight="700" text-anchor="middle" font-family="'Space Grotesk',sans-serif">${escHtml(line2)}</text>`;
+      }
+    });
+    return s;
+  }
+
+  const PW = isSingle ? 560 : 260, PH = 220;
+  const totalW = isSingle ? PW + 40 : PW * 2 + 80, totalH = PH + (isSingle ? 20 : 54);
+  let svg = `<svg viewBox="0 0 ${totalW} ${totalH}" style="width:100%;height:auto;display:block" preserveAspectRatio="xMidYMid meet">`;
+
+  if (isSingle) {
+    svg += `<g transform="translate(20,10)">${renderPanel(beforeZones, PW, PH)}</g>`;
+  } else {
+    // Before panel
+    svg += `<text x="${20 + PW/2}" y="16" fill="#9898b8" font-size="11" font-weight="700" text-anchor="middle" font-family="'Space Grotesk',sans-serif">${escHtml(beforeLabel)}</text>`;
+    svg += `<g transform="translate(20,22)">${renderPanel(beforeZones, PW, PH)}</g>`;
+    // Arrow between
+    const arrowX = 20 + PW + 15;
+    const arrowY = 22 + PH / 2;
+    svg += `<text x="${arrowX}" y="${arrowY + 4}" fill="#555570" font-size="18" text-anchor="middle" font-family="'Space Mono',monospace">→</text>`;
+    // After panel
+    svg += `<text x="${20 + PW + 30 + PW/2}" y="16" fill="#9898b8" font-size="11" font-weight="700" text-anchor="middle" font-family="'Space Grotesk',sans-serif">${escHtml(afterLabel)}</text>`;
+    svg += `<g transform="translate(${20 + PW + 30},22)">${renderPanel(afterZones, PW, PH)}</g>`;
+  }
+  svg += '</svg>';
+
+  // Legend row (unique zone names)
+  const seen = new Set();
+  let legendHtml = '';
+  [...beforeZones, ...afterZones].forEach(z => {
+    if (!seen.has(z.name)) { seen.add(z.name); const col = getColor(z.name); legendHtml += `<div style="display:flex;align-items:center;gap:5px;margin:2px 10px 2px 0"><span style="width:10px;height:10px;border-radius:2px;background:${hexToRgba(col,0.6)};border:1.5px solid ${col};display:inline-block;flex-shrink:0"></span><span style="font-size:11px;color:var(--t2)">${escHtml(z.name)}</span></div>`; }
+  });
+
+  return `<div style="margin:24px 0;padding:16px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
+    ${title ? `<div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:var(--gold);margin-bottom:12px">🗺 ${escHtml(title)}</div>` : ''}
+    ${svg}
+    ${legendHtml ? `<div style="display:flex;flex-wrap:wrap;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #1d1d28">${legendHtml}</div>` : ''}
+  </div>`;
+}
+
+// ── IELTS TABLE BLOCK ─────────────────────────────────────────
+// Renders a [TABLE] block as a styled data table — for IELTS Task 1 tables.
+// Syntax: pipe-delimited rows, first row = headers.
+// Example:
+//   [TABLE title="Proportion of students studying abroad — 2000 and 2020"]
+//   Country | 2000 | 2020
+//   UK      | 12%  | 18%
+//   Germany | 8%   | 14%
+//   [/TABLE]
+function renderIELTSTableBlock(body, attrsStr) {
+  const title = vizAttr(attrsStr, 'title');
+  const rawLines = (body || '').split('\n').map(l => l.trim()).filter(l => l && !/^[-|:\s]+$/.test(l));
+  if (rawLines.length < 2) return '';
+
+  const parseRow = line => line.replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+  const headers = parseRow(rawLines[0]);
+  const bodyRows = rawLines.slice(1).map(parseRow);
+
+  const headerHtml = headers.map(h => `<th style="padding:10px 14px;background:rgba(64,208,192,0.12);border:1px solid rgba(64,208,192,0.25);color:var(--teal);font-weight:700;text-align:left;white-space:nowrap;font-family:'Space Grotesk',sans-serif;font-size:12px">${escHtml(h)}</th>`).join('');
+
+  const bodyHtml = bodyRows.map((row, ri) => {
+    const bg = ri % 2 === 0 ? 'rgba(255,255,255,0.025)' : 'transparent';
+    const cells = row.map((cell, ci) => {
+      const style = ci === 0
+        ? 'padding:9px 14px;border:1px solid #1d1d28;color:var(--gold);font-weight:700;white-space:nowrap;font-family:\'Space Grotesk\',sans-serif;font-size:12px'
+        : 'padding:9px 14px;border:1px solid #1d1d28;color:#c8c8e0;font-family:\'Space Grotesk\',sans-serif;font-size:12px';
+      return `<td style="${style}">${escHtml(cell)}</td>`;
+    }).join('');
+    return `<tr style="background:${bg}">${cells}</tr>`;
+  }).join('');
+
+  return `<div style="margin:24px 0;padding:16px;background:rgba(255,255,255,0.025);border:1px solid #1d1d28;border-radius:12px">
+    ${title ? `<div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:var(--teal);margin-bottom:12px">📊 ${escHtml(title)}</div>` : ''}
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr>${headerHtml}</tr></thead>
+        <tbody>${bodyHtml}</tbody>
+      </table>
+    </div>
   </div>`;
 }
 
