@@ -737,6 +737,112 @@ body {
   transition: background 0.1s;
 }
 .wvt-add-btn:hover { background: rgba(128,224,80,0.2); }
+
+/* SENTENCE TRANSLATE BUTTON — floats near text selection */
+#sentenceTranslateBtn {
+  position: fixed;
+  z-index: 99998;
+  display: none;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  background: linear-gradient(135deg, #1a1a2e, #12121f);
+  border: 1px solid rgba(176,144,248,0.7);
+  border-radius: 20px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.7), 0 0 0 1px rgba(176,144,248,0.15);
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--violet);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  transition: opacity 0.15s, transform 0.15s;
+  opacity: 0;
+  transform: translateY(4px);
+  user-select: none;
+}
+#sentenceTranslateBtn.visible {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+#sentenceTranslateBtn:hover {
+  background: linear-gradient(135deg, #22223a, #18182a);
+  border-color: var(--violet);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.8), 0 0 12px rgba(176,144,248,0.2);
+}
+
+/* SENTENCE TRANSLATION TOAST */
+#sentenceTranslateToast {
+  position: fixed;
+  z-index: 99999;
+  background: #0f0f1a;
+  border: 1px solid rgba(176,144,248,0.5);
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.85), 0 0 0 1px rgba(176,144,248,0.08);
+  min-width: 280px;
+  max-width: 420px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px) scale(0.97);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  font-family: 'Space Grotesk', sans-serif;
+  overflow: hidden;
+  display: none;
+}
+#sentenceTranslateToast.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  display: block;
+}
+.stt-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px 8px;
+  background: linear-gradient(90deg, rgba(176,144,248,0.12), rgba(64,208,192,0.05));
+  border-bottom: 1px solid rgba(37,37,53,0.8);
+}
+.stt-label {
+  font-size: 8px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--violet); flex: 1;
+}
+.stt-speak-btn {
+  background: rgba(176,144,248,0.12); border: 1px solid var(--violet); color: var(--violet);
+  padding: 3px 8px; border-radius: 5px; font-size: 10px; cursor: pointer;
+  font-family: 'Space Mono', monospace; flex-shrink: 0; transition: background 0.1s;
+}
+.stt-speak-btn:hover { background: rgba(176,144,248,0.25); }
+.stt-close-btn {
+  background: none; border: 1px solid #252535; color: var(--t3);
+  width: 22px; height: 22px; border-radius: 5px; font-size: 11px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.1s;
+}
+.stt-close-btn:hover { border-color: var(--rose); color: var(--rose); }
+.stt-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.stt-original {
+  font-size: 12px; color: var(--t2); line-height: 1.6;
+  padding: 7px 9px; background: rgba(37,37,53,0.5);
+  border-radius: 6px; border-left: 2px solid rgba(176,144,248,0.4);
+  font-style: italic;
+}
+.stt-arrow {
+  text-align: center; font-size: 13px; color: var(--t3); line-height: 1;
+}
+.stt-translation {
+  font-size: 15px; font-weight: 600; color: var(--gold);
+  line-height: 1.7; padding: 8px 9px;
+  background: rgba(240,192,64,0.07);
+  border-radius: 6px; border-left: 2px solid rgba(240,192,64,0.4);
+}
+.stt-speak-bangla-btn {
+  width: 100%; background: rgba(176,144,248,0.1); border: 1px solid rgba(176,144,248,0.4);
+  color: var(--violet); padding: 6px 10px; border-radius: 6px;
+  font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.5px; transition: background 0.1s;
+}
+.stt-speak-bangla-btn:hover { background: rgba(176,144,248,0.2); }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 </head>
@@ -8021,6 +8127,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   </div>
 </div>
 
+<!-- SENTENCE TRANSLATE FLOATING BUTTON -->
+<div id="sentenceTranslateBtn" onclick="triggerSentenceTranslate()">
+  🌐 বাংলায় দেখো
+</div>
+
+<!-- SENTENCE TRANSLATION TOAST -->
+<div id="sentenceTranslateToast">
+  <div class="stt-header">
+    <div class="stt-label">🌐 বাক্যের অর্থ · Sentence Meaning</div>
+    <button class="stt-speak-btn" onclick="sttSpeakOriginal()">🔊 EN</button>
+    <button class="stt-close-btn" onclick="hideSentenceToast()">✕</button>
+  </div>
+  <div class="stt-body">
+    <div class="stt-original" id="sttOriginal"></div>
+    <div class="stt-arrow">↓</div>
+    <div class="stt-translation" id="sttTranslation">⏳ অনুবাদ হচ্ছে...</div>
+    <button class="stt-speak-bangla-btn" onclick="sttSpeakBangla()">🔊 বাংলায় শুনো</button>
+  </div>
+</div>
+
 <script>
 // ─────────────────────────────────────────────────────────────
 // FULLSCREEN READ MODE
@@ -8202,7 +8328,205 @@ function wvtAddToVocab() {
   hideWordVocabToast();
 }
 
-// Close toast when clicking outside
+// ─────────────────────────────────────────────────────────────
+// SENTENCE TRANSLATION — select text → floating button → Bangla
+// ─────────────────────────────────────────────────────────────
+let _sttSelectedText = '';
+let _sttBanglaText = '';
+let _sttBtnHideTimer = null;
+let _sttToastHideTimer = null;
+
+function _positionNearSelection(el) {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return;
+  const range = sel.getRangeAt(0);
+  const rect = range.getBoundingClientRect();
+
+  const elW = el.offsetWidth || 160;
+  const elH = el.offsetHeight || 34;
+
+  let left = rect.left + (rect.width / 2) - (elW / 2);
+  let top = rect.bottom + window.scrollY + 10;
+
+  // Flip above selection if too close to bottom
+  if (rect.bottom + elH + 20 > window.innerHeight) {
+    top = rect.top + window.scrollY - elH - 10;
+  }
+  if (left + elW > window.innerWidth - 10) left = window.innerWidth - elW - 10;
+  if (left < 8) left = 8;
+
+  el.style.left = left + 'px';
+  el.style.top = top + 'px';
+}
+
+function _showSentenceTranslateBtn(text) {
+  clearTimeout(_sttBtnHideTimer);
+  _sttSelectedText = text;
+  const btn = document.getElementById('sentenceTranslateBtn');
+  btn.style.display = 'flex';
+  // position after display so offsetWidth is available
+  requestAnimationFrame(() => {
+    _positionNearSelection(btn);
+    requestAnimationFrame(() => { btn.classList.add('visible'); });
+  });
+}
+
+function _hideSentenceTranslateBtn() {
+  const btn = document.getElementById('sentenceTranslateBtn');
+  btn.classList.remove('visible');
+  _sttBtnHideTimer = setTimeout(() => { btn.style.display = 'none'; }, 200);
+}
+
+function hideSentenceToast() {
+  const toast = document.getElementById('sentenceTranslateToast');
+  toast.classList.remove('visible');
+  _sttToastHideTimer = setTimeout(() => { toast.style.display = 'none'; }, 200);
+}
+
+function _showSentenceToast(x, y) {
+  clearTimeout(_sttToastHideTimer);
+  const toast = document.getElementById('sentenceTranslateToast');
+  toast.style.display = 'block';
+  toast.classList.remove('visible');
+
+  // Measure after display
+  requestAnimationFrame(() => {
+    const tw = toast.offsetWidth || 360;
+    const th = toast.offsetHeight || 200;
+    let left = x - tw / 2;
+    let top = y + 10;
+
+    if (top + th > window.innerHeight - 10) top = y - th - 10;
+    if (left + tw > window.innerWidth - 10) left = window.innerWidth - tw - 10;
+    if (left < 8) left = 8;
+    if (top < 8) top = 8;
+
+    toast.style.left = left + 'px';
+    toast.style.top = top + 'px';
+
+    requestAnimationFrame(() => { toast.classList.add('visible'); });
+  });
+}
+
+async function triggerSentenceTranslate() {
+  const text = _sttSelectedText.trim();
+  if (!text) return;
+
+  // Hide translate button
+  _hideSentenceTranslateBtn();
+
+  // Get position from current selection before we clear it
+  const sel = window.getSelection();
+  let anchorX = window.innerWidth / 2, anchorY = window.innerHeight / 2;
+  if (sel && sel.rangeCount > 0) {
+    const r = sel.getRangeAt(0).getBoundingClientRect();
+    anchorX = r.left + r.width / 2 + window.scrollX;
+    anchorY = r.bottom + window.scrollY;
+  }
+
+  // Set up toast with original text, reset translation
+  document.getElementById('sttOriginal').textContent = text;
+  document.getElementById('sttTranslation').textContent = '⏳ অনুবাদ হচ্ছে...';
+  _sttBanglaText = '';
+
+  _showSentenceToast(anchorX, anchorY);
+
+  // Fetch translation
+  try {
+    const res = await fetch(
+      'https://api.mymemory.translated.net/get?q=' +
+      encodeURIComponent(text.slice(0, 500)) +
+      '&langpair=en|bn'
+    );
+    if (!res.ok) throw new Error('Network error');
+    const data = await res.json();
+    if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
+      _sttBanglaText = data.responseData.translatedText;
+      document.getElementById('sttTranslation').textContent = _sttBanglaText;
+    } else {
+      document.getElementById('sttTranslation').textContent = '— অনুবাদ পাওয়া যায়নি';
+    }
+  } catch (e) {
+    document.getElementById('sttTranslation').textContent = '— সংযোগ ব্যর্থ হয়েছে';
+  }
+}
+
+function sttSpeakOriginal() {
+  const text = document.getElementById('sttOriginal').textContent;
+  if (text && typeof speakText === 'function') speakText(text, 'sentence');
+  else if (text) {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; speechSynthesis.speak(u);
+  }
+}
+
+function sttSpeakBangla() {
+  const text = _sttBanglaText || document.getElementById('sttTranslation').textContent;
+  if (!text || text.startsWith('⏳') || text.startsWith('—')) return;
+  const u = new SpeechSynthesisUtterance(text);
+  // Prefer Bengali voice if available
+  const voices = speechSynthesis.getVoices();
+  const bnVoice = voices.find(v => v.lang && (v.lang.startsWith('bn') || v.lang.startsWith('bn-')));
+  if (bnVoice) u.voice = bnVoice;
+  u.lang = 'bn-BD';
+  u.rate = 0.9;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+// Listen for text selection inside #sessionReadContent
+document.addEventListener('mouseup', function(e) {
+  // Small delay so selection is finalized
+  setTimeout(() => {
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.toString().trim()) {
+      _hideSentenceTranslateBtn();
+      return;
+    }
+    const selectedText = sel.toString().trim();
+    // Only activate inside the session read content area
+    const readContent = document.getElementById('sessionReadContent');
+    if (!readContent) return;
+    const anchorNode = sel.anchorNode;
+    if (!readContent.contains(anchorNode)) {
+      _hideSentenceTranslateBtn();
+      return;
+    }
+    // Need at least 2 words to show sentence translate (single word uses word toast)
+    const wordCount = selectedText.split(/\s+/).filter(Boolean).length;
+    if (wordCount < 2) {
+      _hideSentenceTranslateBtn();
+      return;
+    }
+    _showSentenceTranslateBtn(selectedText);
+  }, 10);
+});
+
+// Hide sentence translate button when clicking outside
+document.addEventListener('mousedown', function(e) {
+  const btn = document.getElementById('sentenceTranslateBtn');
+  const toast = document.getElementById('sentenceTranslateToast');
+  if (btn && !btn.contains(e.target)) {
+    _hideSentenceTranslateBtn();
+  }
+  if (toast && toast.classList.contains('visible') && !toast.contains(e.target) && !(btn && btn.contains(e.target))) {
+    hideSentenceToast();
+  }
+});
+
+// Touch support for mobile selection
+document.addEventListener('touchend', function(e) {
+  setTimeout(() => {
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.toString().trim()) return;
+    const selectedText = sel.toString().trim();
+    const readContent = document.getElementById('sessionReadContent');
+    if (!readContent || !readContent.contains(sel.anchorNode)) return;
+    const wordCount = selectedText.split(/\s+/).filter(Boolean).length;
+    if (wordCount >= 2) _showSentenceTranslateBtn(selectedText);
+  }, 50);
+});
+
 document.addEventListener('click', function(e) {
   const toast = document.getElementById('wordVocabToast');
   if (toast && toast.classList.contains('visible') && !toast.contains(e.target)) {
@@ -8214,8 +8538,9 @@ document.addEventListener('click', function(e) {
 }, true);
 
 // ─────────────────────────────────────────────────────────────
-// PATCH showBanglaPopup to ALSO trigger the word vocab toast
-// and auto-speak
+// PATCH showBanglaPopup — two modes:
+//   • Inside Read Mode  → always use the original top-bar banglaPopup (+ auto-speak)
+//   • Outside Read Mode → use the floating word vocab toast (+ auto-speak)
 // ─────────────────────────────────────────────────────────────
 const _origShowBanglaPopup = window.showBanglaPopup;
 window.showBanglaPopup = function(el) {
@@ -8223,13 +8548,18 @@ window.showBanglaPopup = function(el) {
   const bangla = el.getAttribute('data-bangla') || '';
   const desc = el.getAttribute('data-desc') || '';
 
-  // Show the toast (which also auto-speaks)
-  showWordVocabToast(el, word, bangla, desc);
+  const overlay = document.getElementById('readModeOverlay');
+  const inReadMode = overlay && overlay.style.display !== 'none';
 
-  // Also keep original bangla popup bar behaviour for vocab-bank words
-  // (only show bar if this is inside read mode AND word is already in bank)
-  if (bangla && _origShowBanglaPopup) {
-    _origShowBanglaPopup(el);
+  if (inReadMode) {
+    // ── READ MODE: use the top bar banglaPopup exactly as before ──
+    // Auto-speak immediately
+    if (word) { try { speakText(word, 'word'); } catch(e) {} }
+    // Delegate fully to original handler (it shows banglaPopup bar + fetches translation)
+    if (_origShowBanglaPopup) _origShowBanglaPopup(el);
+  } else {
+    // ── OUTSIDE READ MODE: floating toast ──
+    showWordVocabToast(el, word, bangla, desc);
   }
 };
 </script>
