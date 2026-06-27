@@ -1764,6 +1764,7 @@ const defaultStore = {
   topicsCovered: {},    // { "14": "Articles — a, an, the, zero article" } — what Claude actually taught (vs planned TOPICS[d])
   writingBands: {},     // { "14": 6.0 }
   speakingBands: {},    // { "14": 6.5 }
+  writingTaskTypes: {}, // { "14": "Task 1" } — which writing task type was actually used each day, so buildPrompt() can alternate Task 1 / Task 2 instead of always picking the same one
   gcd: '',
   groqKey: '',
   groqKeys: [],
@@ -1775,6 +1776,7 @@ const defaultStore = {
 let S = { ...defaultStore };
 
 function applyStoreDefaults() {
+  if (!S.writingTaskTypes) S.writingTaskTypes = {};
   if (!S.groqKeys) S.groqKeys = [];
   if (S.groqKey && !S.groqKeys.find(k => k.key === S.groqKey)) {
     S.groqKeys.unshift({ key: S.groqKey, label: 'Key 1', status: 'unknown', active: true });
@@ -2288,11 +2290,36 @@ ${errsText}
 ${patternsBlock}`;
 }
 
+// Looks back through every day before `beforeDay` that has a recorded writing task type and
+// returns the most recent one. Used so today's task type can be forced to the opposite.
+function getLastWritingTaskType(beforeDay) {
+  let lastDay = -1, lastType = null;
+  Object.keys(S.writingTaskTypes || {}).forEach(k => {
+    const dd = parseInt(k, 10);
+    if (!isNaN(dd) && dd < beforeDay && dd > lastDay) { lastDay = dd; lastType = S.writingTaskTypes[k]; }
+  });
+  return lastType;
+}
+
+// Forces today's writing task to be the opposite of whichever type was last used, so the app
+// alternates Task 1 (graph/chart/map/process/table) and Task 2 (essay) across sessions instead
+// of leaving the choice open — leaving it open ("Task 1 OR Task 2") is what caused Claude to
+// default to Task 2 every single day, since an essay connects trivially to any grammar topic
+// while a chart/graph does not. If there is no history yet, alternate by day parity so variety
+// starts from day one.
+function getForcedWritingTaskType(d) {
+  const last = getLastWritingTaskType(d);
+  if (last === 'Task 1') return 'Task 2';
+  if (last === 'Task 2') return 'Task 1';
+  return (d % 2 === 0) ? 'Task 1' : 'Task 2';
+}
+
 function buildPrompt(d, topic, ph, rev) {
   const prevScore = S.dayScores[d-1] ? `Previous Day Score: ${S.dayScores[d-1]}%` : '';
   const nextTopic = TOPICS[d+1] || 'next topic';
   const phNames = ['','Foundation','IELTS Mechanics','Intensive Practice','Mastery & Refinement'];
   const errBlock = rev ? buildWeeklyReviewBlock(d) : buildContinuityBlock(d);
+  const forcedTaskType = getForcedWritingTaskType(d);
 
   const schemaBlock = `
 ═══ MANDATORY SESSION DATA BLOCK (copy exactly at end of your response) ═══
@@ -2311,6 +2338,7 @@ errors_grammar: [pipe-separated grammar mistakes — FULL SENTENCE FORMAT REQUIR
 errors_vocab: [pipe-separated vocab mistakes — FULL SENTENCE FORMAT REQUIRED: write the student's exact mistaken sentence ==> write the corrected full sentence :: one-line rule. Example: "The problem is very big in society." ==> "The problem is prevalent in society." :: avoid informal adjectives like 'big/large' in academic writing — use 'prevalent/significant/widespread' | or: none]
 errors_writing: [pipe-separated writing mistakes — FULL SENTENCE FORMAT REQUIRED: quote the student's exact problematic sentence or paragraph ==> write the corrected/improved version :: one-line rule. Example: "The graph shows information about cars." ==> "The graph illustrates the number of cars sold in three countries between 2000 and 2020." :: Task 1 opening must paraphrase the task — include data type, countries/categories, and time period | or: none]
 vocab_learned: [pipe-separated list of new words learned today | or: none]
+writing_task_type: ${forcedTaskType}
 writing_task_done: [yes or no]
 writing_band: [band score if done, e.g. 6.5 | or: na]
 speaking_done: [yes or no]
@@ -2349,7 +2377,7 @@ Day ${d-5}: 75
 REVIEW SESSION STRUCTURE:
 1. RE-TEST GRAMMAR: Take every grammar rule from this week. Write 10 new sentences for me to correct. Do not repeat examples I have already seen.
 2. VOCABULARY QUIZ: Re-test all words from this week in context (fill-in-the-blank, 15 questions).
-3. WRITING ASSESSMENT: Give me a fresh writing task related to this week's topics. Assess with band scores for all 4 criteria.
+3. WRITING ASSESSMENT: Give me a fresh IELTS Writing ${forcedTaskType} task (today's type is fixed as ${forcedTaskType} to keep alternating with Task 2/Task 1 across sessions) related to this week's topics. Assess with band scores for all 4 criteria.
 4. SPEAKING REVIEW: Tell me exactly when to switch to Voice Mode. Provide exact script.
 5. WEAK POINTS: Identify my 3 biggest weaknesses — pull from PERSISTENT WEAK PATTERNS first if present, then this week's mistakes. Create intensive 10-minute drills for each. Tell me plainly if something is still unresolved after a previous review. Include a [CHART] of this week's daily scores from the FULL WEEK DATA above if at least 2 days have recorded scores.
 6. NOTEBOOKLM TASK: Give me an exact instruction for NotebookLM to deepen one key concept from this week.
@@ -2358,13 +2386,6 @@ REVIEW SESSION STRUCTURE:
 
 ${schemaBlock}`;
   }
-
-  // Alternate Task 1 / Task 2 by day number so both appear across the course.
-  // Odd days  → Task 1 (graph / chart / map / process / table)
-  // Even days → Task 2 (essay)
-  const writingTaskSpec = (d % 2 === 1)
-    ? `Task 1 — give me an Academic Writing Task 1 question with a real stimulus (bar chart, line graph, pie chart, table, process diagram, or map) connected to today's topic (${topic}). Include the appropriate [CHART], [TABLE], [PROCESS], or [MAP] visual block immediately after the question so I can see the actual figure. Word target: 150–180 words. Set the [MODEL_ANSWER] task attribute to "1".`
-    : `Task 2 — give me an Academic Writing Task 2 essay question connected to today's topic (${topic}). Word target: 250–280 words. Set the [MODEL_ANSWER] task attribute to "2".`;
 
   return `════════════════════════════════════════════════════════
 IELTS COMMANDER — DAY ${d} SESSION PROMPT
@@ -2484,7 +2505,8 @@ Example: "The data show a rapid increasing in sales." ==> "The data show a rapid
 Do not just write the wrong word alone — always the full sentence in quotes. Do not skip any mistake.
 
 ━━━ STEP 4: WRITING TASK (30 min) ━━━
-Give me 1 IELTS writing ${writingTaskSpec}
+Give me 1 IELTS Writing ${forcedTaskType} task connected to today's topic — ${forcedTaskType === 'Task 1' ? 'a graph, chart, table, process diagram, or map description task (150+ words)' : 'an essay task: opinion, discussion, problem-solution, or two-part question (250+ words)'}.
+Today's task type is FIXED as ${forcedTaskType} so the two task types keep alternating across sessions — do not substitute the other type even if it seems to connect more naturally to today's grammar topic; instead, find a creative way to make ${forcedTaskType} fit the topic (e.g. for a grammar topic, build the ${forcedTaskType === 'Task 1' ? 'chart/graph data and its description' : 'essay question and arguments'} around a subject that naturally uses today's target language).
 After I submit my response:
 • Score me on all 4 criteria (Task Achievement/Response, Coherence & Cohesion, Lexical Resource, Grammatical Range & Accuracy)
 • Give honest band scores for each criterion
@@ -3015,7 +3037,7 @@ function parseResponse() {
 
   // Validate required fields
   const required = ['day','phase','week','score','band_estimate','topic_covered','errors_grammar',
-    'errors_vocab','errors_writing','vocab_learned','writing_task_done','writing_band',
+    'errors_vocab','errors_writing','vocab_learned','writing_task_type','writing_task_done','writing_band',
     'speaking_done','speaking_band','next_day_focus','media_today','notebooklm_task',
     'voice_script','session_note'];
   const missing = required.filter(f => !data[f]);
@@ -3066,6 +3088,10 @@ function parseResponse() {
     });
 
     // Writing/speaking bands
+    if (data.writing_task_type) {
+      const wtt = /task\s*1/i.test(data.writing_task_type) ? 'Task 1' : (/task\s*2/i.test(data.writing_task_type) ? 'Task 2' : null);
+      if (wtt) S.writingTaskTypes[day] = wtt;
+    }
     if (data.writing_task_done === 'yes' && data.writing_band !== 'na') {
       S.writingBands[day] = parseFloat(data.writing_band);
     }
@@ -4670,7 +4696,7 @@ function parseFromReadMode() {
   });
 
   const required = ['day','phase','week','score','band_estimate','topic_covered','errors_grammar',
-    'errors_vocab','errors_writing','vocab_learned','writing_task_done','writing_band',
+    'errors_vocab','errors_writing','vocab_learned','writing_task_type','writing_task_done','writing_band',
     'speaking_done','speaking_band','next_day_focus','media_today','notebooklm_task',
     'voice_script','session_note'];
   const missing = required.filter(f => !data[f]);
@@ -4690,6 +4716,10 @@ function parseFromReadMode() {
     S.errors.vocab = S.errors.vocab.slice(-100);
     S.errors.writing = S.errors.writing.slice(-100);
     parseList(data.vocab_learned).forEach(w => { if (!S.vocabulary.find(v => v.word === w)) S.vocabulary.push({ word: w, bangla: '', description: '', example: '', day: day, manual: false }); });
+    if (data.writing_task_type) {
+      const wtt = /task\s*1/i.test(data.writing_task_type) ? 'Task 1' : (/task\s*2/i.test(data.writing_task_type) ? 'Task 2' : null);
+      if (wtt) S.writingTaskTypes[day] = wtt;
+    }
     if (data.writing_task_done === 'yes' && data.writing_band !== 'na') S.writingBands[day] = parseFloat(data.writing_band);
     if (data.speaking_done === 'yes' && data.speaking_band !== 'na') S.speakingBands[day] = parseFloat(data.speaking_band);
     if (data.media_today) S.media[day] = data.media_today;
@@ -5010,14 +5040,13 @@ function renderSessionReadMode(raw) {
     if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
 
     // Detect correction lines: "wrong" ==> "correct" :: reason (Quick Revision format)
-    // Claude sometimes wraps these in backticks in two ways:
-    //   1. Whole line: `"wrong" ==> "correct" :: rule`  → strip outer pair
-    //   2. Each part:  `"wrong"` ==> `"correct"` :: rule → strip adjacent backtick+quote pairs
-    // Both forms must produce a plain  "wrong" ==> "correct" :: rule  string for the table.
-    const errRaw = line.replace(/^`(.+)`$/, '$1')  // strip whole-line backtick wrapper
-                       .replace(/`"/g, '"')         // strip opening  `"  → "
-                       .replace(/"`/g, '"')         // strip closing  "`  → "
-                       .trim();
+    // Claude formats these inconsistently — sometimes the WHOLE line is wrapped in one pair of
+    // backticks (`"wrong" ==> "correct" :: rule`), sometimes EACH quoted sentence gets its own
+    // backticks (`"wrong"` ==> `"correct"` :: rule), sometimes there are no backticks at all.
+    // Strip ALL backticks before matching so every variant still renders as the error table —
+    // this only affects matching; if the stripped line doesn't fit the pattern, the original
+    // `line` (backticks intact) still flows through the normal renderer below untouched.
+    const errRaw = line.replace(/`/g, '').trim();
     const errMatch = errRaw.match(/^"(.+?)"\s*==>\s*"(.+?)"\s*::\s*(.+)$/);
     if (errMatch) {
       if (tableBuffer.length > 0) { html += flushTable(tableBuffer, vocabMap); tableBuffer = []; }
