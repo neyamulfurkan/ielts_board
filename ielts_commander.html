@@ -658,6 +658,85 @@ body {
   .q-bubble { width:22px; height:22px; font-size:8px; }
   .cbt-speak-wrap { padding:20px; gap:16px; }
 }
+
+/* FULLSCREEN READ MODE */
+#readModeOverlay:fullscreen,
+#readModeOverlay:-webkit-full-screen,
+#readModeOverlay:-moz-full-screen,
+#readModeOverlay:-ms-fullscreen {
+  background: #07080f;
+  display: flex !important;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* WORD VOCAB TOAST — appears near clicked word */
+#wordVocabToast {
+  position: fixed;
+  z-index: 99999;
+  background: #0f0f1a;
+  border: 1px solid rgba(240,192,64,0.5);
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(240,192,64,0.1);
+  padding: 0;
+  min-width: 260px;
+  max-width: 340px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px) scale(0.97);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  font-family: 'Space Grotesk', sans-serif;
+  overflow: hidden;
+}
+#wordVocabToast.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.wvt-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px 8px;
+  background: linear-gradient(90deg, rgba(240,192,64,0.12), rgba(64,208,192,0.06));
+  border-bottom: 1px solid rgba(37,37,53,0.8);
+}
+.wvt-word {
+  font-size: 18px; font-weight: 700; color: var(--teal); flex: 1;
+  font-family: 'Fraunces', serif; letter-spacing: -0.3px;
+}
+.wvt-speak-btn {
+  background: var(--sky-dim); border: 1px solid var(--sky); color: var(--sky);
+  padding: 3px 8px; border-radius: 5px; font-size: 11px; cursor: pointer;
+  font-family: 'Space Mono', monospace; flex-shrink: 0; transition: background 0.1s;
+}
+.wvt-speak-btn:hover { background: rgba(96,184,248,0.25); }
+.wvt-close-btn {
+  background: none; border: 1px solid #252535; color: var(--t3);
+  width: 22px; height: 22px; border-radius: 5px; font-size: 11px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.1s;
+}
+.wvt-close-btn:hover { border-color: var(--rose); color: var(--rose); }
+.wvt-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 7px; }
+.wvt-row { display: flex; align-items: flex-start; gap: 6px; }
+.wvt-lbl {
+  font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--t3); white-space: nowrap; padding-top: 2px; width: 44px; flex-shrink: 0;
+}
+.wvt-val { font-size: 13px; color: var(--t1); line-height: 1.5; }
+.wvt-val.bangla { color: var(--gold); font-weight: 600; font-size: 14px; }
+.wvt-val.def { color: var(--t2); font-size: 11.5px; }
+.wvt-footer {
+  padding: 7px 12px 9px; border-top: 1px solid rgba(37,37,53,0.6);
+  display: flex; gap: 6px; background: rgba(7,8,15,0.5);
+}
+.wvt-add-btn {
+  flex: 1; background: var(--lime-dim); border: 1px solid var(--lime); color: var(--lime);
+  padding: 5px 10px; border-radius: 5px; font-size: 9px; font-weight: 700;
+  cursor: pointer; font-family: 'Space Mono', monospace; letter-spacing: 0.5px;
+  transition: background 0.1s;
+}
+.wvt-add-btn:hover { background: rgba(128,224,80,0.2); }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 </head>
@@ -1393,6 +1472,7 @@ session_note: Good understanding of articles but uncountable noun errors persist
           <button onclick="toggleAnswerPanel()" id="btnTogglePanel" style="background:rgba(176,144,248,0.1);border:1px solid var(--violet);color:var(--violet);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap;flex-shrink:0">📝 EXERCISES</button>
           <button onclick="copyFullDayForAssessment()" title="Finish day" style="background:var(--gold);border:1px solid var(--gold);color:#09090e;padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap;flex-shrink:0">🎯 FINISH DAY</button>
           <button onclick="openReadModeParser()" style="background:rgba(64,208,192,0.1);border:1px solid var(--teal);color:var(--teal);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap;flex-shrink:0">⚡ PARSE</button>
+          <button id="btnFullscreen" onclick="toggleReadModeFullscreen()" title="Toggle fullscreen (hides browser UI)" style="background:rgba(96,184,248,0.1);border:1px solid var(--sky);color:var(--sky);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;white-space:nowrap;flex-shrink:0">⛶ FULL</button>
           <button onclick="closeReadMode()" style="background:var(--rose-dim);border:1px solid var(--rose);color:var(--rose);padding:4px 10px;border-radius:var(--r);font-family:'Space Mono',monospace;font-size:9px;font-weight:700;cursor:pointer;letter-spacing:0.5px;flex-shrink:0">✕</button>
           <div style="position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,0.04);overflow:hidden;">
             <div id="readProgressFill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width 0.12s linear;"></div>
@@ -7913,6 +7993,245 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!S.mockTests) S.mockTests = [];
   if (!S.cbtPassages) S.cbtPassages = [];
 });
+</script>
+
+<!-- WORD VOCAB TOAST (floating popup near clicked word) -->
+<div id="wordVocabToast">
+  <div class="wvt-header">
+    <div class="wvt-word" id="wvtWord">—</div>
+    <button class="wvt-speak-btn" onclick="wvtSpeak()">🔊 SPEAK</button>
+    <button class="wvt-close-btn" onclick="hideWordVocabToast()">✕</button>
+  </div>
+  <div class="wvt-body">
+    <div class="wvt-row">
+      <div class="wvt-lbl">Bangla</div>
+      <div class="wvt-val bangla" id="wvtBangla">⏳ looking up...</div>
+    </div>
+    <div class="wvt-row" id="wvtDefRow">
+      <div class="wvt-lbl">Meaning</div>
+      <div class="wvt-val def" id="wvtDef"></div>
+    </div>
+    <div class="wvt-row" id="wvtExRow" style="display:none">
+      <div class="wvt-lbl">Example</div>
+      <div class="wvt-val def" id="wvtEx" style="color:#9898b8;font-style:italic;"></div>
+    </div>
+  </div>
+  <div class="wvt-footer">
+    <button class="wvt-add-btn" onclick="wvtAddToVocab()">＋ ADD TO VOCAB BANK</button>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// FULLSCREEN READ MODE
+// ─────────────────────────────────────────────────────────────
+function toggleReadModeFullscreen() {
+  const overlay = document.getElementById('readModeOverlay');
+  const btn = document.getElementById('btnFullscreen');
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+  if (!isFs) {
+    const req = overlay.requestFullscreen || overlay.webkitRequestFullscreen || overlay.mozRequestFullScreen || overlay.msRequestFullscreen;
+    if (req) req.call(overlay).catch(() => {});
+  } else {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if (exit) exit.call(document).catch(() => {});
+  }
+}
+
+function _updateFullscreenBtn() {
+  const btn = document.getElementById('btnFullscreen');
+  if (!btn) return;
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+  btn.textContent = isFs ? '⛶ EXIT' : '⛶ FULL';
+  btn.style.background = isFs ? 'rgba(128,224,80,0.12)' : 'rgba(96,184,248,0.1)';
+  btn.style.borderColor = isFs ? 'var(--lime)' : 'var(--sky)';
+  btn.style.color = isFs ? 'var(--lime)' : 'var(--sky)';
+}
+
+document.addEventListener('fullscreenchange', _updateFullscreenBtn);
+document.addEventListener('webkitfullscreenchange', _updateFullscreenBtn);
+document.addEventListener('mozfullscreenchange', _updateFullscreenBtn);
+document.addEventListener('msfullscreenchange', _updateFullscreenBtn);
+
+// Also exit fullscreen when close button is clicked
+const _origCloseReadMode = window.closeReadMode;
+window.closeReadMode = function() {
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+  if (isFs) {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if (exit) exit.call(document).catch(() => {});
+  }
+  if (_origCloseReadMode) _origCloseReadMode();
+};
+
+// ─────────────────────────────────────────────────────────────
+// WORD VOCAB TOAST — floating near the clicked word
+// ─────────────────────────────────────────────────────────────
+let _wvtWord = '', _wvtBangla = '', _wvtDesc = '', _wvtEx = '';
+let _wvtHideTimer = null;
+
+function showWordVocabToast(el, word, bangla, desc) {
+  clearTimeout(_wvtHideTimer);
+  _wvtWord = word;
+  _wvtBangla = bangla || '';
+  _wvtDesc = desc || '';
+  _wvtEx = '';
+
+  document.getElementById('wvtWord').textContent = word;
+  document.getElementById('wvtBangla').textContent = bangla || '⏳ looking up...';
+  const defEl = document.getElementById('wvtDef');
+  const exEl = document.getElementById('wvtEx');
+  const exRow = document.getElementById('wvtExRow');
+  defEl.textContent = desc || '⏳ fetching definition...';
+  exEl.textContent = '';
+  exRow.style.display = 'none';
+
+  // Position the toast near the clicked element
+  const toast = document.getElementById('wordVocabToast');
+  toast.classList.remove('visible');
+  toast.style.display = 'block';
+
+  const rect = el.getBoundingClientRect();
+  const toastW = 300;
+  const toastH = 180; // approx
+  let left = rect.left + window.scrollX;
+  let top = rect.bottom + window.scrollY + 8;
+
+  // Flip above if too close to bottom
+  if (rect.bottom + toastH + 16 > window.innerHeight) {
+    top = rect.top + window.scrollY - toastH - 8;
+  }
+  // Clamp to right edge
+  if (left + toastW > window.innerWidth - 10) {
+    left = window.innerWidth - toastW - 10;
+  }
+  if (left < 8) left = 8;
+
+  toast.style.left = left + 'px';
+  toast.style.top = top + 'px';
+
+  requestAnimationFrame(() => { toast.classList.add('visible'); });
+
+  // Auto-speak immediately
+  if (word) {
+    try { speakText(word, 'word'); } catch(e) {}
+  }
+
+  // Fetch translation + definition if not already known
+  if (!bangla || !desc) {
+    _wvtFetchDetails(word);
+  }
+}
+
+function hideWordVocabToast() {
+  const toast = document.getElementById('wordVocabToast');
+  toast.classList.remove('visible');
+  _wvtHideTimer = setTimeout(() => { toast.style.display = 'none'; }, 200);
+}
+
+async function _wvtFetchDetails(word) {
+  const guardWord = word;
+  try {
+    const [dictRes, memRes] = await Promise.allSettled([
+      fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word)),
+      fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(word) + '&langpair=en|bn')
+    ]);
+    if (_wvtWord !== guardWord) return;
+
+    let banglaResult = _wvtBangla;
+    let descResult = _wvtDesc;
+    let exResult = '';
+
+    if (!banglaResult && memRes.status === 'fulfilled' && memRes.value.ok) {
+      const d = await memRes.value.json();
+      if (d.responseStatus === 200 && d.responseData && d.responseData.translatedText) {
+        banglaResult = d.responseData.translatedText;
+      }
+    }
+    if (!descResult && dictRes.status === 'fulfilled' && dictRes.value.ok) {
+      const d = await dictRes.value.json();
+      if (Array.isArray(d) && d.length > 0) {
+        for (const m of (d[0].meanings || [])) {
+          for (const df of (m.definitions || [])) {
+            if (!descResult && df.definition) descResult = df.definition;
+            if (!exResult && df.example) exResult = df.example;
+            if (descResult && exResult) break;
+          }
+          if (descResult && exResult) break;
+        }
+      }
+    }
+
+    if (_wvtWord !== guardWord) return;
+
+    _wvtBangla = banglaResult;
+    _wvtDesc = descResult;
+    _wvtEx = exResult;
+
+    document.getElementById('wvtBangla').textContent = banglaResult || '— not found';
+    const defEl = document.getElementById('wvtDef');
+    const exEl = document.getElementById('wvtEx');
+    const exRow = document.getElementById('wvtExRow');
+    defEl.textContent = descResult || '— no definition';
+    if (exResult) {
+      exEl.textContent = exResult;
+      exRow.style.display = 'flex';
+    }
+  } catch(e) {
+    if (_wvtWord !== guardWord) return;
+    document.getElementById('wvtBangla').textContent = '— lookup failed';
+  }
+}
+
+function wvtSpeak() {
+  if (_wvtWord) {
+    try { speakText(_wvtWord, 'word'); } catch(e) {}
+  }
+}
+
+function wvtAddToVocab() {
+  const word = _wvtWord;
+  if (!word) return;
+  if (typeof S !== 'undefined' && S.vocabulary) {
+    const exists = S.vocabulary.find(v => v.word.toLowerCase() === word.toLowerCase());
+    if (exists) { if (typeof toast === 'function') toast('"' + word + '" already in vocab bank.', 'warn'); return; }
+    S.vocabulary.push({ word: word, bangla: _wvtBangla, description: _wvtDesc, example: _wvtEx, day: (typeof modalDay !== 'undefined' ? modalDay : 0), manual: true });
+    if (typeof saveStore === 'function') saveStore();
+    if (typeof toast === 'function') toast('Added "' + word + '"' + (_wvtBangla ? ' → ' + _wvtBangla : '') + ' to vocab bank!');
+  }
+  hideWordVocabToast();
+}
+
+// Close toast when clicking outside
+document.addEventListener('click', function(e) {
+  const toast = document.getElementById('wordVocabToast');
+  if (toast && toast.classList.contains('visible') && !toast.contains(e.target)) {
+    // Check if click is on a word span in read mode
+    if (!e.target.closest('#sessionReadContent')) {
+      hideWordVocabToast();
+    }
+  }
+}, true);
+
+// ─────────────────────────────────────────────────────────────
+// PATCH showBanglaPopup to ALSO trigger the word vocab toast
+// and auto-speak
+// ─────────────────────────────────────────────────────────────
+const _origShowBanglaPopup = window.showBanglaPopup;
+window.showBanglaPopup = function(el) {
+  const word = el.getAttribute('data-word') || '';
+  const bangla = el.getAttribute('data-bangla') || '';
+  const desc = el.getAttribute('data-desc') || '';
+
+  // Show the toast (which also auto-speaks)
+  showWordVocabToast(el, word, bangla, desc);
+
+  // Also keep original bangla popup bar behaviour for vocab-bank words
+  // (only show bar if this is inside read mode AND word is already in bank)
+  if (bangla && _origShowBanglaPopup) {
+    _origShowBanglaPopup(el);
+  }
+};
 </script>
 </body>
 </html>
